@@ -67,11 +67,11 @@
                 <button onclick="changeCategoryFilter('tv', this)" class="cat-btn px-5 py-2 rounded-2xl text-xs font-semibold glass-card text-slate-300 whitespace-nowrap hover:bg-white/10">TV Shows</button>
             </div>
 
-            <!-- CLEAN HERO BANNER (Auto-Sliding every 4 sec) -->
-            <div id="hero-container" class="relative rounded-3xl overflow-hidden glass-card border border-white/10 shadow-2xl min-h-[200px] aspect-video sm:aspect-[21/9] flex items-end cursor-pointer group transition duration-500">
+            <!-- OPTIMIZED HERO BANNER (Zoom issue fixed) -->
+            <div id="hero-container" class="relative rounded-3xl overflow-hidden glass-card border border-white/10 shadow-2xl h-[210px] sm:h-[300px] flex items-end cursor-pointer group transition duration-500">
                 <div class="p-12 text-center w-full text-slate-500">
                     <i class="fa-solid fa-circle-notch fa-spin text-2xl text-red-500 mb-2"></i>
-                    <p class="text-xs">Loading Spotlight Carousel...</p>
+                    <p class="text-xs">Loading Spotlight...</p>
                 </div>
             </div>
 
@@ -105,13 +105,11 @@
 
         <!-- SCHEDULE / WATCHED LIST TAB -->
         <section id="tab-schedule" class="hidden space-y-4">
-            <!-- Sub Navigation Tabs -->
             <div class="flex border-b border-white/10 gap-6 pb-2">
                 <button onclick="switchListSubTab('schedule')" id="subtab-schedule" class="text-sm font-bold text-red-500 border-b-2 border-red-500 pb-1">Scheduled Plan</button>
                 <button onclick="switchListSubTab('watched')" id="subtab-watched" class="text-sm font-semibold text-slate-400 pb-1">Watched History</button>
             </div>
 
-            <!-- Sub Tab Containers -->
             <div id="list-schedule-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5"></div>
             <div id="list-watched-container" class="hidden grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5"></div>
         </section>
@@ -126,18 +124,31 @@
         <div id="modal-content" class="max-w-2xl mx-auto pb-12"></div>
     </div>
 
+    <!-- CALENDAR DATE PICKER MODAL -->
+    <div id="date-modal" class="fixed inset-0 z-50 glass-modal hidden flex items-center justify-center p-4">
+        <div class="glass-card p-5 rounded-3xl max-w-xs w-full space-y-4 border border-white/15 shadow-2xl">
+            <h3 id="date-modal-title" class="text-sm font-bold text-slate-100 flex items-center gap-2">
+                <i class="fa-solid fa-calendar-days text-red-500"></i> Select Date
+            </h3>
+            <p class="text-[11px] text-slate-400">Choose date to add to your list:</p>
+            <input type="date" id="custom-date-input" class="w-full bg-slate-900 border border-white/20 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-red-500">
+            <div class="flex gap-2 pt-1">
+                <button onclick="closeDateModal()" class="w-1/2 py-2.5 rounded-xl text-xs font-semibold glass-card text-slate-400 hover:text-white">Cancel</button>
+                <button onclick="confirmDateSelection()" class="w-1/2 py-2.5 rounded-xl text-xs font-bold bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-600/30">Save Date</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Bottom Navigation Bar -->
     <nav class="fixed bottom-0 left-0 right-0 z-40 glass-header px-6 py-2.5 flex justify-around items-center border-t border-white/10">
         <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center gap-1 text-red-500">
             <i class="fa-solid fa-house text-lg"></i>
             <span class="text-[10px] font-semibold">Home</span>
         </button>
-        <!-- RANDOM PICKER ACTION -->
         <button onclick="triggerRandomPicker()" id="nav-random" class="nav-btn flex flex-col items-center gap-1 text-slate-400 hover:text-amber-400 transition">
             <i class="fa-solid fa-dice text-lg animate-bounce"></i>
             <span class="text-[10px] font-semibold">Random</span>
         </button>
-        <!-- SCHEDULE & WATCHED -->
         <button onclick="switchTab('schedule')" id="nav-schedule" class="nav-btn flex flex-col items-center gap-1 text-slate-400">
             <i class="fa-solid fa-calendar-check text-lg"></i>
             <span class="text-[10px] font-semibold">My List</span>
@@ -157,10 +168,12 @@
         let hasMore = true;
         let searchTimeout = null;
 
-        // Auto Slider State
+        // Auto Slider & Date State
         let heroItems = [];
         let heroIndex = 0;
         let heroTimer = null;
+        let pendingItem = null;
+        let pendingKey = null;
 
         document.addEventListener('DOMContentLoaded', () => {
             loadHomeTitles(true);
@@ -288,7 +301,6 @@
             isFetching = false;
         }
 
-        // Auto Slider Logic (Changes every 4 seconds)
         function startHeroAutoSlide() {
             if (heroTimer) clearInterval(heroTimer);
             if (!heroItems.length) return;
@@ -298,10 +310,10 @@
             heroTimer = setInterval(() => {
                 heroIndex = (heroIndex + 1) % heroItems.length;
                 renderHeroBanner(heroItems[heroIndex]);
-            }, 4000); // 4 Seconds Auto Slide
+            }, 4000);
         }
 
-        // CLEAN HERO BANNER RENDER
+        // PERFECTLY PROPORTIONED HERO BANNER
         async function renderHeroBanner(item) {
             const container = document.getElementById('hero-container');
             const type = item.media_type || (item.title ? 'movie' : 'tv');
@@ -315,27 +327,24 @@
 
             container.innerHTML = `
                 <div class="absolute inset-0 bg-slate-900">
-                    <img src="${backdrop}" class="w-full h-full object-cover transition-all duration-700">
-                    <div class="absolute inset-0 bg-gradient-to-t from-[#070a13] via-[#070a13]/40 to-transparent"></div>
-                    <div class="absolute inset-0 bg-gradient-to-r from-[#070a13]/80 via-transparent to-transparent"></div>
+                    <img src="${backdrop}" class="w-full h-full object-cover object-center transition-all duration-700">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#070a13] via-[#070a13]/30 to-transparent"></div>
+                    <div class="absolute inset-0 bg-gradient-to-r from-[#070a13]/70 via-transparent to-transparent"></div>
                 </div>
 
-                <div class="relative z-10 p-5 w-full flex items-end justify-between gap-4">
-                    <div class="space-y-2 max-w-[70%]">
-                        <!-- Rating Badge Only -->
-                        <span class="bg-amber-400/20 text-amber-300 border border-amber-400/30 text-[10px] font-bold px-2.5 py-0.5 rounded-lg flex items-center gap-1 w-max backdrop-blur-md">
+                <div class="relative z-10 p-4 w-full flex items-end justify-between gap-4">
+                    <div class="space-y-1.5 max-w-[75%]">
+                        <span class="bg-amber-400/20 text-amber-300 border border-amber-400/30 text-[10px] font-bold px-2 py-0.5 rounded-lg flex items-center gap-1 w-max backdrop-blur-md">
                             <i class="fa-solid fa-star text-[8px]"></i> TMDB ${rating}
                         </span>
 
-                        <!-- TMDB Title Logo / Name -->
                         ${logoUrl ? `
-                            <img src="${logoUrl}" alt="${title}" class="max-h-12 max-w-[200px] object-contain drop-shadow-2xl">
+                            <img src="${logoUrl}" alt="${title}" class="max-h-10 max-w-[180px] object-contain drop-shadow-2xl">
                         ` : `
-                            <h1 class="text-xl font-black text-white leading-tight drop-shadow-md truncate">${title}</h1>
+                            <h1 class="text-base font-black text-white leading-tight drop-shadow-md truncate">${title}</h1>
                         `}
                     </div>
 
-                    <!-- Slide Indicator Dots -->
                     <div class="flex gap-1.5 pb-1">
                         ${heroItems.map((_, idx) => `
                             <span class="w-1.5 h-1.5 rounded-full transition-all duration-300 ${idx === heroIndex ? 'bg-red-500 w-4' : 'bg-white/30'}"></span>
@@ -345,7 +354,6 @@
             `;
         }
 
-        // RANDOM PICKER FUNCTION (CONFUSION SOLVER)
         async function triggerRandomPicker() {
             const randomPage = Math.floor(Math.random() * 10) + 1;
             const data = await fetchTMDB('/trending/all/week', `&page=${randomPage}`);
@@ -356,21 +364,55 @@
             }
         }
 
-        // USER WATCHED & SCHEDULED LISTS MANAGEMENT
+        // USER LISTS & CALENDAR DATE LOGIC
         function getListData(key) {
             return JSON.parse(localStorage.getItem(`cinedb_${key}`)) || [];
         }
 
-        function toggleListStatus(item, key) {
+        function handleListAction(item, key) {
             let list = getListData(key);
             const index = list.findIndex(i => i.id === item.id);
+
             if (index > -1) {
                 list.splice(index, 1);
+                localStorage.setItem(`cinedb_${key}`, JSON.stringify(list));
+                if (currentTab === 'schedule') renderUserLists();
+                openDetails(item.media_type, item.id);
             } else {
-                list.push(item);
+                pendingItem = item;
+                pendingKey = key;
+                const dateModal = document.getElementById('date-modal');
+                const dateInput = document.getElementById('custom-date-input');
+                const titleEl = document.getElementById('date-modal-title');
+                
+                titleEl.innerHTML = key === 'schedule' 
+                    ? `<i class="fa-solid fa-calendar-day text-red-500"></i> Schedule Plan Date` 
+                    : `<i class="fa-solid fa-circle-check text-blue-500"></i> Watched Date`;
+                    
+                dateInput.value = new Date().toISOString().split('T')[0];
+                dateModal.classList.remove('hidden');
             }
-            localStorage.setItem(`cinedb_${key}`, JSON.stringify(list));
-            renderUserLists();
+        }
+
+        function confirmDateSelection() {
+            if (!pendingItem || !pendingKey) return;
+            const dateVal = document.getElementById('custom-date-input').value;
+            let list = getListData(pendingKey);
+            
+            pendingItem.userDate = dateVal || new Date().toISOString().split('T')[0];
+            list.push(pendingItem);
+            
+            localStorage.setItem(`cinedb_${pendingKey}`, JSON.stringify(list));
+            closeDateModal();
+            
+            if (currentTab === 'schedule') renderUserLists();
+            openDetails(pendingItem.media_type, pendingItem.id);
+        }
+
+        function closeDateModal() {
+            document.getElementById('date-modal').classList.add('hidden');
+            pendingItem = null;
+            pendingKey = null;
         }
 
         function switchListSubTab(sub) {
@@ -388,12 +430,6 @@
 
             renderGrid(schedList, 'list-schedule-container');
             renderGrid(watchedList, 'list-watched-container');
-        }
-
-        async function loadUpcoming() {
-            showGridSkeleton('upcoming-grid');
-            const data = await fetchTMDB('/movie/upcoming', '&page=1');
-            renderGrid(data.results, 'upcoming-grid');
         }
 
         function handleSearch(query) {
@@ -434,7 +470,10 @@
                             </span>
                         </div>
                         <div class="p-2.5 flex flex-col justify-between flex-grow">
-                            <h3 class="text-xs font-semibold text-slate-100 line-clamp-1">${title}</h3>
+                            <div>
+                                <h3 class="text-xs font-semibold text-slate-100 line-clamp-1">${title}</h3>
+                                ${item.userDate ? `<span class="text-[9px] text-red-400 font-semibold block mt-1"><i class="fa-regular fa-calendar-check text-[8px] mr-1"></i>${item.userDate}</span>` : ''}
+                            </div>
                             <div class="flex justify-between items-center text-[10px] text-slate-400 mt-1.5">
                                 <span>${year}</span>
                                 <span class="uppercase tracking-wider font-bold text-[8px] bg-white/5 border border-white/10 px-1.5 py-0.5 rounded-md text-slate-300">${type}</span>
@@ -478,9 +517,8 @@
             const providers = data['watch/providers']?.results?.IN?.flatrate || [];
             const validSeasons = (data.seasons || []).filter(s => s.season_number > 0);
 
-            // Bookmark Statuses
-            const isSched = getListData('schedule').some(i => i.id === data.id);
-            const isWatched = getListData('watched').some(i => i.id === data.id);
+            const schedItem = getListData('schedule').find(i => i.id === data.id);
+            const watchedItem = getListData('watched').find(i => i.id === data.id);
 
             const itemPayload = JSON.stringify({ id: data.id, title, poster_path: data.poster_path, vote_average: data.vote_average, release_date: releaseDate, media_type: type }).replace(/"/g, '&quot;');
 
@@ -512,13 +550,13 @@
                         </div>
                     </div>
 
-                    <!-- USER ACTION BUTTONS (WATCHED & SCHEDULE) -->
+                    <!-- USER ACTION BUTTONS WITH DATE SELECTOR -->
                     <div class="grid grid-cols-2 gap-3">
-                        <button onclick="toggleListStatus(${itemPayload}, 'schedule'); openDetails('${type}', ${id})" class="py-2.5 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 border transition ${isSched ? 'bg-emerald-600 text-white border-emerald-400' : 'glass-card text-slate-300 border-white/10'}">
-                            <i class="fa-solid fa-calendar-plus"></i> ${isSched ? 'Scheduled' : 'Add to Schedule'}
+                        <button onclick="handleListAction(${itemPayload}, 'schedule')" class="py-2.5 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 border transition ${schedItem ? 'bg-emerald-600 text-white border-emerald-400' : 'glass-card text-slate-300 border-white/10'}">
+                            <i class="fa-solid fa-calendar-plus"></i> ${schedItem ? `Scheduled (${schedItem.userDate})` : 'Add to Schedule'}
                         </button>
-                        <button onclick="toggleListStatus(${itemPayload}, 'watched'); openDetails('${type}', ${id})" class="py-2.5 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 border transition ${isWatched ? 'bg-blue-600 text-white border-blue-400' : 'glass-card text-slate-300 border-white/10'}">
-                            <i class="fa-solid fa-check-circle"></i> ${isWatched ? 'Watched' : 'Mark Watched'}
+                        <button onclick="handleListAction(${itemPayload}, 'watched')" class="py-2.5 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 border transition ${watchedItem ? 'bg-blue-600 text-white border-blue-400' : 'glass-card text-slate-300 border-white/10'}">
+                            <i class="fa-solid fa-check-circle"></i> ${watchedItem ? `Watched (${watchedItem.userDate})` : 'Mark Watched'}
                         </button>
                     </div>
 
@@ -540,7 +578,6 @@
                         <p class="text-xs text-slate-300 leading-relaxed">${data.overview || 'No overview available.'}</p>
                     </div>
 
-                    <!-- TV SEASONS & EPISODES -->
                     ${type === 'tv' && validSeasons.length > 0 ? `
                         <div class="glass-card p-4 rounded-2xl space-y-4">
                             <div class="flex justify-between items-center">
@@ -560,7 +597,6 @@
                         </div>
                     ` : ''}
 
-                    <!-- TOP CAST -->
                     ${cast.length > 0 ? `
                         <div>
                             <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-3">Top Cast</h3>
