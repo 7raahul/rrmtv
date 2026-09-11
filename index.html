@@ -67,9 +67,9 @@
                 <button onclick="changeCategoryFilter('tv', this)" class="cat-btn px-5 py-2 rounded-2xl text-xs font-semibold glass-card text-slate-300 whitespace-nowrap hover:bg-white/10">TV Shows</button>
             </div>
 
-            <!-- OPTIMIZED HERO BANNER (Zoom issue fixed) -->
-            <div id="hero-container" class="relative rounded-3xl overflow-hidden glass-card border border-white/10 shadow-2xl h-[210px] sm:h-[300px] flex items-end cursor-pointer group transition duration-500">
-                <div class="p-12 text-center w-full text-slate-500">
+            <!-- HERO BANNER (Original 16:9 Aspect Ratio) -->
+            <div id="hero-container" class="relative rounded-3xl overflow-hidden glass-card border border-white/10 shadow-2xl aspect-[16/9] w-full flex items-end cursor-pointer group transition duration-500">
+                <div class="p-12 text-center w-full text-slate-500 my-auto">
                     <i class="fa-solid fa-circle-notch fa-spin text-2xl text-red-500 mb-2"></i>
                     <p class="text-xs">Loading Spotlight...</p>
                 </div>
@@ -105,9 +105,14 @@
 
         <!-- SCHEDULE / WATCHED LIST TAB -->
         <section id="tab-schedule" class="hidden space-y-4">
-            <div class="flex border-b border-white/10 gap-6 pb-2">
-                <button onclick="switchListSubTab('schedule')" id="subtab-schedule" class="text-sm font-bold text-red-500 border-b-2 border-red-500 pb-1">Scheduled Plan</button>
-                <button onclick="switchListSubTab('watched')" id="subtab-watched" class="text-sm font-semibold text-slate-400 pb-1">Watched History</button>
+            <!-- Clear 2 Toggle Options -->
+            <div class="flex gap-2.5 p-1 glass-card rounded-2xl border border-white/10">
+                <button onclick="switchListSubTab('schedule')" id="subtab-schedule" class="flex-1 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-lg shadow-red-600/30 border border-red-400/30 flex items-center justify-center gap-2 transition">
+                    <i class="fa-solid fa-calendar-day"></i> Scheduled Plan
+                </button>
+                <button onclick="switchListSubTab('watched')" id="subtab-watched" class="flex-1 py-2.5 rounded-xl text-xs font-semibold glass-card text-slate-400 hover:text-white flex items-center justify-center gap-2 transition">
+                    <i class="fa-solid fa-circle-check"></i> Watched History
+                </button>
             </div>
 
             <div id="list-schedule-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5"></div>
@@ -116,16 +121,16 @@
 
     </main>
 
-    <!-- Details Modal -->
+    <!-- Details Modal (z-50 with bottom padding so bottom nav doesn't cover content) -->
     <div id="details-modal" class="fixed inset-0 z-50 glass-modal hidden overflow-y-auto">
         <button onclick="closeModalManual()" class="fixed top-4 right-4 z-50 w-10 h-10 rounded-2xl glass-card flex items-center justify-center text-white border border-white/20 active:scale-95 transition">
             <i class="fa-solid fa-xmark"></i>
         </button>
-        <div id="modal-content" class="max-w-2xl mx-auto pb-12"></div>
+        <div id="modal-content" class="max-w-2xl mx-auto pb-28"></div>
     </div>
 
-    <!-- CALENDAR DATE PICKER MODAL -->
-    <div id="date-modal" class="fixed inset-0 z-50 glass-modal hidden flex items-center justify-center p-4">
+    <!-- CALENDAR DATE PICKER MODAL (z-[70]) -->
+    <div id="date-modal" class="fixed inset-0 z-[70] glass-modal hidden flex items-center justify-center p-4">
         <div class="glass-card p-5 rounded-3xl max-w-xs w-full space-y-4 border border-white/15 shadow-2xl">
             <h3 id="date-modal-title" class="text-sm font-bold text-slate-100 flex items-center gap-2">
                 <i class="fa-solid fa-calendar-days text-red-500"></i> Select Date
@@ -139,8 +144,8 @@
         </div>
     </div>
 
-    <!-- Bottom Navigation Bar -->
-    <nav class="fixed bottom-0 left-0 right-0 z-40 glass-header px-6 py-2.5 flex justify-around items-center border-t border-white/10">
+    <!-- Bottom Navigation Bar (z-[60] ALWAYS VISIBLE ON TOP) -->
+    <nav class="fixed bottom-0 left-0 right-0 z-[60] glass-header px-6 py-2.5 flex justify-around items-center border-t border-white/10">
         <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center gap-1 text-red-500">
             <i class="fa-solid fa-house text-lg"></i>
             <span class="text-[10px] font-semibold">Home</span>
@@ -215,6 +220,7 @@
             document.getElementById(`nav-${tabName}`).classList.replace('text-slate-400', 'text-red-500');
 
             if (tabName === 'schedule') {
+                switchListSubTab('schedule');
                 renderUserLists();
             }
         }
@@ -313,7 +319,6 @@
             }, 4000);
         }
 
-        // PERFECTLY PROPORTIONED HERO BANNER
         async function renderHeroBanner(item) {
             const container = document.getElementById('hero-container');
             const type = item.media_type || (item.title ? 'movie' : 'tv');
@@ -364,7 +369,6 @@
             }
         }
 
-        // USER LISTS & CALENDAR DATE LOGIC
         function getListData(key) {
             return JSON.parse(localStorage.getItem(`cinedb_${key}`)) || [];
         }
@@ -417,8 +421,16 @@
 
         function switchListSubTab(sub) {
             const isSched = sub === 'schedule';
-            document.getElementById('subtab-schedule').className = isSched ? "text-sm font-bold text-red-500 border-b-2 border-red-500 pb-1" : "text-sm font-semibold text-slate-400 pb-1";
-            document.getElementById('subtab-watched').className = !isSched ? "text-sm font-bold text-red-500 border-b-2 border-red-500 pb-1" : "text-sm font-semibold text-slate-400 pb-1";
+            const schedBtn = document.getElementById('subtab-schedule');
+            const watchedBtn = document.getElementById('subtab-watched');
+
+            if (isSched) {
+                schedBtn.className = "flex-1 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-lg shadow-red-600/30 border border-red-400/30 flex items-center justify-center gap-2 transition";
+                watchedBtn.className = "flex-1 py-2.5 rounded-xl text-xs font-semibold glass-card text-slate-400 hover:text-white flex items-center justify-center gap-2 transition";
+            } else {
+                watchedBtn.className = "flex-1 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-600/30 border border-blue-400/30 flex items-center justify-center gap-2 transition";
+                schedBtn.className = "flex-1 py-2.5 rounded-xl text-xs font-semibold glass-card text-slate-400 hover:text-white flex items-center justify-center gap-2 transition";
+            }
 
             document.getElementById('list-schedule-container').classList.toggle('hidden', !isSched);
             document.getElementById('list-watched-container').classList.toggle('hidden', isSched);
@@ -449,7 +461,7 @@
         function renderGrid(items, targetId, append = false) {
             const container = document.getElementById(targetId);
             if (!items || items.length === 0) {
-                if (!append) container.innerHTML = `<p class="col-span-full text-center text-slate-500 py-12 text-xs">No saved titles yet.</p>`;
+                if (!append) container.innerHTML = `<div class="col-span-full text-center text-slate-500 py-16 text-xs space-y-2"><i class="fa-regular fa-folder-open text-2xl text-slate-600"></i><p>No saved titles found here.</p></div>`;
                 return;
             }
 
