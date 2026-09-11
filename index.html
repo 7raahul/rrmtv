@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CineStream - Ultra Modern UI</title>
+    <title>CineDB - Ultimate Streaming Hub</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons CDN -->
@@ -14,7 +14,7 @@
         
         /* Glassmorphism Styles */
         .glass-header {
-            background: rgba(10, 15, 30, 0.75);
+            background: rgba(10, 15, 30, 0.85);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -29,7 +29,7 @@
             transform: scale(0.97);
         }
         .glass-modal {
-            background: rgba(7, 11, 22, 0.94);
+            background: rgba(7, 11, 22, 0.95);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
         }
@@ -39,32 +39,44 @@
 
     <!-- Fixed Glass Header -->
     <header class="sticky top-0 z-40 glass-header px-4 py-3 flex items-center justify-between">
-        <div class="flex items-center gap-3 cursor-pointer" onclick="resetToHome()">
-            <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-red-600 via-rose-500 to-amber-500 flex items-center justify-center shadow-lg shadow-red-500/25 border border-white/20">
+        <div class="flex items-center gap-2.5 cursor-pointer" onclick="resetToHome()">
+            <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-red-600 via-rose-500 to-amber-500 flex items-center justify-center shadow-lg shadow-red-500/30 border border-white/20">
                 <i class="fa-solid fa-play text-white text-xs"></i>
             </div>
             <div>
-                <span class="text-lg font-black tracking-wider bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent block leading-none">CineStream</span>
-                <span class="text-[9px] text-red-500 font-bold uppercase tracking-widest">Premium</span>
+                <!-- Solid White Name Fix -->
+                <span class="text-xl font-black tracking-wider text-white block leading-none">Cine<span class="text-red-500">DB</span></span>
+                <span class="text-[9px] text-amber-400 font-bold uppercase tracking-widest flex items-center gap-1">
+                    <i class="fa-solid fa-bolt text-[8px]"></i> TMDB Inside
+                </span>
             </div>
         </div>
         
-        <!-- Right Top Action Icon -->
+        <!-- Right Search Action Icon -->
         <button onclick="switchTab('search')" class="w-10 h-10 rounded-2xl glass-card flex items-center justify-center text-slate-300 hover:text-white border border-white/10 active:bg-white/10 transition">
             <i class="fa-solid fa-magnifying-glass text-sm"></i>
         </button>
     </header>
 
     <!-- Main Content Container -->
-    <main class="p-4 max-w-7xl mx-auto space-y-6">
+    <main class="p-4 max-w-7xl mx-auto space-y-5">
 
         <!-- HOME TAB -->
         <section id="tab-home" class="space-y-5">
+            
             <!-- Category Filters: ALL, MOVIES, TV SHOWS -->
-            <div class="flex gap-2.5 overflow-x-auto no-scrollbar py-1">
+            <div class="flex gap-2.5 overflow-x-auto no-scrollbar py-0.5">
                 <button onclick="changeCategoryFilter('all', this)" class="cat-btn active px-5 py-2 rounded-2xl text-xs font-bold bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-lg shadow-red-600/30 whitespace-nowrap border border-red-400/30">All</button>
                 <button onclick="changeCategoryFilter('movie', this)" class="cat-btn px-5 py-2 rounded-2xl text-xs font-semibold glass-card text-slate-300 whitespace-nowrap hover:bg-white/10">Movies</button>
                 <button onclick="changeCategoryFilter('tv', this)" class="cat-btn px-5 py-2 rounded-2xl text-xs font-semibold glass-card text-slate-300 whitespace-nowrap hover:bg-white/10">TV Shows</button>
+            </div>
+
+            <!-- HERO FEATURED SECTION -->
+            <div id="hero-container" class="relative rounded-3xl overflow-hidden glass-card border border-white/10 shadow-2xl min-h-[260px] flex items-end">
+                <div class="p-12 text-center w-full text-slate-500">
+                    <i class="fa-solid fa-circle-notch fa-spin text-2xl text-red-500 mb-2"></i>
+                    <p class="text-xs">Loading Featured Spotlight...</p>
+                </div>
             </div>
 
             <div class="flex justify-between items-center">
@@ -134,7 +146,7 @@
         const BACKDROP_URL = 'https://image.tmdb.org/t/p/w1280';
 
         let currentTab = 'home';
-        let currentCategory = 'all'; // 'all', 'movie', 'tv'
+        let currentCategory = 'all'; 
         let currentPage = 1;
         let isFetching = false;
         let hasMore = true;
@@ -194,7 +206,18 @@
             }
         }
 
-        // Category Filter Change (All / Movies / TV Shows)
+        // Fetch Official TMDB Title PNG Logo
+        async function fetchTitleLogo(type, id) {
+            try {
+                const data = await fetchTMDB(`/${type}/${id}/images`, '&include_image_language=en,hi,null');
+                if (data && data.logos && data.logos.length > 0) {
+                    const logo = data.logos.find(l => l.iso_639_1 === 'en') || data.logos[0];
+                    return `${IMG_URL}${logo.file_path}`;
+                }
+            } catch (e) { console.error(e); }
+            return null;
+        }
+
         function changeCategoryFilter(category, btnEl) {
             document.querySelectorAll('.cat-btn').forEach(b => {
                 b.className = "cat-btn px-5 py-2 rounded-2xl text-xs font-semibold glass-card text-slate-300 whitespace-nowrap hover:bg-white/10";
@@ -237,12 +260,13 @@
             if (currentCategory === 'movie') endpoint = '/trending/movie/day';
             if (currentCategory === 'tv') endpoint = '/trending/tv/day';
 
-            let params = `&page=${currentPage}`;
-
-            const data = await fetchTMDB(endpoint, params);
+            const data = await fetchTMDB(endpoint, `&page=${currentPage}`);
             document.getElementById('infinite-loader').classList.add('hidden');
 
             if (data && data.results && data.results.length > 0) {
+                if (reset) {
+                    renderHeroBanner(data.results[0]);
+                }
                 renderGrid(data.results, 'home-grid', !reset);
                 currentPage++;
                 if (currentPage > data.total_pages) hasMore = false;
@@ -251,6 +275,50 @@
             }
 
             isFetching = false;
+        }
+
+        // Render Spotlight Hero Banner
+        async function renderHeroBanner(item) {
+            const container = document.getElementById('hero-container');
+            const type = item.media_type || (item.title ? 'movie' : 'tv');
+            const title = item.title || item.name;
+            const backdrop = item.backdrop_path ? `${BACKDROP_URL}${item.backdrop_path}` : `${IMG_URL}${item.poster_path}`;
+            const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
+
+            // Fetch Title Logo
+            const logoUrl = await fetchTitleLogo(type, item.id);
+
+            container.innerHTML = `
+                <div class="absolute inset-0 bg-slate-900">
+                    <img src="${backdrop}" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#070a13] via-[#070a13]/60 to-transparent"></div>
+                    <div class="absolute inset-0 bg-gradient-to-r from-[#070a13]/90 via-transparent to-transparent"></div>
+                </div>
+
+                <div class="relative z-10 p-5 space-y-3 max-w-lg">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-red-600 text-white font-black text-[9px] px-2 py-0.5 rounded-md uppercase tracking-widest shadow-md">SPOTLIGHT</span>
+                        <span class="bg-amber-400/20 text-amber-300 border border-amber-400/30 text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1">
+                            <i class="fa-solid fa-star text-[8px]"></i> TMDB ${rating}
+                        </span>
+                    </div>
+
+                    <!-- Display PNG Logo if available, else standard text -->
+                    ${logoUrl ? `
+                        <img src="${logoUrl}" alt="${title}" class="max-h-16 max-w-[240px] object-contain drop-shadow-2xl">
+                    ` : `
+                        <h1 class="text-2xl font-black text-white leading-tight drop-shadow-md">${title}</h1>
+                    `}
+
+                    <p class="text-xs text-slate-300 line-clamp-2 leading-relaxed font-normal">${item.overview || 'Watch the official trending title now on CineDB.'}</p>
+
+                    <div class="pt-1 flex gap-2.5">
+                        <button onclick="openDetails('${type}', ${item.id})" class="px-4 py-2.5 bg-gradient-to-r from-red-600 to-rose-600 text-white font-bold text-xs rounded-xl shadow-lg shadow-red-600/30 flex items-center gap-2 border border-red-400/30 active:scale-95 transition">
+                            <i class="fa-solid fa-play"></i> View Details
+                        </button>
+                    </div>
+                </div>
+            `;
         }
 
         async function loadUpcoming() {
@@ -323,7 +391,10 @@
 
             content.innerHTML = `<div class="p-16 text-center text-slate-400"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-red-500 mb-3"></i><p class="text-xs">Loading details...</p></div>`;
 
-            const data = await fetchTMDB(`/${type}/${id}`, '&append_to_response=credits,watch/providers');
+            const [data, logoUrl] = await Promise.all([
+                fetchTMDB(`/${type}/${id}`, '&append_to_response=credits,watch/providers'),
+                fetchTitleLogo(type, id)
+            ]);
 
             if (!data) {
                 content.innerHTML = `<p class="p-12 text-center text-red-400 text-xs">Failed to load content.</p>`;
@@ -349,11 +420,20 @@
                 <div class="px-5 -mt-20 relative z-10 space-y-5">
                     <div class="flex items-end gap-4">
                         <img src="${IMG_URL}${data.poster_path}" class="w-28 h-40 rounded-2xl border border-white/20 shadow-2xl object-cover flex-shrink-0">
-                        <div class="space-y-1.5">
-                            <span class="text-[10px] font-bold text-red-500 uppercase tracking-widest bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded-md">${type === 'movie' ? 'Movie' : 'TV Show'}</span>
-                            <h1 class="text-xl font-bold text-white leading-tight">${title}</h1>
+                        <div class="space-y-2 min-w-0 flex-grow">
+                            <span class="text-[10px] font-bold text-red-500 uppercase tracking-widest bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded-md inline-block">${type === 'movie' ? 'Movie' : 'TV Show'}</span>
+                            
+                            <!-- TMDB PNG Logo in Modal if available -->
+                            ${logoUrl ? `
+                                <img src="${logoUrl}" alt="${title}" class="max-h-12 max-w-full object-contain my-1">
+                            ` : `
+                                <h1 class="text-xl font-bold text-white leading-tight">${title}</h1>
+                            `}
+
                             <div class="flex items-center gap-3 text-xs text-slate-300">
-                                <span class="text-amber-400 font-bold flex items-center gap-1"><i class="fa-solid fa-star"></i> ${rating}</span>
+                                <span class="text-amber-400 font-bold flex items-center gap-1 bg-amber-400/10 px-2 py-0.5 rounded-md border border-amber-400/20">
+                                    <i class="fa-solid fa-star text-[10px]"></i> TMDB ${rating}
+                                </span>
                                 <span>•</span>
                                 <span>${releaseDate}</span>
                             </div>
