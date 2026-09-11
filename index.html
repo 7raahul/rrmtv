@@ -12,7 +12,6 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* Glassmorphism Styles */
         .glass-header {
             background: rgba(10, 15, 30, 0.85);
             backdrop-filter: blur(20px);
@@ -37,14 +36,13 @@
 </head>
 <body class="bg-[#070a13] text-slate-100 font-sans antialiased min-h-screen pb-24 select-none bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-indigo-950/30 via-[#070a13] to-[#070a13]">
 
-    <!-- Fixed Glass Header -->
+    <!-- Fixed Header -->
     <header class="sticky top-0 z-40 glass-header px-4 py-3 flex items-center justify-between">
         <div class="flex items-center gap-2.5 cursor-pointer" onclick="resetToHome()">
             <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-red-600 via-rose-500 to-amber-500 flex items-center justify-center shadow-lg shadow-red-500/30 border border-white/20">
                 <i class="fa-solid fa-play text-white text-xs"></i>
             </div>
             <div>
-                <!-- Solid White Name Fix -->
                 <span class="text-xl font-black tracking-wider text-white block leading-none">Cine<span class="text-red-500">DB</span></span>
                 <span class="text-[9px] text-amber-400 font-bold uppercase tracking-widest flex items-center gap-1">
                     <i class="fa-solid fa-bolt text-[8px]"></i> TMDB Inside
@@ -52,30 +50,28 @@
             </div>
         </div>
         
-        <!-- Right Search Action Icon -->
         <button onclick="switchTab('search')" class="w-10 h-10 rounded-2xl glass-card flex items-center justify-center text-slate-300 hover:text-white border border-white/10 active:bg-white/10 transition">
             <i class="fa-solid fa-magnifying-glass text-sm"></i>
         </button>
     </header>
 
-    <!-- Main Content Container -->
+    <!-- Main Content -->
     <main class="p-4 max-w-7xl mx-auto space-y-5">
 
         <!-- HOME TAB -->
         <section id="tab-home" class="space-y-5">
-            
-            <!-- Category Filters: ALL, MOVIES, TV SHOWS -->
+            <!-- Category Filters -->
             <div class="flex gap-2.5 overflow-x-auto no-scrollbar py-0.5">
                 <button onclick="changeCategoryFilter('all', this)" class="cat-btn active px-5 py-2 rounded-2xl text-xs font-bold bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-lg shadow-red-600/30 whitespace-nowrap border border-red-400/30">All</button>
                 <button onclick="changeCategoryFilter('movie', this)" class="cat-btn px-5 py-2 rounded-2xl text-xs font-semibold glass-card text-slate-300 whitespace-nowrap hover:bg-white/10">Movies</button>
                 <button onclick="changeCategoryFilter('tv', this)" class="cat-btn px-5 py-2 rounded-2xl text-xs font-semibold glass-card text-slate-300 whitespace-nowrap hover:bg-white/10">TV Shows</button>
             </div>
 
-            <!-- HERO FEATURED SECTION -->
-            <div id="hero-container" class="relative rounded-3xl overflow-hidden glass-card border border-white/10 shadow-2xl min-h-[260px] flex items-end">
+            <!-- CLEAN HERO BANNER (Auto-Sliding every 4 sec) -->
+            <div id="hero-container" class="relative rounded-3xl overflow-hidden glass-card border border-white/10 shadow-2xl min-h-[200px] aspect-video sm:aspect-[21/9] flex items-end cursor-pointer group transition duration-500">
                 <div class="p-12 text-center w-full text-slate-500">
                     <i class="fa-solid fa-circle-notch fa-spin text-2xl text-red-500 mb-2"></i>
-                    <p class="text-xs">Loading Featured Spotlight...</p>
+                    <p class="text-xs">Loading Spotlight Carousel...</p>
                 </div>
             </div>
 
@@ -89,7 +85,7 @@
             <!-- Media Grid -->
             <div id="home-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5"></div>
 
-            <!-- Infinite Scroll Loader -->
+            <!-- Scroll Loader -->
             <div id="infinite-loader" class="py-6 text-center text-slate-500 text-xs hidden">
                 <i class="fa-solid fa-circle-notch fa-spin text-lg text-red-500 mb-1"></i>
                 <p>Loading more titles...</p>
@@ -107,10 +103,17 @@
             </div>
         </section>
 
-        <!-- UPCOMING TAB -->
-        <section id="tab-upcoming" class="hidden space-y-4">
-            <h2 class="text-base font-bold text-white">Upcoming Releases</h2>
-            <div id="upcoming-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5"></div>
+        <!-- SCHEDULE / WATCHED LIST TAB -->
+        <section id="tab-schedule" class="hidden space-y-4">
+            <!-- Sub Navigation Tabs -->
+            <div class="flex border-b border-white/10 gap-6 pb-2">
+                <button onclick="switchListSubTab('schedule')" id="subtab-schedule" class="text-sm font-bold text-red-500 border-b-2 border-red-500 pb-1">Scheduled Plan</button>
+                <button onclick="switchListSubTab('watched')" id="subtab-watched" class="text-sm font-semibold text-slate-400 pb-1">Watched History</button>
+            </div>
+
+            <!-- Sub Tab Containers -->
+            <div id="list-schedule-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5"></div>
+            <div id="list-watched-container" class="hidden grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5"></div>
         </section>
 
     </main>
@@ -129,13 +132,15 @@
             <i class="fa-solid fa-house text-lg"></i>
             <span class="text-[10px] font-semibold">Home</span>
         </button>
-        <button onclick="switchTab('search')" id="nav-search" class="nav-btn flex flex-col items-center gap-1 text-slate-400">
-            <i class="fa-solid fa-compass text-lg"></i>
-            <span class="text-[10px] font-semibold">Explore</span>
+        <!-- RANDOM PICKER ACTION -->
+        <button onclick="triggerRandomPicker()" id="nav-random" class="nav-btn flex flex-col items-center gap-1 text-slate-400 hover:text-amber-400 transition">
+            <i class="fa-solid fa-dice text-lg animate-bounce"></i>
+            <span class="text-[10px] font-semibold">Random</span>
         </button>
-        <button onclick="switchTab('upcoming')" id="nav-upcoming" class="nav-btn flex flex-col items-center gap-1 text-slate-400">
-            <i class="fa-solid fa-calendar-days text-lg"></i>
-            <span class="text-[10px] font-semibold">Upcoming</span>
+        <!-- SCHEDULE & WATCHED -->
+        <button onclick="switchTab('schedule')" id="nav-schedule" class="nav-btn flex flex-col items-center gap-1 text-slate-400">
+            <i class="fa-solid fa-calendar-check text-lg"></i>
+            <span class="text-[10px] font-semibold">My List</span>
         </button>
     </nav>
 
@@ -151,6 +156,11 @@
         let isFetching = false;
         let hasMore = true;
         let searchTimeout = null;
+
+        // Auto Slider State
+        let heroItems = [];
+        let heroIndex = 0;
+        let heroTimer = null;
 
         document.addEventListener('DOMContentLoaded', () => {
             loadHomeTitles(true);
@@ -183,7 +193,7 @@
 
         function switchTabDOM(tabName) {
             currentTab = tabName;
-            ['home', 'search', 'upcoming'].forEach(tab => {
+            ['home', 'search', 'schedule'].forEach(tab => {
                 document.getElementById(`tab-${tab}`).classList.add('hidden');
                 document.getElementById(`nav-${tab}`).classList.replace('text-red-500', 'text-slate-400');
             });
@@ -191,8 +201,8 @@
             document.getElementById(`tab-${tabName}`).classList.remove('hidden');
             document.getElementById(`nav-${tabName}`).classList.replace('text-slate-400', 'text-red-500');
 
-            if (tabName === 'upcoming' && document.getElementById('upcoming-grid').children.length === 0) {
-                loadUpcoming();
+            if (tabName === 'schedule') {
+                renderUserLists();
             }
         }
 
@@ -206,7 +216,6 @@
             }
         }
 
-        // Fetch Official TMDB Title PNG Logo
         async function fetchTitleLogo(type, id) {
             try {
                 const data = await fetchTMDB(`/${type}/${id}/images`, '&include_image_language=en,hi,null');
@@ -265,7 +274,9 @@
 
             if (data && data.results && data.results.length > 0) {
                 if (reset) {
-                    renderHeroBanner(data.results[0]);
+                    heroItems = data.results.slice(0, 5);
+                    heroIndex = 0;
+                    startHeroAutoSlide();
                 }
                 renderGrid(data.results, 'home-grid', !reset);
                 currentPage++;
@@ -277,7 +288,20 @@
             isFetching = false;
         }
 
-        // Render Spotlight Hero Banner
+        // Auto Slider Logic (Changes every 4 seconds)
+        function startHeroAutoSlide() {
+            if (heroTimer) clearInterval(heroTimer);
+            if (!heroItems.length) return;
+
+            renderHeroBanner(heroItems[heroIndex]);
+
+            heroTimer = setInterval(() => {
+                heroIndex = (heroIndex + 1) % heroItems.length;
+                renderHeroBanner(heroItems[heroIndex]);
+            }, 4000); // 4 Seconds Auto Slide
+        }
+
+        // CLEAN HERO BANNER RENDER
         async function renderHeroBanner(item) {
             const container = document.getElementById('hero-container');
             const type = item.media_type || (item.title ? 'movie' : 'tv');
@@ -285,40 +309,85 @@
             const backdrop = item.backdrop_path ? `${BACKDROP_URL}${item.backdrop_path}` : `${IMG_URL}${item.poster_path}`;
             const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
 
-            // Fetch Title Logo
+            container.onclick = () => openDetails(type, item.id);
+
             const logoUrl = await fetchTitleLogo(type, item.id);
 
             container.innerHTML = `
                 <div class="absolute inset-0 bg-slate-900">
-                    <img src="${backdrop}" class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-[#070a13] via-[#070a13]/60 to-transparent"></div>
-                    <div class="absolute inset-0 bg-gradient-to-r from-[#070a13]/90 via-transparent to-transparent"></div>
+                    <img src="${backdrop}" class="w-full h-full object-cover transition-all duration-700">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#070a13] via-[#070a13]/40 to-transparent"></div>
+                    <div class="absolute inset-0 bg-gradient-to-r from-[#070a13]/80 via-transparent to-transparent"></div>
                 </div>
 
-                <div class="relative z-10 p-5 space-y-3 max-w-lg">
-                    <div class="flex items-center gap-2">
-                        <span class="bg-red-600 text-white font-black text-[9px] px-2 py-0.5 rounded-md uppercase tracking-widest shadow-md">SPOTLIGHT</span>
-                        <span class="bg-amber-400/20 text-amber-300 border border-amber-400/30 text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1">
+                <div class="relative z-10 p-5 w-full flex items-end justify-between gap-4">
+                    <div class="space-y-2 max-w-[70%]">
+                        <!-- Rating Badge Only -->
+                        <span class="bg-amber-400/20 text-amber-300 border border-amber-400/30 text-[10px] font-bold px-2.5 py-0.5 rounded-lg flex items-center gap-1 w-max backdrop-blur-md">
                             <i class="fa-solid fa-star text-[8px]"></i> TMDB ${rating}
                         </span>
+
+                        <!-- TMDB Title Logo / Name -->
+                        ${logoUrl ? `
+                            <img src="${logoUrl}" alt="${title}" class="max-h-12 max-w-[200px] object-contain drop-shadow-2xl">
+                        ` : `
+                            <h1 class="text-xl font-black text-white leading-tight drop-shadow-md truncate">${title}</h1>
+                        `}
                     </div>
 
-                    <!-- Display PNG Logo if available, else standard text -->
-                    ${logoUrl ? `
-                        <img src="${logoUrl}" alt="${title}" class="max-h-16 max-w-[240px] object-contain drop-shadow-2xl">
-                    ` : `
-                        <h1 class="text-2xl font-black text-white leading-tight drop-shadow-md">${title}</h1>
-                    `}
-
-                    <p class="text-xs text-slate-300 line-clamp-2 leading-relaxed font-normal">${item.overview || 'Watch the official trending title now on CineDB.'}</p>
-
-                    <div class="pt-1 flex gap-2.5">
-                        <button onclick="openDetails('${type}', ${item.id})" class="px-4 py-2.5 bg-gradient-to-r from-red-600 to-rose-600 text-white font-bold text-xs rounded-xl shadow-lg shadow-red-600/30 flex items-center gap-2 border border-red-400/30 active:scale-95 transition">
-                            <i class="fa-solid fa-play"></i> View Details
-                        </button>
+                    <!-- Slide Indicator Dots -->
+                    <div class="flex gap-1.5 pb-1">
+                        ${heroItems.map((_, idx) => `
+                            <span class="w-1.5 h-1.5 rounded-full transition-all duration-300 ${idx === heroIndex ? 'bg-red-500 w-4' : 'bg-white/30'}"></span>
+                        `).join('')}
                     </div>
                 </div>
             `;
+        }
+
+        // RANDOM PICKER FUNCTION (CONFUSION SOLVER)
+        async function triggerRandomPicker() {
+            const randomPage = Math.floor(Math.random() * 10) + 1;
+            const data = await fetchTMDB('/trending/all/week', `&page=${randomPage}`);
+            if (data && data.results && data.results.length > 0) {
+                const randomItem = data.results[Math.floor(Math.random() * data.results.length)];
+                const type = randomItem.media_type || (randomItem.title ? 'movie' : 'tv');
+                openDetails(type, randomItem.id);
+            }
+        }
+
+        // USER WATCHED & SCHEDULED LISTS MANAGEMENT
+        function getListData(key) {
+            return JSON.parse(localStorage.getItem(`cinedb_${key}`)) || [];
+        }
+
+        function toggleListStatus(item, key) {
+            let list = getListData(key);
+            const index = list.findIndex(i => i.id === item.id);
+            if (index > -1) {
+                list.splice(index, 1);
+            } else {
+                list.push(item);
+            }
+            localStorage.setItem(`cinedb_${key}`, JSON.stringify(list));
+            renderUserLists();
+        }
+
+        function switchListSubTab(sub) {
+            const isSched = sub === 'schedule';
+            document.getElementById('subtab-schedule').className = isSched ? "text-sm font-bold text-red-500 border-b-2 border-red-500 pb-1" : "text-sm font-semibold text-slate-400 pb-1";
+            document.getElementById('subtab-watched').className = !isSched ? "text-sm font-bold text-red-500 border-b-2 border-red-500 pb-1" : "text-sm font-semibold text-slate-400 pb-1";
+
+            document.getElementById('list-schedule-container').classList.toggle('hidden', !isSched);
+            document.getElementById('list-watched-container').classList.toggle('hidden', isSched);
+        }
+
+        function renderUserLists() {
+            const schedList = getListData('schedule');
+            const watchedList = getListData('watched');
+
+            renderGrid(schedList, 'list-schedule-container');
+            renderGrid(watchedList, 'list-watched-container');
         }
 
         async function loadUpcoming() {
@@ -344,7 +413,7 @@
         function renderGrid(items, targetId, append = false) {
             const container = document.getElementById(targetId);
             if (!items || items.length === 0) {
-                if (!append) container.innerHTML = `<p class="col-span-full text-center text-slate-500 py-12 text-xs">No results found.</p>`;
+                if (!append) container.innerHTML = `<p class="col-span-full text-center text-slate-500 py-12 text-xs">No saved titles yet.</p>`;
                 return;
             }
 
@@ -407,9 +476,13 @@
             const releaseDate = data.release_date || data.first_air_date || 'N/A';
             const cast = data.credits?.cast?.slice(0, 10) || [];
             const providers = data['watch/providers']?.results?.IN?.flatrate || [];
-
-            // Filter out Specials (Season 0)
             const validSeasons = (data.seasons || []).filter(s => s.season_number > 0);
+
+            // Bookmark Statuses
+            const isSched = getListData('schedule').some(i => i.id === data.id);
+            const isWatched = getListData('watched').some(i => i.id === data.id);
+
+            const itemPayload = JSON.stringify({ id: data.id, title, poster_path: data.poster_path, vote_average: data.vote_average, release_date: releaseDate, media_type: type }).replace(/"/g, '&quot;');
 
             content.innerHTML = `
                 <div class="relative aspect-video w-full bg-slate-900">
@@ -423,7 +496,6 @@
                         <div class="space-y-2 min-w-0 flex-grow">
                             <span class="text-[10px] font-bold text-red-500 uppercase tracking-widest bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded-md inline-block">${type === 'movie' ? 'Movie' : 'TV Show'}</span>
                             
-                            <!-- TMDB PNG Logo in Modal if available -->
                             ${logoUrl ? `
                                 <img src="${logoUrl}" alt="${title}" class="max-h-12 max-w-full object-contain my-1">
                             ` : `
@@ -438,6 +510,16 @@
                                 <span>${releaseDate}</span>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- USER ACTION BUTTONS (WATCHED & SCHEDULE) -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="toggleListStatus(${itemPayload}, 'schedule'); openDetails('${type}', ${id})" class="py-2.5 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 border transition ${isSched ? 'bg-emerald-600 text-white border-emerald-400' : 'glass-card text-slate-300 border-white/10'}">
+                            <i class="fa-solid fa-calendar-plus"></i> ${isSched ? 'Scheduled' : 'Add to Schedule'}
+                        </button>
+                        <button onclick="toggleListStatus(${itemPayload}, 'watched'); openDetails('${type}', ${id})" class="py-2.5 rounded-2xl font-bold text-xs flex items-center justify-center gap-2 border transition ${isWatched ? 'bg-blue-600 text-white border-blue-400' : 'glass-card text-slate-300 border-white/10'}">
+                            <i class="fa-solid fa-check-circle"></i> ${isWatched ? 'Watched' : 'Mark Watched'}
+                        </button>
                     </div>
 
                     ${providers.length > 0 ? `
@@ -458,7 +540,7 @@
                         <p class="text-xs text-slate-300 leading-relaxed">${data.overview || 'No overview available.'}</p>
                     </div>
 
-                    <!-- TV SHOW SEASONS & EPISODES SECTION -->
+                    <!-- TV SEASONS & EPISODES -->
                     ${type === 'tv' && validSeasons.length > 0 ? `
                         <div class="glass-card p-4 rounded-2xl space-y-4">
                             <div class="flex justify-between items-center">
@@ -466,7 +548,6 @@
                                 <span class="text-[10px] text-slate-400">${validSeasons.length} Seasons</span>
                             </div>
 
-                            <!-- Season Tabs -->
                             <div class="flex gap-2 overflow-x-auto no-scrollbar py-1">
                                 ${validSeasons.map((s, idx) => `
                                     <button onclick="loadSeasonEpisodes(${id}, ${s.season_number}, this)" class="season-btn ${idx === 0 ? 'bg-red-600 text-white border-red-400/30' : 'bg-white/5 text-slate-300 border-white/10'} px-3.5 py-1.5 rounded-xl text-xs font-semibold border whitespace-nowrap transition">
@@ -475,12 +556,11 @@
                                 `).join('')}
                             </div>
 
-                            <!-- Episode Container -->
                             <div id="episodes-container" class="space-y-3 pt-2"></div>
                         </div>
                     ` : ''}
 
-                    <!-- Cast with Photos -->
+                    <!-- TOP CAST -->
                     ${cast.length > 0 ? `
                         <div>
                             <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-3">Top Cast</h3>
@@ -501,7 +581,6 @@
                 </div>
             `;
 
-            // Auto load Season 1 Episodes for TV Shows
             if (type === 'tv' && validSeasons.length > 0) {
                 const firstSeasonNum = validSeasons[0].season_number;
                 const firstBtn = document.querySelector('.season-btn');
@@ -509,7 +588,6 @@
             }
         }
 
-        // Fetch & Render Episodes for TV Seasons
         async function loadSeasonEpisodes(tvId, seasonNumber, btnEl) {
             if (btnEl) {
                 document.querySelectorAll('.season-btn').forEach(b => {
