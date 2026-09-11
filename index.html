@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CineDB - Stream Hub (India)</title>
+    <title>CineDB - Stream Hub</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons CDN -->
@@ -59,7 +59,7 @@
             <div>
                 <span class="text-xl font-black tracking-wider text-white block leading-none">Cine<span class="text-indigo-400">DB</span></span>
                 <span class="text-[9px] text-indigo-300/80 font-bold uppercase tracking-widest flex items-center gap-1">
-                    <i class="fa-solid fa-bolt text-[8px] text-indigo-400"></i> India Edition
+                    <i class="fa-solid fa-globe text-[8px] text-indigo-400"></i> Global & Indian Hub
                 </span>
             </div>
         </div>
@@ -102,14 +102,14 @@
             <div id="hero-container" class="relative rounded-3xl overflow-hidden glass-card border border-indigo-500/20 shadow-2xl aspect-[16/9] w-full flex items-end cursor-pointer group transition duration-500">
                 <div class="p-12 text-center w-full text-indigo-300/60 my-auto">
                     <i class="fa-solid fa-circle-notch fa-spin text-2xl text-indigo-400 mb-2"></i>
-                    <p class="text-xs">Loading Indian Spotlight...</p>
+                    <p class="text-xs">Loading Spotlight...</p>
                 </div>
             </div>
 
             <div class="flex justify-between items-center pt-2">
                 <h2 id="section-title" class="text-base font-bold text-white tracking-wide flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
-                    Trending Indian Movies & Shows
+                    Trending Movies & Shows
                 </h2>
             </div>
 
@@ -345,7 +345,7 @@
             });
         }
 
-        // Home Navigation Button Click Action
+        // Home Navigation Button Action (Scroll to top + reload/reset Home view)
         function handleHomeNavigation() {
             switchTab('home');
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -391,7 +391,8 @@
             if (cached) return JSON.parse(cached);
 
             try {
-                const res = await fetch(`${BASE_URL}${endpoint}?api_key=${API_KEY}&region=IN${params}`);
+                // Fetching with region=IN & watch_region=IN without forcing hard language/country block
+                const res = await fetch(`${BASE_URL}${endpoint}?api_key=${API_KEY}&region=IN&watch_region=IN${params}`);
                 const data = await res.json();
                 if (data) sessionStorage.setItem(cacheKey, JSON.stringify(data));
                 return data;
@@ -405,7 +406,7 @@
             try {
                 const data = await fetchTMDB(`/${type}/${id}/images`, '&include_image_language=en,hi,null');
                 if (data && data.logos && data.logos.length > 0) {
-                    const logo = data.logos.find(l => l.iso_639_1 === 'en') || data.logos[0];
+                    const logo = data.logos.find(l => l.iso_639_1 === 'en' || l.iso_639_1 === 'hi') || data.logos[0];
                     return `${IMG_URL}${logo.file_path}`;
                 }
             } catch (e) { console.error(e); }
@@ -435,7 +436,7 @@
         }
 
         function updateSectionTitle() {
-            const titles = { all: "Trending Indian Movies & Shows", movie: "Popular Indian Movies", tv: "Popular Indian Shows" };
+            const titles = { all: "Trending Movies & Shows", movie: "Popular Movies", tv: "Popular TV Shows" };
             let titleText = titles[currentCategory] || "Trending Titles";
             if (currentGenre) titleText += " (Filtered)";
             document.getElementById('section-title').innerHTML = `<span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span> ${titleText}`;
@@ -450,7 +451,7 @@
             });
         }
 
-        // Indian Region Priority Endpoint Builder
+        // MIXED CONTENT FETCH (Global + Indian Mixed)
         async function loadHomeTitles(reset = false) {
             if (isFetching) return;
             isFetching = true;
@@ -463,17 +464,18 @@
                 document.getElementById('infinite-loader').classList.remove('hidden');
             }
 
-            let endpoint = '/discover/movie';
-            let params = `&page=${currentPage}&sort_by=popularity.desc&with_origin_country=IN&with_original_language=hi|ta|te|ml|kn|bn|pa|mr`;
+            let endpoint = '/trending/all/day';
+            let params = `&page=${currentPage}`;
 
-            if (currentCategory === 'tv') {
-                endpoint = '/discover/tv';
-            } else if (currentCategory === 'all') {
-                endpoint = '/discover/movie'; 
+            if (currentCategory === 'movie') {
+                endpoint = '/trending/movie/day';
+            } else if (currentCategory === 'tv') {
+                endpoint = '/trending/tv/day';
             }
 
             if (currentGenre !== '') {
-                params += `&with_genres=${currentGenre}`;
+                endpoint = currentCategory === 'tv' ? '/discover/tv' : '/discover/movie';
+                params += `&with_genres=${currentGenre}&sort_by=popularity.desc`;
             }
 
             const data = await fetchTMDB(endpoint, params);
@@ -549,10 +551,11 @@
 
         async function triggerRandomPicker() {
             const randomPage = Math.floor(Math.random() * 5) + 1;
-            const data = await fetchTMDB('/discover/movie', `&page=${randomPage}&with_origin_country=IN`);
+            const data = await fetchTMDB('/trending/all/day', `&page=${randomPage}`);
             if (data && data.results && data.results.length > 0) {
                 const randomItem = data.results[Math.floor(Math.random() * data.results.length)];
-                openDetails('movie', randomItem.id);
+                const type = randomItem.media_type || (randomItem.title ? 'movie' : 'tv');
+                openDetails(type, randomItem.id);
             }
         }
 
@@ -792,7 +795,7 @@
 
                     ${providers.length > 0 ? `
                         <div class="glass-card p-3.5 rounded-2xl">
-                            <p class="text-xs font-semibold text-indigo-300 mb-2.5">Available On (India):</p>
+                            <p class="text-xs font-semibold text-indigo-300 mb-2.5">Available On (India Streaming Providers):</p>
                             <div class="flex gap-3 overflow-x-auto no-scrollbar py-1">
                                 ${providers.map(p => `
                                     <div class="flex-none w-11 h-11 rounded-2xl overflow-hidden bg-[#090d16] border border-indigo-500/20 p-1 flex items-center justify-center shadow-lg">
