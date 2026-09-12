@@ -64,60 +64,52 @@
         }
     </style>
 </head>
-<body class="bg-[#060608] text-slate-100 font-sans antialiased min-h-screen pb-24 select-none bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-indigo-950/40 via-[#060608] to-[#060608]">
+<body class="bg-[#060608] text-slate-100 font-sans antialiased min-h-screen pb-24 lg:pb-8 select-none bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-indigo-950/40 via-[#060608] to-[#060608]">
 
     <!-- Toast Container -->
     <div id="toast-container" class="fixed top-5 right-5 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
     <!-- Fixed Header -->
-    <header class="sticky top-0 z-40 glass-header px-4 py-3">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <div class="flex items-center gap-2.5 cursor-pointer group/logo" onclick="switchTab('home')">
-                <div class="w-9 h-9 lg:w-10 lg:h-10 rounded-2xl bg-gradient-to-tr from-stone-200 via-white to-stone-300 flex items-center justify-center shadow-lg shadow-white/20 border border-white/30 transition duration-300 group-hover/logo:shadow-white/40 group-hover/logo:scale-105">
-                    <i class="fa-solid fa-play text-slate-950 text-xs font-black"></i>
-                </div>
-                <span class="text-2xl lg:text-3xl font-black tracking-wider text-white leading-none">Cine<span class="text-indigo-400">DB</span></span>
+    <header class="sticky top-0 z-40 glass-header px-4 lg:px-8 py-3">
+      <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <div class="flex items-center gap-2.5 cursor-pointer" onclick="switchTab('home')">
+            <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-stone-200 via-white to-stone-300 flex items-center justify-center shadow-lg shadow-white/20 border border-white/30">
+                <i class="fa-solid fa-play text-slate-950 text-xs font-black"></i>
             </div>
-
-            <!-- Desktop Top Nav (tab links) -->
-            <nav class="hidden lg:flex items-center gap-1 glass-card rounded-2xl px-1.5 py-1.5 border border-indigo-500/20">
-                <button onclick="switchTab('home')" id="dnav-home" class="dnav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 bg-white text-black shadow-md">
-                    <i class="fa-solid fa-house mr-2"></i>Home
-                </button>
-                <button onclick="switchTab('search')" id="dnav-search" class="dnav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 text-stone-400 hover:text-white hover:bg-white/5">
-                    <i class="fa-solid fa-magnifying-glass mr-2"></i>Search
-                </button>
-                <button onclick="switchTab('random')" id="dnav-random" class="dnav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 text-stone-400 hover:text-white hover:bg-white/5">
-                    <i class="fa-solid fa-dice mr-2"></i>Random
-                </button>
-                <button onclick="switchTab('schedule')" id="dnav-schedule" class="dnav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 text-stone-400 hover:text-white hover:bg-white/5">
-                    <i class="fa-solid fa-calendar-check mr-2"></i>My List
-                </button>
-            </nav>
-
-            <div class="flex items-center gap-2">
-                <button onclick="openAuthModal('signin')" class="px-3 py-1.5 lg:px-4 lg:py-2 rounded-xl text-xs lg:text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/5 transition">Sign In</button>
-                <button onclick="openAuthModal('signup')" class="px-3.5 py-1.5 lg:px-5 lg:py-2 rounded-xl text-xs lg:text-sm font-bold bg-white text-black shadow-lg shadow-indigo-500/25 border border-indigo-400/30 hover:opacity-95 hover:scale-[1.03] transition">Sign Up</button>
-            </div>
+            <span class="text-2xl font-black tracking-wider text-white leading-none">Cine<span class="text-indigo-400">DB</span></span>
         </div>
+
+        <!-- Desktop inline nav (hidden on mobile, floating pill nav below is used instead) -->
+        <nav class="hidden lg:flex items-center gap-1">
+            <button onclick="switchTab('home')" id="dnav-home" class="dnav-btn px-4 py-2 rounded-xl text-sm font-bold bg-white text-black transition">Home</button>
+            <button onclick="switchTab('search')" id="dnav-search" class="dnav-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition">Search</button>
+            <button onclick="switchTab('random')" id="dnav-random" class="dnav-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition">Random</button>
+            <button onclick="switchTab('schedule')" id="dnav-schedule" class="dnav-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition">My List</button>
+        </nav>
+
+        <div class="flex items-center gap-2">
+            <button onclick="openAuthModal('signin')" class="px-3 py-1.5 rounded-xl text-xs lg:text-sm font-semibold text-slate-300 hover:text-white transition">Sign In</button>
+            <button onclick="openAuthModal('signup')" class="px-3.5 py-1.5 lg:px-5 lg:py-2 rounded-xl text-xs lg:text-sm font-bold bg-white text-black shadow-lg shadow-indigo-500/25 border border-indigo-400/30 hover:opacity-95 transition">Sign Up</button>
+        </div>
+      </div>
     </header>
 
     <!-- Main Content Tab Area -->
-    <main class="p-4 max-w-7xl mx-auto space-y-5">
+    <main class="p-4 lg:p-8 max-w-7xl mx-auto space-y-5 lg:space-y-8">
 
         <!-- HOME TAB -->
         <section id="tab-home" class="space-y-4">
             
             <!-- Category & Country Bar -->
             <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
-                <button onclick="changeCategoryFilter('all', this)" class="cat-btn active px-4 py-2 lg:px-5 lg:py-2.5 rounded-2xl text-xs lg:text-sm font-bold bg-white text-black shadow-lg shadow-indigo-500/25 whitespace-nowrap border border-indigo-400/30 transition hover:opacity-90">All</button>
-                <button onclick="changeCategoryFilter('movie', this)" class="cat-btn px-4 py-2 lg:px-5 lg:py-2.5 rounded-2xl text-xs lg:text-sm font-semibold glass-card text-indigo-200 whitespace-nowrap transition hover:bg-indigo-500/10 hover:border-indigo-400/40">Movies</button>
-                <button onclick="changeCategoryFilter('tv', this)" class="cat-btn px-4 py-2 lg:px-5 lg:py-2.5 rounded-2xl text-xs lg:text-sm font-semibold glass-card text-indigo-200 whitespace-nowrap transition hover:bg-indigo-500/10 hover:border-indigo-400/40">TV Shows</button>
+                <button onclick="changeCategoryFilter('all', this)" class="cat-btn active px-4 py-2 rounded-2xl text-xs font-bold bg-white text-black shadow-lg shadow-indigo-500/25 whitespace-nowrap border border-indigo-400/30">All</button>
+                <button onclick="changeCategoryFilter('movie', this)" class="cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10">Movies</button>
+                <button onclick="changeCategoryFilter('tv', this)" class="cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10">TV Shows</button>
 
                 <!-- MODERN COUNTRY SELECTOR DROPDOWN -->
-                <div class="relative flex-shrink-0 flex items-center glass-card rounded-2xl px-3 py-1.5 lg:px-4 lg:py-2 border border-indigo-400/30 transition hover:border-indigo-400/50">
+                <div class="relative flex-shrink-0 flex items-center glass-card rounded-2xl px-3 py-1.5 border border-indigo-400/30">
                     <i class="fa-solid fa-earth-americas text-indigo-400 text-xs mr-2 pointer-events-none"></i>
-                    <select id="country-select" onchange="changeCountryFilter(this.value)" class="bg-transparent text-indigo-200 text-xs lg:text-sm font-semibold focus:outline-none cursor-pointer pr-1">
+                    <select id="country-select" onchange="changeCountryFilter(this.value)" class="bg-transparent text-indigo-200 text-xs font-semibold focus:outline-none cursor-pointer pr-1">
                         <option value="ALL" class="bg-[#0D0D10] text-white">All Countries (Global)</option>
                         <option value="IN" class="bg-[#0D0D10] text-white">🇮🇳 India</option>
                         <option value="US" class="bg-[#0D0D10] text-white">🇺🇸 United States</option>
@@ -138,17 +130,17 @@
 
             <!-- Genre Quick Filters -->
             <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-                <button onclick="changeGenreFilter('', this)" class="genre-btn active text-[11px] lg:text-xs font-medium px-3.5 py-1 lg:px-4 lg:py-1.5 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 whitespace-nowrap transition hover:bg-indigo-500/30">All Genres</button>
-                <button onclick="changeGenreFilter('28', this)" class="genre-btn text-[11px] lg:text-xs font-medium px-3.5 py-1 lg:px-4 lg:py-1.5 rounded-xl glass-card text-slate-300 whitespace-nowrap transition hover:bg-indigo-500/10 hover:text-white">Action</button>
-                <button onclick="changeGenreFilter('35', this)" class="genre-btn text-[11px] lg:text-xs font-medium px-3.5 py-1 lg:px-4 lg:py-1.5 rounded-xl glass-card text-slate-300 whitespace-nowrap transition hover:bg-indigo-500/10 hover:text-white">Comedy</button>
-                <button onclick="changeGenreFilter('18', this)" class="genre-btn text-[11px] lg:text-xs font-medium px-3.5 py-1 lg:px-4 lg:py-1.5 rounded-xl glass-card text-slate-300 whitespace-nowrap transition hover:bg-indigo-500/10 hover:text-white">Drama</button>
-                <button onclick="changeGenreFilter('878', this)" class="genre-btn text-[11px] lg:text-xs font-medium px-3.5 py-1 lg:px-4 lg:py-1.5 rounded-xl glass-card text-slate-300 whitespace-nowrap transition hover:bg-indigo-500/10 hover:text-white">Sci-Fi</button>
-                <button onclick="changeGenreFilter('27', this)" class="genre-btn text-[11px] lg:text-xs font-medium px-3.5 py-1 lg:px-4 lg:py-1.5 rounded-xl glass-card text-slate-300 whitespace-nowrap transition hover:bg-indigo-500/10 hover:text-white">Horror</button>
-                <button onclick="changeGenreFilter('16', this)" class="genre-btn text-[11px] lg:text-xs font-medium px-3.5 py-1 lg:px-4 lg:py-1.5 rounded-xl glass-card text-slate-300 whitespace-nowrap transition hover:bg-indigo-500/10 hover:text-white">Animation</button>
+                <button onclick="changeGenreFilter('', this)" class="genre-btn active text-[11px] font-medium px-3.5 py-1 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 whitespace-nowrap">All Genres</button>
+                <button onclick="changeGenreFilter('28', this)" class="genre-btn text-[11px] font-medium px-3.5 py-1 rounded-xl glass-card text-slate-300 whitespace-nowrap">Action</button>
+                <button onclick="changeGenreFilter('35', this)" class="genre-btn text-[11px] font-medium px-3.5 py-1 rounded-xl glass-card text-slate-300 whitespace-nowrap">Comedy</button>
+                <button onclick="changeGenreFilter('18', this)" class="genre-btn text-[11px] font-medium px-3.5 py-1 rounded-xl glass-card text-slate-300 whitespace-nowrap">Drama</button>
+                <button onclick="changeGenreFilter('878', this)" class="genre-btn text-[11px] font-medium px-3.5 py-1 rounded-xl glass-card text-slate-300 whitespace-nowrap">Sci-Fi</button>
+                <button onclick="changeGenreFilter('27', this)" class="genre-btn text-[11px] font-medium px-3.5 py-1 rounded-xl glass-card text-slate-300 whitespace-nowrap">Horror</button>
+                <button onclick="changeGenreFilter('16', this)" class="genre-btn text-[11px] font-medium px-3.5 py-1 rounded-xl glass-card text-slate-300 whitespace-nowrap">Animation</button>
             </div>
 
             <!-- HERO SPOTLIGHT -->
-            <div id="hero-container" class="relative rounded-3xl overflow-hidden glass-card border border-indigo-500/20 shadow-2xl aspect-[16/9] lg:aspect-[21/9] w-full flex items-end cursor-pointer group transition duration-500 hover:border-indigo-400/40 hover:shadow-indigo-500/10">
+            <div id="hero-container" class="relative rounded-3xl overflow-hidden glass-card border border-indigo-500/20 shadow-2xl aspect-[16/9] w-full flex items-end cursor-pointer group transition duration-500">
                 <div class="p-12 text-center w-full text-indigo-300/60 my-auto">
                     <i class="fa-solid fa-circle-notch fa-spin text-2xl text-indigo-400 mb-2"></i>
                     <p class="text-xs">Loading Spotlight...</p>
@@ -156,14 +148,14 @@
             </div>
 
             <div class="flex justify-between items-center pt-2">
-                <h2 id="section-title" class="text-base lg:text-xl font-bold text-white tracking-wide flex items-center gap-2">
+                <h2 id="section-title" class="text-base font-bold text-white tracking-wide flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
                     Trending Movies & Shows
                 </h2>
             </div>
 
             <!-- Home Media Grid -->
-            <div id="home-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3.5"></div>
+            <div id="home-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3.5 lg:gap-5"></div>
 
             <div id="infinite-loader" class="py-6 text-center text-indigo-300/60 text-xs hidden">
                 <i class="fa-solid fa-circle-notch fa-spin text-lg text-indigo-400 mb-1"></i>
@@ -206,7 +198,7 @@
                 </select>
             </div>
 
-            <div id="search-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3.5">
+            <div id="search-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3.5 lg:gap-5">
                 <p class="col-span-full text-center text-slate-400 py-12 text-xs">Type query or pick filters to search content...</p>
             </div>
         </section>
@@ -267,7 +259,7 @@
                     </div>
                 </div>
 
-                <button onclick="executeRandomPick()" class="w-full py-3 rounded-2xl font-bold text-xs bg-white text-black shadow-xl shadow-white/10 flex items-center justify-center gap-2 active:scale-95 transition hover:opacity-90 hover:scale-[1.01]">
+                <button onclick="executeRandomPick()" class="w-full py-3 rounded-2xl font-bold text-xs bg-white text-black shadow-xl shadow-white/10 flex items-center justify-center gap-2 active:scale-95 transition">
                     <i class="fa-solid fa-shuffle text-sm"></i> Roll Random Pick
                 </button>
             </div>
@@ -289,8 +281,8 @@
                 </button>
             </div>
 
-            <div id="list-schedule-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3.5"></div>
-            <div id="list-watched-container" class="hidden grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3.5"></div>
+            <div id="list-schedule-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3.5 lg:gap-5"></div>
+            <div id="list-watched-container" class="hidden grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3.5 lg:gap-5"></div>
         </section>
 
     </main>
@@ -339,10 +331,10 @@
 
     <!-- Movie/Show Details Modal -->
     <div id="details-modal" class="fixed inset-0 z-50 glass-modal hidden overflow-y-auto">
-        <button onclick="closeModalManual()" class="fixed top-4 right-4 lg:top-6 lg:right-6 z-50 w-10 h-10 lg:w-12 lg:h-12 rounded-2xl glass-card flex items-center justify-center text-white border border-indigo-500/30 active:scale-95 transition hover:bg-white/10 hover:border-white/40">
+        <button onclick="closeModalManual()" class="fixed top-4 right-4 z-50 w-10 h-10 rounded-2xl glass-card flex items-center justify-center text-white border border-indigo-500/30 active:scale-95 transition">
             <i class="fa-solid fa-xmark"></i>
         </button>
-        <div id="modal-content" class="max-w-2xl lg:max-w-5xl mx-auto pb-28 lg:pb-16"></div>
+        <div id="modal-content" class="max-w-2xl lg:max-w-5xl mx-auto pb-28 lg:pb-16 lg:pt-10"></div>
     </div>
 
     <!-- Actor Profile Modal -->
@@ -371,7 +363,7 @@
     </div>
 
     <!-- Bottom Navigation Bar (floating pill) -->
-    <nav class="lg:hidden fixed bottom-4 left-4 right-4 z-[60] bg-black/75 backdrop-blur-2xl px-2 py-2 rounded-full flex justify-around items-center border border-white/10 shadow-2xl shadow-black/60">
+    <nav class="fixed bottom-4 left-4 right-4 z-[60] lg:hidden bg-black/75 backdrop-blur-2xl px-2 py-2 rounded-full flex justify-around items-center border border-white/10 shadow-2xl shadow-black/60">
         <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-row items-center gap-2 px-4 py-2.5 rounded-full bg-white text-black font-bold transition-all duration-300 shadow-lg">
             <i class="fa-solid fa-house text-base"></i>
             <span class="text-[11px]">Home</span>
@@ -506,27 +498,26 @@
 
             const inactiveClass = "nav-btn flex flex-col items-center gap-1 px-3 py-1.5 rounded-full text-stone-400 hover:text-white transition-all duration-300";
             const activeClass = "nav-btn flex flex-row items-center gap-2 px-4 py-2.5 rounded-full bg-white text-black font-bold transition-all duration-300 shadow-lg";
-
-            const dInactiveClass = "dnav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 text-stone-400 hover:text-white hover:bg-white/5";
-            const dActiveClass = "dnav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 bg-white text-black shadow-md";
+            const dInactiveClass = "dnav-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition";
+            const dActiveClass = "dnav-btn px-4 py-2 rounded-xl text-sm font-bold bg-white text-black transition";
 
             ['home', 'search', 'random', 'schedule'].forEach(tab => {
                 const tabEl = document.getElementById(`tab-${tab}`);
                 const navEl = document.getElementById(`nav-${tab}`);
-                const dNavEl = document.getElementById(`dnav-${tab}`);
+                const dnavEl = document.getElementById(`dnav-${tab}`);
 
                 if (tabEl) tabEl.classList.add('hidden');
                 if (navEl) navEl.className = inactiveClass;
-                if (dNavEl) dNavEl.className = dInactiveClass;
+                if (dnavEl) dnavEl.className = dInactiveClass;
             });
 
             const activeTabEl = document.getElementById(`tab-${tabName}`);
             const activeNavEl = document.getElementById(`nav-${tabName}`);
-            const activeDNavEl = document.getElementById(`dnav-${tabName}`);
+            const activeDnavEl = document.getElementById(`dnav-${tabName}`);
 
             if (activeTabEl) activeTabEl.classList.remove('hidden');
             if (activeNavEl) activeNavEl.className = activeClass;
-            if (activeDNavEl) activeDNavEl.className = dActiveClass;
+            if (activeDnavEl) activeDnavEl.className = dActiveClass;
 
             if (tabName === 'schedule') {
                 switchListSubTab('schedule');
@@ -568,9 +559,9 @@
 
         function changeCategoryFilter(category, btnEl) {
             document.querySelectorAll('.cat-btn').forEach(b => {
-                b.className = "cat-btn px-4 py-2 lg:px-5 lg:py-2.5 rounded-2xl text-xs lg:text-sm font-semibold glass-card text-indigo-200 whitespace-nowrap transition hover:bg-indigo-500/10 hover:border-indigo-400/40";
+                b.className = "cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10";
             });
-            if (btnEl) btnEl.className = "cat-btn active px-4 py-2 lg:px-5 lg:py-2.5 rounded-2xl text-xs lg:text-sm font-bold bg-white text-black shadow-lg shadow-indigo-500/25 whitespace-nowrap border border-indigo-400/30 transition hover:opacity-90";
+            if (btnEl) btnEl.className = "cat-btn active px-4 py-2 rounded-2xl text-xs font-bold bg-white text-black shadow-lg shadow-indigo-500/25 whitespace-nowrap border border-indigo-400/30";
 
             currentCategory = category;
             updateSectionTitle();
@@ -585,9 +576,9 @@
 
         function changeGenreFilter(genreId, btnEl) {
             document.querySelectorAll('.genre-btn').forEach(b => {
-                b.className = "genre-btn text-[11px] lg:text-xs font-medium px-3.5 py-1 lg:px-4 lg:py-1.5 rounded-xl glass-card text-slate-300 whitespace-nowrap transition hover:bg-indigo-500/10 hover:text-white";
+                b.className = "genre-btn text-[11px] font-medium px-3.5 py-1 rounded-xl glass-card text-slate-300 whitespace-nowrap";
             });
-            if (btnEl) btnEl.className = "genre-btn active text-[11px] lg:text-xs font-medium px-3.5 py-1 lg:px-4 lg:py-1.5 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 whitespace-nowrap transition hover:bg-indigo-500/30";
+            if (btnEl) btnEl.className = "genre-btn active text-[11px] font-medium px-3.5 py-1 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 whitespace-nowrap";
 
             currentGenre = genreId;
             updateSectionTitle();
@@ -699,20 +690,20 @@
                     <div class="absolute inset-0 bg-gradient-to-r from-[#060608]/80 via-transparent to-transparent"></div>
                 </div>
 
-                <span class="absolute top-3 left-3 lg:top-5 lg:left-5 z-20 bg-black/70 text-amber-400 border border-white/15 text-[11px] lg:text-sm font-bold px-2.5 py-1 lg:px-3 lg:py-1.5 rounded-lg flex items-center gap-1 w-max backdrop-blur-md">
-                    <i class="fa-solid fa-star text-[9px]"></i> ${rating}
+                <span class="absolute top-3 left-3 lg:top-5 lg:left-5 z-20 bg-black/70 text-amber-400 border border-white/15 text-[11px] lg:text-sm font-bold px-2.5 py-1 lg:px-3.5 lg:py-1.5 rounded-lg flex items-center gap-1 w-max backdrop-blur-md">
+                    <i class="fa-solid fa-star text-[9px] lg:text-xs"></i> ${rating}
                 </span>
 
                 <div class="relative z-10 p-4 lg:p-8 w-full flex flex-col gap-2 lg:gap-3">
                     ${logoUrl ? `
                         <img src="${logoUrl}" alt="${title}" class="max-h-10 lg:max-h-16 max-w-[220px] lg:max-w-[380px] object-contain drop-shadow-2xl">
                     ` : `
-                        <h1 class="text-lg lg:text-4xl font-black text-white leading-tight drop-shadow-md truncate max-w-[85%]">${title}</h1>
+                        <h1 class="text-lg lg:text-3xl font-black text-white leading-tight drop-shadow-md truncate max-w-[85%]">${title}</h1>
                     `}
 
-                    <div class="flex gap-1.5 pt-1">
+                    <div class="flex gap-1.5 lg:gap-2 pt-1">
                         ${heroItems.map((_, idx) => `
-                            <span class="w-1.5 h-1.5 rounded-full transition-all duration-300 ${idx === heroIndex ? 'bg-white w-4' : 'bg-white/30'}"></span>
+                            <span class="w-1.5 h-1.5 lg:w-2 lg:h-2 rounded-full transition-all duration-300 ${idx === heroIndex ? 'bg-white w-4 lg:w-6' : 'bg-white/30'}"></span>
                         `).join('')}
                     </div>
                 </div>
@@ -909,8 +900,8 @@
                 const itemPayload = JSON.stringify({ id: item.id, title, poster_path: item.poster_path, vote_average: item.vote_average, release_date: date, media_type: type }).replace(/"/g, '&quot;');
 
                 return `
-                    <div onclick="openDetails('${type}', ${item.id})" class="card-solid rounded-2xl overflow-hidden transition duration-300 cursor-pointer flex flex-col group relative hover:border-white/30 hover:shadow-xl hover:shadow-black/40 hover:-translate-y-1">
-                        <button onclick="event.stopPropagation(); toggleQuickBookmark(${itemPayload})" class="absolute top-2 left-2 z-20 w-7 h-7 rounded-xl card-solid flex items-center justify-center text-slate-200 hover:text-amber-400 hover:border-amber-400/40 border border-indigo-500/30 active:scale-95 transition shadow-lg">
+                    <div onclick="openDetails('${type}', ${item.id})" class="card-solid rounded-2xl overflow-hidden transition duration-300 cursor-pointer flex flex-col group relative">
+                        <button onclick="event.stopPropagation(); toggleQuickBookmark(${itemPayload})" class="absolute top-2 left-2 z-20 w-7 h-7 rounded-xl card-solid flex items-center justify-center text-slate-200 hover:text-amber-400 border border-indigo-500/30 active:scale-95 transition shadow-lg">
                             <i class="${isBookmarked ? 'fa-solid text-amber-400' : 'fa-regular'} fa-bookmark text-xs"></i>
                         </button>
 
@@ -976,138 +967,154 @@
             const itemPayload = JSON.stringify({ id: data.id, title, poster_path: data.poster_path, vote_average: data.vote_average, release_date: releaseDate, media_type: type }).replace(/"/g, '&quot;');
 
             content.innerHTML = `
-                <div class="lg:flex lg:gap-8 lg:p-8 lg:items-start">
-                <div class="relative aspect-video w-full bg-[#060608] lg:hidden">
-                    <img src="${backdrop}" class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-[#060608] via-[#060608]/50 to-transparent"></div>
-                </div>
+                <div class="lg:flex lg:gap-10 lg:items-start">
+                    <!-- Left column: backdrop, poster, title, stats, actions (sticky on desktop) -->
+                    <div class="lg:w-[38%] lg:flex-shrink-0 lg:sticky lg:top-24">
+                        <div class="relative aspect-video w-full bg-[#060608] lg:rounded-3xl lg:overflow-hidden">
+                            <img src="${backdrop}" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#060608] via-[#060608]/50 to-transparent lg:hidden"></div>
+                        </div>
 
-                <!-- Desktop left column: backdrop + poster -->
-                <div class="hidden lg:block lg:w-[340px] lg:flex-shrink-0 lg:sticky lg:top-24 space-y-4">
-                    <div class="relative aspect-video w-full rounded-2xl overflow-hidden border border-white/10 shadow-xl">
-                        <img src="${backdrop}" class="w-full h-full object-cover">
-                    </div>
-                    <img src="${IMG_URL}${data.poster_path}" class="w-full aspect-[2/3] rounded-2xl border border-white/20 shadow-2xl object-cover">
-                </div>
-                
-                <div class="px-5 -mt-20 relative z-10 space-y-5 lg:mt-0 lg:px-0 lg:flex-1 lg:min-w-0">
-                    <div class="flex items-end gap-4 lg:items-start">
-                        <img src="${IMG_URL}${data.poster_path}" class="w-28 h-40 rounded-2xl border border-white/20 shadow-2xl object-cover flex-shrink-0 lg:hidden">
-                        <div class="space-y-2 min-w-0 flex-grow">
-                            <span class="text-[10px] lg:text-xs font-bold text-slate-200 uppercase tracking-widest bg-white/10 border border-white/15 px-2 py-0.5 rounded-md inline-block">${type === 'movie' ? 'Movie' : 'TV Show'}</span>
-                            
-                            ${logoUrl ? `
-                                <img src="${logoUrl}" alt="${title}" class="max-h-12 lg:max-h-16 max-w-full object-contain my-1">
-                            ` : `
-                                <h1 class="text-xl lg:text-3xl font-bold text-white leading-tight">${title}</h1>
-                            `}
+                        <div class="px-5 lg:px-0 -mt-20 lg:mt-5 relative z-10 space-y-5">
+                            <div class="flex items-end lg:items-start gap-4">
+                                <img src="${IMG_URL}${data.poster_path}" class="w-28 h-40 lg:w-36 lg:h-52 rounded-2xl border border-white/20 shadow-2xl object-cover flex-shrink-0">
+                                <div class="space-y-2 min-w-0 flex-grow lg:hidden">
+                                    <span class="text-[10px] font-bold text-slate-200 uppercase tracking-widest bg-white/10 border border-white/15 px-2 py-0.5 rounded-md inline-block">${type === 'movie' ? 'Movie' : 'TV Show'}</span>
 
-                            <div class="flex items-center gap-3 text-xs lg:text-sm text-slate-300">
-                                <span class="text-amber-400 font-bold flex items-center gap-1 bg-amber-400/10 px-2 py-0.5 rounded-md border border-amber-400/20">
-                                    <i class="fa-solid fa-star text-[10px]"></i> ${rating}
-                                </span>
-                                <span>•</span>
-                                <span>${releaseDate}</span>
+                                    ${logoUrl ? `
+                                        <img src="${logoUrl}" alt="${title}" class="max-h-12 max-w-full object-contain my-1">
+                                    ` : `
+                                        <h1 class="text-xl font-bold text-white leading-tight">${title}</h1>
+                                    `}
+
+                                    <div class="flex items-center gap-3 text-xs text-slate-300">
+                                        <span class="text-amber-400 font-bold flex items-center gap-1 bg-amber-400/10 px-2 py-0.5 rounded-md border border-amber-400/20">
+                                            <i class="fa-solid fa-star text-[10px]"></i> ${rating}
+                                        </span>
+                                        <span>•</span>
+                                        <span>${releaseDate}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="hidden lg:block space-y-2">
+                                <span class="text-[10px] font-bold text-slate-200 uppercase tracking-widest bg-white/10 border border-white/15 px-2 py-0.5 rounded-md inline-block">${type === 'movie' ? 'Movie' : 'TV Show'}</span>
+
+                                ${logoUrl ? `
+                                    <img src="${logoUrl}" alt="${title}" class="max-h-14 max-w-full object-contain my-1">
+                                ` : `
+                                    <h1 class="text-2xl font-bold text-white leading-tight">${title}</h1>
+                                `}
+
+                                <div class="flex items-center gap-3 text-sm text-slate-300">
+                                    <span class="text-amber-400 font-bold flex items-center gap-1 bg-amber-400/10 px-2 py-0.5 rounded-md border border-amber-400/20">
+                                        <i class="fa-solid fa-star text-xs"></i> ${rating}
+                                    </span>
+                                    <span>•</span>
+                                    <span>${releaseDate}</span>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3 text-center">
+                                <div class="card-solid rounded-xl py-2.5">
+                                    <p class="text-[9px] text-slate-400 uppercase tracking-wider mb-0.5">Release</p>
+                                    <p class="text-sm font-bold text-white">${releaseYear}</p>
+                                </div>
+                                <div class="card-solid rounded-xl py-2.5">
+                                    <p class="text-[9px] text-slate-400 uppercase tracking-wider mb-0.5">${type === 'movie' ? 'Runtime' : 'Seasons'}</p>
+                                    <p class="text-sm font-bold text-white">${type === 'movie' ? (data.runtime ? data.runtime + ' min' : 'N/A') : (data.number_of_seasons || validSeasons.length)}</p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <button onclick="handleListAction(${itemPayload}, 'schedule')" class="py-2.5 rounded-2xl font-bold text-xs lg:text-sm flex items-center justify-center gap-2 border transition hover:opacity-90 ${schedItem ? 'bg-white text-black border-white' : 'card-solid text-slate-200'}">
+                                    <i class="fa-solid fa-calendar-plus"></i> ${schedItem ? `Scheduled (${schedItem.userDate})` : 'Add to Schedule'}
+                                </button>
+                                <button onclick="handleListAction(${itemPayload}, 'watched')" class="py-2.5 rounded-2xl font-bold text-xs lg:text-sm flex items-center justify-center gap-2 border transition hover:opacity-90 ${watchedItem ? 'bg-white text-black border-white' : 'card-solid text-slate-200'}">
+                                    <i class="fa-solid fa-check-circle"></i> ${watchedItem ? `Watched (${watchedItem.userDate})` : 'Mark Watched'}
+                                </button>
                             </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 lg:grid-cols-2 lg:max-w-md gap-3 text-center">
-                        <div class="card-solid rounded-xl py-2.5 hover:border-white/25 transition">
-                            <p class="text-[9px] lg:text-[10px] text-slate-400 uppercase tracking-wider mb-0.5">Release</p>
-                            <p class="text-sm lg:text-base font-bold text-white">${releaseYear}</p>
+                    <!-- Right column: tabs + content -->
+                    <div class="px-5 lg:px-0 lg:flex-1 lg:pt-2 mt-5 lg:mt-0 space-y-5">
+                        <!-- Detail Tabs -->
+                        <div class="flex gap-5 border-b border-white/10">
+                            <button onclick="switchDetailTab('overview')" id="dtab-overview" class="detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-white border-b-2 border-white transition">Overview</button>
+                            ${hasEpisodesTab ? `<button onclick="switchDetailTab('episodes')" id="dtab-episodes" class="detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-slate-400 border-b-2 border-transparent transition">Episodes</button>` : ''}
+                            <button onclick="switchDetailTab('more')" id="dtab-more" class="detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-slate-400 border-b-2 border-transparent transition">Cast & More</button>
                         </div>
-                        <div class="card-solid rounded-xl py-2.5 hover:border-white/25 transition">
-                            <p class="text-[9px] lg:text-[10px] text-slate-400 uppercase tracking-wider mb-0.5">${type === 'movie' ? 'Runtime' : 'Seasons'}</p>
-                            <p class="text-sm lg:text-base font-bold text-white">${type === 'movie' ? (data.runtime ? data.runtime + ' min' : 'N/A') : (data.number_of_seasons || validSeasons.length)}</p>
+
+                        <!-- Overview Panel -->
+                        <div id="dpanel-overview" class="space-y-5">
+                            ${providers.length > 0 ? `
+                                <div class="card-solid p-3.5 rounded-2xl">
+                                    <p class="text-xs font-semibold text-slate-200 mb-2.5">Available On (India Streaming Providers):</p>
+                                    <div class="flex gap-3 overflow-x-auto no-scrollbar py-1">
+                                        ${providers.map(p => `
+                                            <div class="flex-none w-11 h-11 rounded-2xl overflow-hidden bg-[#060608] border border-white/15 p-1 flex items-center justify-center shadow-lg">
+                                                <img src="${IMG_URL}${p.logo_path}" title="${p.provider_name}" class="w-full h-full object-cover rounded-xl">
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            <div class="card-solid p-4 rounded-2xl">
+                                <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-1.5">Overview</h3>
+                                <p class="text-xs lg:text-sm text-slate-300 leading-relaxed">${data.overview || 'No overview available.'}</p>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="grid grid-cols-2 lg:max-w-md gap-3">
-                        <button onclick="handleListAction(${itemPayload}, 'schedule')" class="py-2.5 rounded-2xl font-bold text-xs lg:text-sm flex items-center justify-center gap-2 border transition hover:opacity-90 hover:scale-[1.02] ${schedItem ? 'bg-white text-black border-white' : 'card-solid text-slate-200'}">
-                            <i class="fa-solid fa-calendar-plus"></i> ${schedItem ? `Scheduled (${schedItem.userDate})` : 'Add to Schedule'}
-                        </button>
-                        <button onclick="handleListAction(${itemPayload}, 'watched')" class="py-2.5 rounded-2xl font-bold text-xs lg:text-sm flex items-center justify-center gap-2 border transition hover:opacity-90 hover:scale-[1.02] ${watchedItem ? 'bg-white text-black border-white' : 'card-solid text-slate-200'}">
-                            <i class="fa-solid fa-check-circle"></i> ${watchedItem ? `Watched (${watchedItem.userDate})` : 'Mark Watched'}
-                        </button>
-                    </div>
+                        <!-- Episodes Panel -->
+                        ${hasEpisodesTab ? `
+                            <div id="dpanel-episodes" class="hidden space-y-4">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider">Seasons & Episodes</h3>
+                                    <span class="text-[10px] text-slate-400">${validSeasons.length} Seasons</span>
+                                </div>
 
-                    <!-- Detail Tabs -->
-                    <div class="flex gap-5 border-b border-white/10">
-                        <button onclick="switchDetailTab('overview')" id="dtab-overview" class="detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-white border-b-2 border-white transition hover:text-white">Overview</button>
-                        ${hasEpisodesTab ? `<button onclick="switchDetailTab('episodes')" id="dtab-episodes" class="detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-slate-400 border-b-2 border-transparent transition hover:text-white">Episodes</button>` : ''}
-                        <button onclick="switchDetailTab('more')" id="dtab-more" class="detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-slate-400 border-b-2 border-transparent transition hover:text-white">Cast & More</button>
-                    </div>
-
-                    <!-- Overview Panel -->
-                    <div id="dpanel-overview" class="space-y-5">
-                        ${providers.length > 0 ? `
-                            <div class="card-solid p-3.5 rounded-2xl">
-                                <p class="text-xs font-semibold text-slate-200 mb-2.5">Available On (India Streaming Providers):</p>
-                                <div class="flex gap-3 overflow-x-auto no-scrollbar py-1">
-                                    ${providers.map(p => `
-                                        <div class="flex-none w-11 h-11 rounded-2xl overflow-hidden bg-[#060608] border border-white/15 p-1 flex items-center justify-center shadow-lg">
-                                            <img src="${IMG_URL}${p.logo_path}" title="${p.provider_name}" class="w-full h-full object-cover rounded-xl">
-                                        </div>
+                                <div class="flex gap-2 overflow-x-auto no-scrollbar py-1">
+                                    ${validSeasons.map((s, idx) => `
+                                        <button onclick="loadSeasonEpisodes(${id}, ${s.season_number}, this)" class="season-btn ${idx === 0 ? 'bg-white text-black border-white font-bold' : 'bg-slate-800/80 text-slate-300 border-white/10'} px-3.5 py-1.5 rounded-xl text-xs font-semibold border whitespace-nowrap transition hover:border-white/30">
+                                            ${s.name}
+                                        </button>
                                     `).join('')}
                                 </div>
+
+                                <div id="episodes-container" class="grid lg:grid-cols-2 gap-3 pt-2"></div>
                             </div>
                         ` : ''}
 
-                        <div class="card-solid p-4 rounded-2xl">
-                            <h3 class="text-xs lg:text-sm font-bold text-slate-200 uppercase tracking-wider mb-1.5">Overview</h3>
-                            <p class="text-xs lg:text-sm text-slate-300 leading-relaxed">${data.overview || 'No overview available.'}</p>
-                        </div>
-                    </div>
-
-                    <!-- Episodes Panel -->
-                    ${hasEpisodesTab ? `
-                        <div id="dpanel-episodes" class="hidden space-y-4">
-                            <div class="flex justify-between items-center">
-                                <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider">Seasons & Episodes</h3>
-                                <span class="text-[10px] text-slate-400">${validSeasons.length} Seasons</span>
-                            </div>
-
-                            <div class="flex gap-2 overflow-x-auto no-scrollbar py-1">
-                                ${validSeasons.map((s, idx) => `
-                                    <button onclick="loadSeasonEpisodes(${id}, ${s.season_number}, this)" class="season-btn ${idx === 0 ? 'bg-white text-black border-white font-bold' : 'bg-slate-800/80 text-slate-300 border-white/10 hover:bg-slate-700/80 hover:text-white'} px-3.5 py-1.5 rounded-xl text-xs font-semibold border whitespace-nowrap transition">
-                                        ${s.name}
-                                    </button>
-                                `).join('')}
-                            </div>
-
-                            <div id="episodes-container" class="space-y-3 pt-2"></div>
-                        </div>
-                    ` : ''}
-
-                    <!-- Cast & More Panel -->
-                    <div id="dpanel-more" class="hidden space-y-6">
-                        ${cast.length > 0 ? `
-                            <div>
-                                <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-3">Top Cast (Click to View)</h3>
-                                <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2">
-                                    ${cast.map(c => {
-                                        const photo = c.profile_path ? `${IMG_URL}${c.profile_path}` : 'https://via.placeholder.com/150?text=No+Photo';
-                                        return `
-                                            <div onclick="openActorModal(${c.id})" class="flex-none w-24 card-solid p-2 rounded-2xl text-center flex flex-col items-center cursor-pointer hover:border-white/30 transition">
-                                                <img src="${photo}" class="w-14 h-14 rounded-full object-cover border border-white/20 mb-2 shadow-md" loading="lazy">
-                                                <p class="text-[11px] font-semibold text-slate-100 truncate w-full">${c.name}</p>
-                                                <p class="text-[9px] text-slate-400 truncate w-full mt-0.5">${c.character || ''}</p>
-                                            </div>
-                                        `;
-                                    }).join('')}
+                        <!-- Cast & More Panel -->
+                        <div id="dpanel-more" class="hidden space-y-6">
+                            ${cast.length > 0 ? `
+                                <div>
+                                    <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-3">Top Cast (Click to View)</h3>
+                                    <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2">
+                                        ${cast.map(c => {
+                                            const photo = c.profile_path ? `${IMG_URL}${c.profile_path}` : 'https://via.placeholder.com/150?text=No+Photo';
+                                            return `
+                                                <div onclick="openActorModal(${c.id})" class="flex-none w-24 card-solid p-2 rounded-2xl text-center flex flex-col items-center cursor-pointer hover:border-white/30 transition">
+                                                    <img src="${photo}" class="w-14 h-14 rounded-full object-cover border border-white/20 mb-2 shadow-md" loading="lazy">
+                                                    <p class="text-[11px] font-semibold text-slate-100 truncate w-full">${c.name}</p>
+                                                    <p class="text-[9px] text-slate-400 truncate w-full mt-0.5">${c.character || ''}</p>
+                                                </div>
+                                            `;
+                                        }).join('')}
+                                    </div>
                                 </div>
-                            </div>
-                        ` : ''}
+                            ` : ''}
 
-                        ${similarResults.length > 0 ? `
-                            <div>
-                                <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-3">You May Also Like</h3>
-                                <div id="similar-grid" class="grid grid-cols-3 lg:grid-cols-5 gap-3"></div>
-                            </div>
-                        ` : ''}
+                            ${similarResults.length > 0 ? `
+                                <div>
+                                    <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-3">You May Also Like</h3>
+                                    <div id="similar-grid" class="grid grid-cols-3 lg:grid-cols-5 gap-3"></div>
+                                </div>
+                            ` : ''}
+                        </div>
                     </div>
-                </div>
                 </div>
             `;
 
@@ -1174,7 +1181,7 @@
         async function loadSeasonEpisodes(tvId, seasonNumber, btnEl) {
             if (btnEl) {
                 document.querySelectorAll('.season-btn').forEach(b => {
-                    b.className = "season-btn bg-slate-800/80 text-slate-300 border border-white/10 px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition hover:bg-slate-700/80 hover:text-white";
+                    b.className = "season-btn bg-slate-800/80 text-slate-300 border border-white/10 px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition";
                 });
                 btnEl.className = "season-btn bg-white text-black border border-white font-bold px-3.5 py-1.5 rounded-xl text-xs whitespace-nowrap transition";
             }
