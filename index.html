@@ -1,198 +1,289 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi" class="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TV Shows & Movies</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CineDB</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .glass-header {
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(99, 102, 241, 0.18);
+        }
+        .glass-card:active { transform: scale(0.97); }
+        .glass-modal {
+            background: rgba(15, 23, 42, 0.96);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+        }
 
-    body {
-      background-color: #0d1117;
-      color: #ffffff;
-      padding-bottom: 70px; /* Space for fixed bottom nav */
-    }
-
-    /* Main Container */
-    .container {
-      padding: 20px;
-    }
-
-    /* Card Layout */
-    .card {
-      background: #161b22;
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 15px;
-      cursor: pointer;
-    }
-
-    /* Modal / Pop-up Overlay */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      display: none; /* Initially Hidden */
-      justify-content: center;
-      align-items: center;
-      z-index: 500; /* Lower than Bottom Nav */
-      padding: 20px;
-      overflow-y: auto;
-    }
-
-    /* Active Modal */
-    .modal-overlay.active {
-      display: flex;
-    }
-
-    /* Modal Content Box */
-    .modal-content {
-      background: #161b22;
-      border-radius: 12px;
-      width: 100%;
-      max-width: 500px;
-      position: relative;
-      padding: 20px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-      margin-bottom: 60px; /* Bottom Nav blockage prevention */
-    }
-
-    /* Close (X) Button */
-    .close-btn {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      background: rgba(255, 255, 255, 0.2);
-      border: none;
-      color: #fff;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      font-size: 18px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* Bottom Navigation Bar - FIX APPLIED HERE */
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 60px;
-      background: #161b22;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      border-top: 1px solid #30363d;
-      z-index: 1000; /* HIGHEST Z-INDEX SO BUTTONS ARE ALWAYS CLICKABLE */
-    }
-
-    .nav-item {
-      color: #8b949e;
-      text-decoration: none;
-      font-size: 12px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: none;
-      border: none;
-      cursor: pointer;
-    }
-
-    .nav-item.active {
-      color: #58a6ff;
-    }
-  </style>
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .skeleton {
+            background: linear-gradient(90deg, rgba(30, 41, 59, 0.8) 25%, rgba(49, 46, 129, 0.6) 50%, rgba(30, 41, 59, 0.8) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-[#090d16] text-slate-100 font-sans antialiased min-h-screen pb-24 select-none bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-indigo-950/40 via-[#090d16] to-[#090d16]">
 
-  <!-- Content Section -->
-  <div class="container">
-    <h2>TV Shows</h2>
-    <div class="card" onclick="openModal('Silo', 'In a ruined and toxic future, thousands live in a giant silo deep underground.')">
-      <h3>SILO</h3>
-      <p>Rating: 8.2 | Click for details</p>
-    </div>
-  </div>
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-5 right-5 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- Modal / Pop-up Window -->
-  <div class="modal-overlay" id="detailModal" onclick="closeModalOnOutsideClick(event)">
-    <div class="modal-content">
-      <button class="close-btn" onclick="closeModal()">&times;</button>
-      <h2 id="modalTitle">Show Title</h2>
-      <p id="modalOverview" style="margin-top: 10px; color: #c9d1d9;"></p>
-    </div>
-  </div>
+    <!-- Fixed Header -->
+    <header class="sticky top-0 z-40 glass-header px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-2.5 cursor-pointer" onclick="switchTab('home')">
+            <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-indigo-600 via-violet-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-indigo-500/30 border border-white/20">
+                <i class="fa-solid fa-play text-slate-950 text-xs font-black"></i>
+            </div>
+            <span class="text-2xl font-black tracking-wider text-white leading-none">Cine<span class="text-indigo-400">DB</span></span>
+        </div>
+        
+        <div class="flex items-center gap-2">
+            <button onclick="openAuthModal('signin')" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white transition">Sign In</button>
+            <button onclick="openAuthModal('signup')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-indigo-500 to-violet-600 text-white shadow-lg shadow-indigo-500/25 border border-indigo-400/30 hover:opacity-95 transition">Sign Up</button>
+        </div>
+    </header>
 
-  <!-- Bottom Navigation Bar -->
-  <nav class="bottom-nav">
-    <button class="nav-item active" onclick="handleNavClick('Home')">
-      <span>🏠</span>
-      <span>Home</span>
-    </button>
-    <button class="nav-item" onclick="handleNavClick('Search')">
-      <span>🔍</span>
-      <span>Search</span>
-    </button>
-    <button class="nav-item" onclick="handleNavClick('Random')">
-      <span>🎲</span>
-      <span>Random</span>
-    </button>
-    <button class="nav-item" onclick="handleNavClick('My List')">
-      <span>📅</span>
-      <span>My List</span>
-    </button>
-  </nav>
+    <!-- Main Content Tab Area -->
+    <main class="p-4 max-w-7xl mx-auto space-y-5">
 
-  <script>
-    const modal = document.getElementById('detailModal');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalOverview = document.getElementById('modalOverview');
+        <!-- HOME TAB -->
+        <section id="tab-home" class="space-y-4">
+            
+            <!-- Category & Country Bar -->
+            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
+                <button onclick="changeCategoryFilter('all', this)" class="cat-btn active px-4 py-2 rounded-2xl text-xs font-bold bg-gradient-to-r from-indigo-500 to-violet-600 text-white shadow-lg shadow-indigo-500/25 whitespace-nowrap border border-indigo-400/30">All</button>
+                <button onclick="changeCategoryFilter('movie', this)" class="cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10">Movies</button>
+                <button onclick="changeCategoryFilter('tv', this)" class="cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10">TV Shows</button>
 
-    // Function to Open Modal
-    function openModal(title, overview) {
-      modalTitle.innerText = title;
-      modalOverview.innerText = overview;
-      modal.classList.add('active');
-    }
+                <!-- MODERN COUNTRY SELECTOR DROPDOWN -->
+                <div class="relative flex-shrink-0 flex items-center glass-card rounded-2xl px-3 py-1.5 border border-indigo-400/30">
+                    <i class="fa-solid fa-earth-americas text-indigo-400 text-xs mr-2 pointer-events-none"></i>
+                    <select id="country-select" onchange="changeCountryFilter(this.value)" class="bg-transparent text-indigo-200 text-xs font-semibold focus:outline-none cursor-pointer pr-1">
+                        <option value="ALL" class="bg-[#0f172a] text-white">All Countries (Global)</option>
+                        <option value="IN" class="bg-[#0f172a] text-white">🇮🇳 India</option>
+                        <option value="US" class="bg-[#0f172a] text-white">🇺🇸 United States</option>
+                        <option value="KR" class="bg-[#0f172a] text-white">🇰🇷 South Korea</option>
+                        <option value="JP" class="bg-[#0f172a] text-white">🇯🇵 Japan</option>
+                        <option value="GB" class="bg-[#0f172a] text-white">🇬🇧 United Kingdom</option>
+                        <option value="ES" class="bg-[#0f172a] text-white">🇪🇸 Spain</option>
+                        <option value="FR" class="bg-[#0f172a] text-white">🇫🇷 France</option>
+                        <option value="DE" class="bg-[#0f172a] text-white">🇩🇪 Germany</option>
+                        <option value="TR" class="bg-[#0f172a] text-white">🇹🇷 Turkey</option>
+                        <option value="CN" class="bg-[#0f172a] text-white">🇨🇳 China</option>
+                        <option value="CA" class="bg-[#0f172a] text-white">🇨🇦 Canada</option>
+                        <option value="BR" class="bg-[#0f172a] text-white">🇧🇷 Brazil</option>
+                        <option value="IT" class="bg-[#0f172a] text-white">🇮🇹 Italy</option>
+                    </select>
+                </div>
+            </div>
 
-    // Function to Close Modal
-    function closeModal() {
-      modal.classList.remove('active');
-    }
+            <!-- Genre Quick Filters -->
+            <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                <button onclick="changeGenreFilter('', this)" class="genre-btn active text-[11px] font-medium px-3.5 py-1 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 whitespace-nowrap">All Genres</button>
+                <button onclick="changeGenreFilter('28', this)" class="genre-btn text-[11px] font-medium px-3.5 py-1 rounded-xl glass-card text-slate-300 whitespace-nowrap">Action</button>
+                <button onclick="changeGenreFilter('35', this)" class="genre-btn text-[11px] font-medium px-3.5 py-1 rounded-xl glass-card text-slate-300 whitespace-nowrap">Comedy</button>
+                <button onclick="changeGenreFilter('18', this)" class="genre-btn text-[11px] font-medium px-3.5 py-1 rounded-xl glass-card text-slate-300 whitespace-nowrap">Drama</button>
+                <button onclick="changeGenreFilter('878', this)" class="genre-btn text-[11px] font-medium px-3.5 py-1 rounded-xl glass-card text-slate-300 whitespace-nowrap">Sci-Fi</button>
+                <button onclick="changeGenreFilter('27', this)" class="genre-btn text-[11px] font-medium px-3.5 py-1 rounded-xl glass-card text-slate-300 whitespace-nowrap">Horror</button>
+                <button onclick="changeGenreFilter('16', this)" class="genre-btn text-[11px] font-medium px-3.5 py-1 rounded-xl glass-card text-slate-300 whitespace-nowrap">Animation</button>
+            </div>
 
-    // Close Modal if user clicks outside content box
-    function closeModalOnOutsideClick(event) {
-      if (event.target === modal) {
-        closeModal();
-      }
-    }
+            <!-- HERO SPOTLIGHT -->
+            <div id="hero-container" class="relative rounded-3xl overflow-hidden glass-card border border-indigo-500/20 shadow-2xl aspect-[16/9] w-full flex items-end cursor-pointer group transition duration-500">
+                <div class="p-12 text-center w-full text-indigo-300/60 my-auto">
+                    <i class="fa-solid fa-circle-notch fa-spin text-2xl text-indigo-400 mb-2"></i>
+                    <p class="text-xs">Loading Spotlight...</p>
+                </div>
+            </div>
 
-    // Navigation Click Handler (Closes Modal automatically & Handles Nav)
-    function handleNavClick(tabName) {
-      // Step 1: Close modal if open
-      closeModal();
+            <div class="flex justify-between items-center pt-2">
+                <h2 id="section-title" class="text-base font-bold text-white tracking-wide flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
+                    Trending Movies & Shows
+                </h2>
+            </div>
 
-      // Step 2: Handle Navigation Action
-      console.log("Navigated to: " + tabName);
-      
-      // Update Active Tab UI
-      const navItems = document.querySelectorAll('.nav-item');
-      navItems.forEach(item => item.classList.remove('active'));
-      event.currentTarget.classList.add('active');
-    }
-  </script>
+            <!-- Home Media Grid -->
+            <div id="home-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5"></div>
 
-</body>
-</html>
+            <div id="infinite-loader" class="py-6 text-center text-indigo-300/60 text-xs hidden">
+                <i class="fa-solid fa-circle-notch fa-spin text-lg text-indigo-400 mb-1"></i>
+                <p>Loading more titles...</p>
+            </div>
+        </section>
+
+        <!-- SEARCH TAB WITH FILTERS -->
+        <section id="tab-search" class="hidden space-y-4">
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-indigo-400/70"></i>
+                <input type="text" id="search-input" oninput="handleSearch()" placeholder="Search Movies, TV Shows, Cast..." class="w-full glass-card rounded-2xl pl-11 pr-4 py-3.5 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-indigo-400 transition">
+            </div>
+
+            <!-- Search Filters Bar -->
+            <div class="grid grid-cols-3 gap-2">
+                <select id="search-type" onchange="handleSearch()" class="glass-card text-xs text-indigo-200 rounded-xl p-2.5 bg-[#0f172a] border border-indigo-500/20 focus:outline-none">
+                    <option value="all">All Content</option>
+                    <option value="movie">Movies Only</option>
+                    <option value="tv">TV Shows Only</option>
+                </select>
+                <select id="search-genre" onchange="handleSearch()" class="glass-card text-xs text-indigo-200 rounded-xl p-2.5 bg-[#0f172a] border border-indigo-500/20 focus:outline-none">
+                    <option value="">All Genres</option>
+                    <option value="28">Action</option>
+                    <option value="35">Comedy</option>
+                    <option value="18">Drama</option>
+                    <option value="878">Sci-Fi</option>
+                    <option value="27">Horror</option>
+                    <option value="16">Animation</option>
+                </select>
+                <select id="search-year" onchange="handleSearch()" class="glass-card text-xs text-indigo-200 rounded-xl p-2.5 bg-[#0f172a] border border-indigo-500/20 focus:outline-none">
+                    <option value="">All Years</option>
+                    <option value="2026">2026</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="2020">2020s</option>
+                    <option value="2010">2010s</option>
+                </select>
+            </div>
+
+            <div id="search-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5">
+                <p class="col-span-full text-center text-slate-400 py-12 text-xs">Type query or pick filters to search content...</p>
+            </div>
+        </section>
+
+        <!-- RANDOM DISCOVERY SEPARATE PAGE -->
+        <section id="tab-random" class="hidden space-y-5">
+            <div class="glass-card p-5 rounded-3xl space-y-4 border border-indigo-500/30">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-dice text-amber-400 text-xl"></i>
+                    <div>
+                        <h2 class="text-sm font-bold text-white">Random Title Picker</h2>
+                        <p class="text-[11px] text-slate-400">Configure parameters & generate random picks</p>
+                    </div>
+                </div>
+
+                <!-- Type Selector -->
+                <div class="flex gap-2">
+                    <button onclick="setRandomType('all', this)" class="rand-type-btn active flex-1 py-2 rounded-xl text-xs font-bold bg-indigo-500 text-white">All</button>
+                    <button onclick="setRandomType('movie', this)" class="rand-type-btn flex-1 py-2 rounded-xl text-xs font-semibold glass-card text-indigo-200">Movies</button>
+                    <button onclick="setRandomType('tv', this)" class="rand-type-btn flex-1 py-2 rounded-xl text-xs font-semibold glass-card text-indigo-200">TV Shows</button>
+                </div>
+
+                <!-- Filters Grid -->
+                <div class="grid grid-cols-3 gap-2">
+                    <div>
+                        <label class="text-[10px] text-indigo-300 font-semibold block mb-1">Country</label>
+                        <select id="random-country" class="w-full glass-card text-xs text-indigo-200 rounded-xl p-2 bg-[#0f172a] border border-indigo-500/20 focus:outline-none">
+                            <option value="">Global (Any)</option>
+                            <option value="IN">🇮🇳 India</option>
+                            <option value="US">🇺🇸 USA</option>
+                            <option value="KR">🇰🇷 S. Korea</option>
+                            <option value="JP">🇯🇵 Japan</option>
+                            <option value="GB">🇬🇧 UK</option>
+                            <option value="ES">🇪🇸 Spain</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-indigo-300 font-semibold block mb-1">Genre</label>
+                        <select id="random-genre" class="w-full glass-card text-xs text-indigo-200 rounded-xl p-2 bg-[#0f172a] border border-indigo-500/20 focus:outline-none">
+                            <option value="">Any Genre</option>
+                            <option value="28">Action</option>
+                            <option value="35">Comedy</option>
+                            <option value="18">Drama</option>
+                            <option value="878">Sci-Fi</option>
+                            <option value="27">Horror</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-indigo-300 font-semibold block mb-1">Release Year</label>
+                        <select id="random-year" class="w-full glass-card text-xs text-indigo-200 rounded-xl p-2 bg-[#0f172a] border border-indigo-500/20 focus:outline-none">
+                            <option value="">Any Year</option>
+                            <option value="2026">2026</option>
+                            <option value="2025">2025</option>
+                            <option value="2024">2024</option>
+                            <option value="2023">2023</option>
+                            <option value="2022">2022</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button onclick="executeRandomPick()" class="w-full py-3 rounded-2xl font-bold text-xs bg-gradient-to-r from-amber-500 via-indigo-600 to-violet-600 text-white shadow-xl shadow-indigo-500/20 flex items-center justify-center gap-2 active:scale-95 transition">
+                    <i class="fa-solid fa-shuffle text-sm"></i> Roll Random Pick
+                </button>
+            </div>
+
+            <!-- Random Pick Result Container -->
+            <div id="random-result-container">
+                <p class="text-center text-slate-400 py-12 text-xs">Click "Roll Random Pick" button to get suggestions!</p>
+            </div>
+        </section>
+
+        <!-- SCHEDULE / WATCHED LIST TAB -->
+        <section id="tab-schedule" class="hidden space-y-4">
+            <div class="flex gap-2.5 p-1 glass-card rounded-2xl border border-indigo-500/20">
+                <button onclick="switchListSubTab('schedule')" id="subtab-schedule" class="flex-1 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-indigo-500 to-violet-600 text-white shadow-lg shadow-indigo-500/25 border border-indigo-400/30 flex items-center justify-center gap-2 transition">
+                    <i class="fa-solid fa-calendar-day"></i> Scheduled Plan
+                </button>
+                <button onclick="switchListSubTab('watched')" id="subtab-watched" class="flex-1 py-2.5 rounded-xl text-xs font-semibold glass-card text-indigo-200 hover:text-white flex items-center justify-center gap-2 transition">
+                    <i class="fa-solid fa-circle-check"></i> Watched History
+                </button>
+            </div>
+
+            <div id="list-schedule-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5"></div>
+            <div id="list-watched-container" class="hidden grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5"></div>
+        </section>
+
+    </main>
+
+    <!-- AUTH SIGNIN/SIGNUP MODAL -->
+    <div id="auth-modal" class="fixed inset-0 z-[90] glass-modal hidden flex items-center justify-center p-4">
+        <div class="glass-card p-6 rounded-3xl max-w-sm w-full space-y-5 border border-indigo-500/30 shadow-2xl relative">
+            <button onclick="closeAuthModal()" class="absolute top-4 right-4 w-8 h-8 rounded-xl glass-card flex items-center justify-center text-white">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="flex border-b border-slate-700/60 pb-2 gap-4">
+                <button id="auth-tab-signin" onclick="switchAuthMode('signin')" class="text-sm font-bold text-indigo-400 border-b-2 border-indigo-400 pb-1">Sign In</button>
+                <button id="auth-tab-signup" onclick="switchAuthMode('signup')" class="text-sm font-bold text-slate-400 hover:text-white pb-1">Sign Up</button>
+            </div>
+
+            <form id="form-signin" onsubmit="event.preventDefault(); handleAuthSubmit('signin');" class="space-y-3">
+                <div>
+                    <label class="text-[11px] text-slate-400 block mb-1">Email Address</label>
+                    <input type="email" required placeholder="yourname@gmail.com" class="w-full bg-[#090d16] border border-indigo-500/30 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-400">
+                </div>
+                <div>
+                    <label class="text-[11px] text-slate-400 block mb-1">Password</label>
+                    <input type="password" required placeholder="••••••••" class="w-full bg-[#090d16] border border-indigo-500/30 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-400">
+                </div>
+                <button type="submit" class="w-full py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-indigo-500 to-violet-600 text-white shadow-lg shadow-indigo-500/25 mt-2">Sign In</button>
+            </form>
+
+            <form id="form-signup" onsubmit="event.preventDefault(); handleAuthSubmit('signup');" class="hidden space-y-3">
+                <div>
+                    <label class="text-[11px] text-slate-400 block mb-1">Full Name</label>
+                    <input type="text" required placeholder="John Doe" class="w-full bg-[#090d16] border border-indigo-500/30 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-400">
+                </div>
+                <div>
+                    <label class="text-[11px] text-slate-400 block mb-1">Email Address</label>
+                    <input type="email" required placeholder="yourname@gmail.com" class="w-full bg-[#090d16] border border-indigo-500/30 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-
