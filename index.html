@@ -13,7 +13,12 @@
                 extend: {
                     colors: {
                         indigo: { 50:'#FFFFFF',100:'#F5F5F5',200:'#E5E5E5',300:'#D4D4D4',400:'#B0B0B0',500:'#FFFFFF',600:'#9A9A9A',700:'#7A7A7A',800:'#5C5C5C',900:'#404040',950:'#1A1A1A' }
-                    }
+                    },
+                    // Default Tailwind 'lg' is 1024px — too high. Phones running
+                    // "Request Desktop Site" report ~980px, so the desktop
+                    // layout (top nav, split modal, scaled-up text) never
+                    // triggered there. 900px catches that case reliably.
+                    screens: { 'lg': '900px' }
                 }
             }
         }
@@ -140,7 +145,7 @@
             </div>
 
             <!-- HERO SPOTLIGHT -->
-            <div id="hero-container" class="relative rounded-3xl overflow-hidden glass-card border border-indigo-500/20 shadow-2xl aspect-[16/9] w-full flex items-end cursor-pointer group transition duration-500">
+            <div id="hero-container" class="relative rounded-3xl overflow-hidden glass-card border border-indigo-500/20 shadow-2xl aspect-[16/9] lg:aspect-[21/9] lg:max-h-[480px] w-full flex items-end cursor-pointer group transition duration-500">
                 <div class="p-12 text-center w-full text-indigo-300/60 my-auto">
                     <i class="fa-solid fa-circle-notch fa-spin text-2xl text-indigo-400 mb-2"></i>
                     <p class="text-xs">Loading Spotlight...</p>
