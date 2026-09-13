@@ -90,6 +90,26 @@
             <button onclick="switchTab('search')" id="dnav-search" class="dnav-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition">Search</button>
             <button onclick="switchTab('random')" id="dnav-random" class="dnav-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition">Random</button>
             <button onclick="switchTab('schedule')" id="dnav-schedule" class="dnav-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition">My List</button>
+
+            <div class="relative">
+                <button onclick="toggleGenreMega(event)" id="dnav-genres-btn" class="dnav-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition flex items-center gap-1.5">
+                    Genres <i class="fa-solid fa-chevron-down text-[9px]"></i>
+                </button>
+                <div id="genre-mega-dropdown" class="hidden absolute top-full left-0 mt-2 w-64 card-solid border border-white/15 rounded-2xl p-3 shadow-2xl grid grid-cols-2 gap-1 z-50">
+                    <button onclick="selectMegaGenre('28')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Action</button>
+                    <button onclick="selectMegaGenre('35')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Comedy</button>
+                    <button onclick="selectMegaGenre('18')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Drama</button>
+                    <button onclick="selectMegaGenre('878')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Sci-Fi</button>
+                    <button onclick="selectMegaGenre('27')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Horror</button>
+                    <button onclick="selectMegaGenre('16')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Animation</button>
+                    <button onclick="selectMegaGenre('10749')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Romance</button>
+                    <button onclick="selectMegaGenre('53')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Thriller</button>
+                    <button onclick="selectMegaGenre('99')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Documentary</button>
+                    <button onclick="selectMegaGenre('14')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Fantasy</button>
+                    <button onclick="selectMegaGenre('9648')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Mystery</button>
+                    <button onclick="selectMegaGenre('10751')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Family</button>
+                </div>
+            </div>
         </nav>
 
         <div class="flex items-center gap-2">
@@ -145,10 +165,40 @@
             </div>
 
             <!-- HERO SPOTLIGHT -->
-            <div id="hero-container" class="relative rounded-3xl overflow-hidden glass-card border border-indigo-500/20 shadow-2xl aspect-[16/9] lg:aspect-[21/9] lg:max-h-[480px] w-full flex items-end cursor-pointer group transition duration-500">
-                <div class="p-12 text-center w-full text-indigo-300/60 my-auto">
-                    <i class="fa-solid fa-circle-notch fa-spin text-2xl text-indigo-400 mb-2"></i>
-                    <p class="text-xs">Loading Spotlight...</p>
+            <div class="relative group/hero">
+                <div id="hero-container" class="relative rounded-3xl overflow-hidden glass-card border border-indigo-500/20 shadow-2xl aspect-[16/9] lg:aspect-[21/9] lg:max-h-[480px] w-full flex items-end cursor-pointer group transition duration-500">
+                    <div class="p-12 text-center w-full text-indigo-300/60 my-auto">
+                        <i class="fa-solid fa-circle-notch fa-spin text-2xl text-indigo-400 mb-2"></i>
+                        <p class="text-xs">Loading Spotlight...</p>
+                    </div>
+                </div>
+                <button onclick="heroPrev(event)" class="hidden lg:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/50 hover:bg-black/75 border border-white/15 items-center justify-center text-white transition opacity-0 group-hover/hero:opacity-100">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button onclick="heroNext(event)" class="hidden lg:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/50 hover:bg-black/75 border border-white/15 items-center justify-center text-white transition opacity-0 group-hover/hero:opacity-100">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+
+            <!-- TOP 10 TODAY (Desktop only) -->
+            <div id="top10-section" class="hidden lg:block space-y-3"></div>
+
+            <!-- BROWSE BY GENRE (Desktop only) -->
+            <div class="hidden lg:block space-y-3">
+                <h2 class="text-base font-bold text-white tracking-wide">Browse by Genre</h2>
+                <div class="grid grid-cols-4 xl:grid-cols-6 gap-4">
+                    <button onclick="selectMegaGenre('28')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-red-500/25 to-red-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-explosion text-2xl"></i>Action</button>
+                    <button onclick="selectMegaGenre('35')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-amber-500/25 to-amber-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-face-laugh-beam text-2xl"></i>Comedy</button>
+                    <button onclick="selectMegaGenre('18')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-purple-500/25 to-purple-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-masks-theater text-2xl"></i>Drama</button>
+                    <button onclick="selectMegaGenre('878')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-blue-500/25 to-blue-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-user-astronaut text-2xl"></i>Sci-Fi</button>
+                    <button onclick="selectMegaGenre('27')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-rose-600/25 to-rose-600/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-ghost text-2xl"></i>Horror</button>
+                    <button onclick="selectMegaGenre('16')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-pink-500/25 to-pink-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-palette text-2xl"></i>Animation</button>
+                    <button onclick="selectMegaGenre('10749')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-fuchsia-500/25 to-fuchsia-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-heart text-2xl"></i>Romance</button>
+                    <button onclick="selectMegaGenre('53')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-slate-500/25 to-slate-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-magnifying-glass text-2xl"></i>Thriller</button>
+                    <button onclick="selectMegaGenre('99')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-teal-500/25 to-teal-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-video text-2xl"></i>Documentary</button>
+                    <button onclick="selectMegaGenre('14')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-violet-500/25 to-violet-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-dragon text-2xl"></i>Fantasy</button>
+                    <button onclick="selectMegaGenre('9648')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-cyan-500/25 to-cyan-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-question text-2xl"></i>Mystery</button>
+                    <button onclick="selectMegaGenre('10751')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-emerald-500/25 to-emerald-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-users text-2xl"></i>Family</button>
                 </div>
             </div>
 
@@ -173,6 +223,15 @@
             <div class="relative">
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-indigo-400/70"></i>
                 <input type="text" id="search-input" oninput="handleSearch()" placeholder="Search Movies, TV Shows, Cast..." class="w-full glass-card rounded-2xl pl-11 pr-4 py-3.5 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-indigo-400 transition">
+            </div>
+
+            <!-- Recent Searches (Desktop only) -->
+            <div id="recent-searches-wrap" class="hidden">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs font-semibold text-slate-400">Recent Searches</span>
+                    <button onclick="clearRecentSearches()" class="text-xs font-semibold text-slate-400 hover:text-white underline transition">Clear All</button>
+                </div>
+                <div id="recent-searches-row" class="flex gap-2 flex-wrap"></div>
             </div>
 
             <!-- Search Filters Bar -->
@@ -530,6 +589,7 @@
             }
             if (tabName === 'search' && !searchInitialized) {
                 searchInitialized = true;
+                renderRecentSearches();
                 handleSearch();
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -577,6 +637,65 @@
             currentCountry = countryCode;
             updateSectionTitle();
             loadHomeTitles(true);
+        }
+
+        function toggleGenreMega(e) {
+            e.stopPropagation();
+            document.getElementById('genre-mega-dropdown').classList.toggle('hidden');
+        }
+        function closeGenreMega() {
+            document.getElementById('genre-mega-dropdown')?.classList.add('hidden');
+        }
+        function selectMegaGenre(genreId) {
+            closeGenreMega();
+            switchTab('home');
+            changeGenreFilter(genreId, null);
+        }
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('genre-mega-dropdown');
+            const btn = document.getElementById('dnav-genres-btn');
+            if (dropdown && !dropdown.classList.contains('hidden') && !dropdown.contains(e.target) && e.target !== btn) {
+                closeGenreMega();
+            }
+        });
+
+        function heroPrev(e) {
+            e.stopPropagation();
+            if (!heroItems.length) return;
+            heroIndex = (heroIndex - 1 + heroItems.length) % heroItems.length;
+            startHeroAutoSlide();
+        }
+        function heroNext(e) {
+            e.stopPropagation();
+            if (!heroItems.length) return;
+            heroIndex = (heroIndex + 1) % heroItems.length;
+            startHeroAutoSlide();
+        }
+
+        function renderTop10(items) {
+            const section = document.getElementById('top10-section');
+            if (!section) return;
+            if (!items.length) { section.innerHTML = ''; return; }
+            section.innerHTML = `
+                <h2 class="text-base font-bold text-white tracking-wide flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-indigo-400"></span> Top 10 Today
+                </h2>
+                <div class="flex gap-6 overflow-x-auto no-scrollbar pb-2 pt-1">
+                    ${items.map((item, idx) => {
+                        const type = item.media_type || (item.title ? 'movie' : 'tv');
+                        const title = item.title || item.name || 'Untitled';
+                        const poster = item.poster_path ? `${IMG_URL}${item.poster_path}` : 'https://via.placeholder.com/300x450?text=No+Image';
+                        return `
+                            <div onclick="openDetails('${type}', ${item.id})" class="relative flex-none flex items-end cursor-pointer group">
+                                <span class="text-[90px] font-black leading-none select-none text-transparent" style="-webkit-text-stroke: 2px rgba(255,255,255,0.25);">${idx + 1}</span>
+                                <div class="w-28 aspect-[2/3] rounded-xl overflow-hidden border border-white/10 shadow-xl -ml-7 group-hover:border-white/30 transition">
+                                    <img src="${poster}" alt="${title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
         }
 
         function changeGenreFilter(genreId, btnEl) {
@@ -651,6 +770,7 @@
                     heroItems = data.results.slice(0, 5);
                     heroIndex = 0;
                     startHeroAutoSlide();
+                    renderTop10(data.results.slice(0, 10));
                 }
                 renderGrid(data.results, 'home-grid', !reset);
                 currentPage++;
@@ -758,6 +878,38 @@
         }
 
         /* ENHANCED SEARCH LOGIC */
+        function getRecentSearches() {
+            try { return JSON.parse(localStorage.getItem('cinedb_recent_searches')) || []; } catch (e) { return []; }
+        }
+        function saveRecentSearch(query) {
+            let list = getRecentSearches().filter(q => q.toLowerCase() !== query.toLowerCase());
+            list.unshift(query);
+            list = list.slice(0, 8);
+            localStorage.setItem('cinedb_recent_searches', JSON.stringify(list));
+            renderRecentSearches();
+        }
+        function renderRecentSearches() {
+            const wrap = document.getElementById('recent-searches-wrap');
+            const row = document.getElementById('recent-searches-row');
+            if (!wrap || !row) return;
+            const list = getRecentSearches();
+            if (!list.length) { wrap.className = "hidden"; row.innerHTML = ''; return; }
+            wrap.className = "hidden lg:block";
+            row.innerHTML = list.map(q => `
+                <button onclick="applyRecentSearch('${q.replace(/'/g, "\\'")}')" class="flex-none px-3 py-1.5 rounded-xl card-solid border border-white/10 text-xs text-slate-300 hover:text-white hover:border-white/30 transition whitespace-nowrap">
+                    <i class="fa-regular fa-clock text-[10px] mr-1.5"></i>${q}
+                </button>
+            `).join('');
+        }
+        function applyRecentSearch(query) {
+            document.getElementById('search-input').value = query;
+            handleSearch();
+        }
+        function clearRecentSearches() {
+            localStorage.removeItem('cinedb_recent_searches');
+            renderRecentSearches();
+        }
+
         function handleSearch() {
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(async () => {
@@ -765,6 +917,8 @@
                 const type = document.getElementById('search-type').value;
                 const genre = document.getElementById('search-genre').value;
                 const year = document.getElementById('search-year').value;
+
+                if (query) saveRecentSearch(query);
 
                 showGridSkeleton('search-grid');
 
@@ -901,6 +1055,8 @@
                 const poster = item.poster_path ? `${IMG_URL}${item.poster_path}` : 'https://via.placeholder.com/500x750?text=No+Poster';
                 const type = item.media_type || (item.title ? 'movie' : 'tv');
                 const isBookmarked = schedList.some(s => s.id === item.id);
+                const releaseTime = date !== 'N/A' ? new Date(date).getTime() : 0;
+                const isNew = releaseTime > 0 && releaseTime <= Date.now() && (Date.now() - releaseTime) < (45 * 24 * 60 * 60 * 1000);
 
                 const itemPayload = JSON.stringify({ id: item.id, title, poster_path: item.poster_path, vote_average: item.vote_average, release_date: date, media_type: type }).replace(/"/g, '&quot;');
 
@@ -915,6 +1071,7 @@
                             <span class="absolute top-2 right-2 bg-[#060608]/90 text-amber-400 font-bold text-[10px] px-2 py-0.5 rounded-lg flex items-center gap-1 border border-indigo-500/20 shadow-md">
                                 <i class="fa-solid fa-star text-[9px]"></i> ${rating}
                             </span>
+                            ${isNew ? `<span class="hidden lg:flex absolute bottom-2 left-2 bg-white text-black text-[9px] font-black px-2 py-0.5 rounded-md items-center shadow-md">NEW</span>` : ''}
                         </div>
                         <div class="p-2.5 flex flex-col justify-between flex-grow">
                             <div>
