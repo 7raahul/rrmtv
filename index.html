@@ -1365,6 +1365,7 @@
                 return;
             }
 
+            container.className = "grid grid-cols-1 lg:grid-cols-2 gap-4 pt-2";
             container.innerHTML = data.episodes.map(ep => {
                 const thumbnail = ep.still_path ? `${IMG_URL}${ep.still_path}` : 'https://via.placeholder.com/400x225?text=No+Thumbnail';
                 const rating = ep.vote_average ? ep.vote_average.toFixed(1) : 'N/A';
@@ -1373,32 +1374,48 @@
                 const overview = ep.overview ? ep.overview : 'No description available.';
 
                 return `
-                    <div class="card-solid rounded-2xl overflow-hidden border border-white/10 active:scale-[0.98] transition">
-                        <div class="relative w-full aspect-video bg-[#060608] overflow-hidden">
+                    <div class="card-solid rounded-2xl overflow-hidden border border-white/10 flex flex-col transition hover:border-white/30">
+                        <!-- Thumbnail (Left Side) -->
+                        <div class="relative aspect-video bg-[#060608] overflow-hidden flex-shrink-0">
                             <img src="${thumbnail}" class="w-full h-full object-cover" loading="lazy">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
 
-                            <span class="absolute top-2 left-2 bg-black/85 text-white font-black text-sm px-2.5 py-1 rounded-lg border border-white/15">
+                            <!-- Episode Number Badge (Top-Left) -->
+                            <span class="absolute top-3 left-3 bg-white text-black font-black text-sm px-3 py-1.5 rounded-lg shadow-lg">
                                 ${String(ep.episode_number).padStart(2, '0')}
                             </span>
 
-                            <span class="absolute top-2 right-2 bg-black/85 text-amber-400 font-bold text-[10px] px-2 py-1 rounded-lg flex items-center gap-1 border border-white/15">
-                                <i class="fa-solid fa-star text-[8px]"></i> ${rating}
+                            <!-- Rating Badge (Top-Right) -->
+                            <span class="absolute top-3 right-3 bg-amber-400 text-black font-bold text-[11px] px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-lg">
+                                <i class="fa-solid fa-star text-[9px]"></i> ${rating}
                             </span>
-
-                            ${runtime ? `
-                                <span class="absolute bottom-2 right-2 bg-black/85 text-slate-200 font-semibold text-[9px] px-2 py-0.5 rounded-md border border-white/15">
-                                    <i class="fa-regular fa-clock text-[8px] mr-1"></i>${runtime}
-                                </span>
-                            ` : ''}
                         </div>
 
-                        <div class="p-3 space-y-1.5">
-                            <h4 class="text-xs font-bold text-slate-100">${ep.name}</h4>
-                            <p class="text-[10px] text-slate-400 flex items-center gap-1">
-                                <i class="fa-regular fa-calendar text-[9px]"></i> ${airDate}
-                            </p>
-                            <p class="text-[10.5px] text-slate-400 leading-relaxed line-clamp-2">${overview}</p>
+                        <!-- Details (Right Side / Below on mobile) -->
+                        <div class="p-4 flex-grow flex flex-col justify-between space-y-2.5">
+                            <!-- Title -->
+                            <h4 class="text-sm font-bold text-white line-clamp-2">${ep.name}</h4>
+
+                            <!-- Meta Info: Date + Runtime -->
+                            <div class="flex items-center gap-3 text-xs text-slate-400">
+                                <span class="flex items-center gap-1">
+                                    <i class="fa-regular fa-calendar text-[10px]"></i> ${airDate}
+                                </span>
+                                ${runtime ? `<span class="text-slate-500">•</span><span class="flex items-center gap-1"><i class="fa-regular fa-clock text-[10px]"></i> ${runtime}</span>` : ''}
+                            </div>
+
+                            <!-- Overview -->
+                            <p class="text-[13px] text-slate-300 leading-relaxed line-clamp-2 flex-grow">${overview}</p>
+
+                            <!-- Action Buttons -->
+                            <div class="flex gap-2 pt-2">
+                                <button onclick="showToast('✓ Marked as watched')" class="flex-1 py-2 rounded-lg bg-white text-black text-xs font-bold hover:bg-slate-100 transition">
+                                    <i class="fa-solid fa-check text-[10px] mr-1.5"></i> Watched
+                                </button>
+                                <button onclick="showToast('+ Added to schedule')" class="flex-1 py-2 rounded-lg border border-white/30 text-white text-xs font-bold hover:bg-white/10 transition">
+                                    <i class="fa-solid fa-calendar-plus text-[10px] mr-1.5"></i> Schedule
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `;
