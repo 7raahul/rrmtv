@@ -126,15 +126,17 @@
         <section id="tab-home" class="space-y-4">
             
             <!-- Category & Country Bar -->
-            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
-                <button onclick="changeCategoryFilter('all', this)" class="cat-btn active px-4 py-2 rounded-2xl text-xs font-bold bg-white text-black shadow-lg shadow-indigo-500/25 whitespace-nowrap border border-indigo-400/30">All</button>
-                <button onclick="changeCategoryFilter('movie', this)" class="cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10">Movies</button>
-                <button onclick="changeCategoryFilter('tv', this)" class="cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10">TV Shows</button>
+            <div class="flex items-center gap-2 lg:gap-3 overflow-x-auto no-scrollbar py-0.5">
+                <div class="flex items-center gap-2 lg:gap-1.5 lg:bg-white/5 lg:border lg:border-white/10 lg:rounded-2xl lg:p-1.5">
+                    <button onclick="changeCategoryFilter('all', this)" class="cat-btn active px-4 py-2 lg:px-5 lg:py-2.5 rounded-2xl text-xs lg:text-sm font-bold bg-white text-black shadow-lg shadow-indigo-500/25 whitespace-nowrap border border-indigo-400/30 lg:border-0"><i class="hidden lg:inline-block fa-solid fa-layer-group mr-2 text-[11px]"></i>All</button>
+                    <button onclick="changeCategoryFilter('movie', this)" class="cat-btn px-4 py-2 lg:px-5 lg:py-2.5 rounded-2xl text-xs lg:text-sm font-semibold glass-card lg:bg-transparent lg:border-0 lg:shadow-none text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10"><i class="hidden lg:inline-block fa-solid fa-film mr-2 text-[11px]"></i>Movies</button>
+                    <button onclick="changeCategoryFilter('tv', this)" class="cat-btn px-4 py-2 lg:px-5 lg:py-2.5 rounded-2xl text-xs lg:text-sm font-semibold glass-card lg:bg-transparent lg:border-0 lg:shadow-none text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10"><i class="hidden lg:inline-block fa-solid fa-tv mr-2 text-[11px]"></i>TV Shows</button>
+                </div>
 
                 <!-- MODERN COUNTRY SELECTOR DROPDOWN -->
-                <div class="relative flex-shrink-0 flex items-center glass-card rounded-2xl px-3 py-1.5 border border-indigo-400/30">
+                <div class="relative flex-shrink-0 flex items-center glass-card rounded-2xl px-3 py-1.5 lg:px-4 lg:py-2.5 border border-indigo-400/30">
                     <i class="fa-solid fa-earth-americas text-indigo-400 text-xs mr-2 pointer-events-none"></i>
-                    <select id="country-select" onchange="changeCountryFilter(this.value)" class="bg-transparent text-indigo-200 text-xs font-semibold focus:outline-none cursor-pointer pr-1">
+                    <select id="country-select" onchange="changeCountryFilter(this.value)" class="bg-transparent text-indigo-200 text-xs lg:text-sm font-semibold focus:outline-none cursor-pointer pr-1">
                         <option value="ALL" class="bg-[#0D0D10] text-white">All Countries (Global)</option>
                         <option value="IN" class="bg-[#0D0D10] text-white">🇮🇳 India</option>
                         <option value="US" class="bg-[#0D0D10] text-white">🇺🇸 United States</option>
@@ -153,8 +155,8 @@
                 </div>
             </div>
 
-            <!-- Genre Quick Filters -->
-            <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+            <!-- Genre Quick Filters (mobile only — desktop uses the top-nav Genres dropdown) -->
+            <div class="lg:hidden flex gap-2 overflow-x-auto no-scrollbar pb-1">
                 <button onclick="changeGenreFilter('', this)" class="genre-btn active text-[11px] font-medium px-3.5 py-1 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 whitespace-nowrap">All Genres</button>
                 <button onclick="changeGenreFilter('28', this)" class="genre-btn text-[11px] font-medium px-3.5 py-1 rounded-xl glass-card text-slate-300 whitespace-nowrap">Action</button>
                 <button onclick="changeGenreFilter('35', this)" class="genre-btn text-[11px] font-medium px-3.5 py-1 rounded-xl glass-card text-slate-300 whitespace-nowrap">Comedy</button>
@@ -182,25 +184,6 @@
 
             <!-- TOP 10 TODAY (Desktop only) -->
             <div id="top10-section" class="hidden lg:block space-y-3"></div>
-
-            <!-- BROWSE BY GENRE (Desktop only) -->
-            <div class="hidden lg:block space-y-3">
-                <h2 class="text-base font-bold text-white tracking-wide">Browse by Genre</h2>
-                <div class="grid grid-cols-4 xl:grid-cols-6 gap-4">
-                    <button onclick="selectMegaGenre('28')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-red-500/25 to-red-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-explosion text-2xl"></i>Action</button>
-                    <button onclick="selectMegaGenre('35')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-amber-500/25 to-amber-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-face-laugh-beam text-2xl"></i>Comedy</button>
-                    <button onclick="selectMegaGenre('18')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-purple-500/25 to-purple-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-masks-theater text-2xl"></i>Drama</button>
-                    <button onclick="selectMegaGenre('878')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-blue-500/25 to-blue-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-user-astronaut text-2xl"></i>Sci-Fi</button>
-                    <button onclick="selectMegaGenre('27')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-rose-600/25 to-rose-600/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-ghost text-2xl"></i>Horror</button>
-                    <button onclick="selectMegaGenre('16')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-pink-500/25 to-pink-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-palette text-2xl"></i>Animation</button>
-                    <button onclick="selectMegaGenre('10749')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-fuchsia-500/25 to-fuchsia-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-heart text-2xl"></i>Romance</button>
-                    <button onclick="selectMegaGenre('53')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-slate-500/25 to-slate-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-magnifying-glass text-2xl"></i>Thriller</button>
-                    <button onclick="selectMegaGenre('99')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-teal-500/25 to-teal-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-video text-2xl"></i>Documentary</button>
-                    <button onclick="selectMegaGenre('14')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-violet-500/25 to-violet-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-dragon text-2xl"></i>Fantasy</button>
-                    <button onclick="selectMegaGenre('9648')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-cyan-500/25 to-cyan-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-question text-2xl"></i>Mystery</button>
-                    <button onclick="selectMegaGenre('10751')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-emerald-500/25 to-emerald-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-users text-2xl"></i>Family</button>
-                </div>
-            </div>
 
             <div class="flex justify-between items-center pt-2">
                 <h2 id="section-title" class="text-base font-bold text-white tracking-wide flex items-center gap-2">
@@ -232,6 +215,25 @@
                     <button onclick="clearRecentSearches()" class="text-xs font-semibold text-slate-400 hover:text-white underline transition">Clear All</button>
                 </div>
                 <div id="recent-searches-row" class="flex gap-2 flex-wrap"></div>
+            </div>
+
+            <!-- SEARCH BY GENRE (Desktop only) -->
+            <div class="hidden lg:block space-y-3">
+                <h2 class="text-base font-bold text-white tracking-wide">Search by Genre</h2>
+                <div class="grid grid-cols-4 xl:grid-cols-6 gap-4">
+                    <button onclick="selectSearchGenre('28')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-red-500/25 to-red-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-explosion text-2xl"></i>Action</button>
+                    <button onclick="selectSearchGenre('35')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-amber-500/25 to-amber-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-face-laugh-beam text-2xl"></i>Comedy</button>
+                    <button onclick="selectSearchGenre('18')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-purple-500/25 to-purple-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-masks-theater text-2xl"></i>Drama</button>
+                    <button onclick="selectSearchGenre('878')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-blue-500/25 to-blue-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-user-astronaut text-2xl"></i>Sci-Fi</button>
+                    <button onclick="selectSearchGenre('27')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-rose-600/25 to-rose-600/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-ghost text-2xl"></i>Horror</button>
+                    <button onclick="selectSearchGenre('16')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-pink-500/25 to-pink-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-palette text-2xl"></i>Animation</button>
+                    <button onclick="selectSearchGenre('10749')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-fuchsia-500/25 to-fuchsia-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-heart text-2xl"></i>Romance</button>
+                    <button onclick="selectSearchGenre('53')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-slate-500/25 to-slate-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-magnifying-glass text-2xl"></i>Thriller</button>
+                    <button onclick="selectSearchGenre('99')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-teal-500/25 to-teal-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-video text-2xl"></i>Documentary</button>
+                    <button onclick="selectSearchGenre('14')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-violet-500/25 to-violet-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-dragon text-2xl"></i>Fantasy</button>
+                    <button onclick="selectSearchGenre('9648')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-cyan-500/25 to-cyan-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-question text-2xl"></i>Mystery</button>
+                    <button onclick="selectSearchGenre('10751')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-emerald-500/25 to-emerald-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-users text-2xl"></i>Family</button>
+                </div>
             </div>
 
             <!-- Search Filters Bar -->
@@ -651,6 +653,11 @@
             switchTab('home');
             changeGenreFilter(genreId, null);
         }
+        function selectSearchGenre(genreId) {
+            document.getElementById('search-genre').value = genreId;
+            document.getElementById('search-input').value = '';
+            handleSearch();
+        }
         document.addEventListener('click', (e) => {
             const dropdown = document.getElementById('genre-mega-dropdown');
             const btn = document.getElementById('dnav-genres-btn');
@@ -678,7 +685,7 @@
             if (!items.length) { section.innerHTML = ''; return; }
             section.innerHTML = `
                 <h2 class="text-base font-bold text-white tracking-wide flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-indigo-400"></span> Top 10 Today
+                    <span class="w-2 h-2 rounded-full bg-indigo-400"></span> Trending Now
                 </h2>
                 <div class="flex gap-6 overflow-x-auto no-scrollbar pb-2 pt-1">
                     ${items.map((item, idx) => {
@@ -686,11 +693,11 @@
                         const title = item.title || item.name || 'Untitled';
                         const poster = item.poster_path ? `${IMG_URL}${item.poster_path}` : 'https://via.placeholder.com/300x450?text=No+Image';
                         return `
-                            <div onclick="openDetails('${type}', ${item.id})" class="relative flex-none flex items-end cursor-pointer group">
-                                <span class="text-[90px] font-black leading-none select-none text-transparent" style="-webkit-text-stroke: 2px rgba(255,255,255,0.25);">${idx + 1}</span>
-                                <div class="w-28 aspect-[2/3] rounded-xl overflow-hidden border border-white/10 shadow-xl -ml-7 group-hover:border-white/30 transition">
+                            <div onclick="openDetails('${type}', ${item.id})" class="relative flex-none flex items-end cursor-pointer group pl-8">
+                                <div class="relative z-0 w-28 aspect-[2/3] rounded-xl overflow-hidden border border-white/10 shadow-xl group-hover:border-white/30 transition">
                                     <img src="${poster}" alt="${title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
                                 </div>
+                                <span class="absolute left-0 bottom-0 z-10 text-[90px] font-black leading-none select-none text-transparent pointer-events-none" style="-webkit-text-stroke: 3px rgba(255,255,255,0.9);">${idx + 1}</span>
                             </div>
                         `;
                     }).join('')}
