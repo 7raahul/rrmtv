@@ -208,7 +208,7 @@
 
             <!-- HERO SPOTLIGHT -->
             <div class="relative group/hero">
-                <div id="hero-container" class="relative rounded-3xl overflow-hidden glass-card border border-indigo-500/20 shadow-2xl aspect-[16/9] lg:aspect-[16/6] lg:max-h-[380px] w-full flex items-end cursor-pointer group transition duration-500">
+                <div id="hero-container" class="relative rounded-3xl overflow-hidden glass-card border border-indigo-500/20 shadow-2xl aspect-[16/9] lg:aspect-[21/8] lg:max-h-[440px] w-full flex items-end cursor-pointer group transition duration-500">
                     <div class="p-12 text-center w-full text-indigo-300/60 my-auto">
                         <i class="fa-solid fa-circle-notch fa-spin text-2xl text-indigo-400 mb-2"></i>
                         <p class="text-xs">Loading Spotlight...</p>
@@ -465,23 +465,6 @@
                 <button onclick="closeDateModal()" class="w-1/2 py-2.5 rounded-xl text-xs font-semibold glass-card text-slate-300 hover:text-white">Cancel</button>
                 <button onclick="confirmDateSelection()" class="w-1/2 py-2.5 rounded-xl text-xs font-bold bg-white hover:bg-stone-200 text-black shadow-lg shadow-indigo-500/20">Save Date</button>
             </div>
-        </div>
-    </div>
-
-    <!-- CUSTOM POSTER EDIT MODAL -->
-    <div id="poster-edit-modal" class="fixed inset-0 z-[70] glass-modal hidden flex items-center justify-center p-4">
-        <div class="glass-card p-5 rounded-3xl max-w-xs w-full space-y-4 border border-indigo-500/30 shadow-2xl">
-            <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
-                <i class="fa-solid fa-image text-indigo-400"></i> Change Poster
-            </h3>
-            <p id="poster-edit-title" class="text-[11px] text-slate-400 truncate"></p>
-            <input type="text" id="poster-edit-input" placeholder="Paste image URL…" class="w-full bg-[#060608] border border-indigo-500/30 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-400">
-            <p class="text-[10px] text-slate-500">Leave blank and save to remove a custom poster.</p>
-            <div class="flex gap-2 pt-1">
-                <button onclick="useDefaultPoster()" class="w-1/2 py-2.5 rounded-xl text-xs font-semibold glass-card text-slate-300 hover:text-white">Use TMDB Default</button>
-                <button onclick="savePosterEdit()" class="w-1/2 py-2.5 rounded-xl text-xs font-bold bg-white hover:bg-stone-200 text-black shadow-lg shadow-indigo-500/20">Save</button>
-            </div>
-            <button onclick="closePosterEditor()" class="w-full text-center text-[11px] text-slate-400 hover:text-white">Cancel</button>
         </div>
     </div>
 
@@ -768,7 +751,7 @@
                     ${items.map((item, idx) => {
                         const type = item.media_type || (item.title ? 'movie' : 'tv');
                         const title = item.title || item.name || 'Untitled';
-                        const poster = getCustomPoster(type, item.id) || (item.poster_path ? `${IMG_URL}${item.poster_path}` : 'https://via.placeholder.com/300x450?text=No+Image');
+                        const poster = item.poster_path ? `${IMG_URL}${item.poster_path}` : 'https://via.placeholder.com/300x450?text=No+Image';
                         return `
                             <div onclick="openDetails('${type}', ${item.id})" class="relative flex-none flex items-end cursor-pointer group pl-8">
                                 <div class="relative z-0 w-28 aspect-[2/3] rounded-xl overflow-hidden border border-white/10 shadow-xl group-hover:border-white/30 transition">
@@ -858,7 +841,16 @@
 
             if (data && data.results && data.results.length > 0) {
                 if (reset) {
-                    heroItems = data.results.slice(0, 5);
+                    const rawHero = data.results.slice(0, 5);
+                    heroItems = await Promise.all(rawHero.map(async raw => {
+                        const hType = raw.media_type || (raw.title ? 'movie' : 'tv');
+                        const certAppend = hType === 'movie' ? 'release_dates' : 'content_ratings';
+                        const [details, logoUrl] = await Promise.all([
+                            fetchTMDB(`/${hType}/${raw.id}`, `&append_to_response=${certAppend}`),
+                            fetchTitleLogo(hType, raw.id)
+                        ]);
+                        return { ...raw, _type: hType, _details: details, _logoUrl: logoUrl };
+                    }));
                     heroIndex = 0;
                     startHeroAutoSlide();
                     renderTop10(data.results.slice(0, 10));
@@ -885,42 +877,102 @@
             heroTimer = setInterval(() => {
                 heroIndex = (heroIndex + 1) % heroItems.length;
                 renderHeroBanner(heroItems[heroIndex]);
-            }, 4000);
+            }, 6000);
         }
 
-        async function renderHeroBanner(item) {
+        function extractCertification(type, details) {
+            if (!details) return null;
+            try {
+                if (type === 'movie' && details.release_dates?.results) {
+                    const entry = details.release_dates.results.find(r => r.iso_3166_1 === 'IN')
+                        || details.release_dates.results.find(r => r.iso_3166_1 === 'US');
+                    const found = entry?.release_dates?.find(rd => rd.certification);
+                    return found?.certification || null;
+                }
+                if (type === 'tv' && details.content_ratings?.results) {
+                    const entry = details.content_ratings.results.find(r => r.iso_3166_1 === 'IN')
+                        || details.content_ratings.results.find(r => r.iso_3166_1 === 'US');
+                    return entry?.rating || null;
+                }
+            } catch (e) { /* no-op */ }
+            return null;
+        }
+
+        function renderHeroBanner(item) {
             const container = document.getElementById('hero-container');
-            const type = item.media_type || (item.title ? 'movie' : 'tv');
+            const type = item._type || item.media_type || (item.title ? 'movie' : 'tv');
             const title = item.title || item.name;
             const backdrop = item.backdrop_path ? `${BACKDROP_URL}${item.backdrop_path}` : `${IMG_URL}${item.poster_path}`;
             const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
+            const logoUrl = item._logoUrl || null;
+            const details = item._details || null;
+
+            const date = item.release_date || item.first_air_date || (details && (details.release_date || details.first_air_date)) || 'N/A';
+            const releaseYear = date !== 'N/A' ? date.split('-')[0] : null;
+            const releaseTime = date !== 'N/A' ? new Date(date).getTime() : 0;
+            const isNew = releaseTime > 0 && releaseTime <= Date.now() && (Date.now() - releaseTime) < (45 * 24 * 60 * 60 * 1000);
+
+            const runtimeMin = details ? (type === 'movie' ? details.runtime : (details.episode_run_time && details.episode_run_time[0])) : null;
+            const runtimeStr = runtimeMin ? `${Math.floor(runtimeMin / 60)}h ${runtimeMin % 60}m` : null;
+            const cert = extractCertification(type, details);
+            const langCount = details?.spoken_languages?.length || null;
+            const genres = (details?.genres || []).slice(0, 4).map(g => g.name);
+            const overview = (details?.overview || item.overview || '').trim();
 
             container.onclick = () => openDetails(type, item.id);
-
-            const logoUrl = await fetchTitleLogo(type, item.id);
 
             container.innerHTML = `
                 <div class="absolute inset-0 bg-[#060608]">
                     <img src="${backdrop}" class="w-full h-full object-cover object-top transition-all duration-700">
-                    <div class="absolute inset-0 bg-gradient-to-t from-[#060608] via-[#060608]/30 to-transparent"></div>
-                    <div class="absolute inset-0 bg-gradient-to-r from-[#060608]/80 via-transparent to-transparent"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#060608] via-[#060608]/20 to-transparent"></div>
+                    <div class="absolute inset-0 bg-gradient-to-r from-[#060608] via-[#060608]/55 lg:via-[#060608]/60 to-transparent lg:to-[#060608]/5"></div>
                 </div>
 
                 <span class="absolute top-3 left-3 lg:top-4 lg:left-4 z-20 bg-black/70 text-amber-400 border border-white/15 text-[11px] lg:text-xs font-bold px-2.5 py-1 lg:px-3 lg:py-1 rounded-lg flex items-center gap-1 w-max backdrop-blur-md">
                     <i class="fa-solid fa-star text-[9px] lg:text-[10px]"></i> ${rating}
                 </span>
 
-                <div class="relative z-10 p-4 lg:p-5 w-full flex flex-col gap-1.5 lg:gap-2">
+                <!-- MOBILE: compact bottom overlay -->
+                <div class="lg:hidden relative z-10 p-4 w-full flex flex-col gap-1.5">
                     ${logoUrl ? `
-                        <img src="${logoUrl}" alt="${title}" class="max-h-9 lg:max-h-11 max-w-[220px] lg:max-w-[300px] object-contain drop-shadow-2xl">
+                        <img src="${logoUrl}" alt="${title}" class="max-h-9 max-w-[220px] object-contain drop-shadow-2xl">
                     ` : `
-                        <h1 class="text-base lg:text-xl font-black text-white leading-tight drop-shadow-md truncate max-w-[85%]">${title}</h1>
+                        <h1 class="text-base font-black text-white leading-tight drop-shadow-md truncate max-w-[85%]">${title}</h1>
                     `}
-
                     <div class="flex gap-1.5 pt-0.5">
                         ${heroItems.map((_, idx) => `
                             <span class="w-1.5 h-1.5 rounded-full transition-all duration-300 ${idx === heroIndex ? 'bg-white w-4' : 'bg-white/30'}"></span>
                         `).join('')}
+                    </div>
+                </div>
+
+                <!-- DESKTOP: rich Netflix-style content block -->
+                <div class="hidden lg:flex absolute inset-0 z-10 items-center">
+                    <div class="pl-8 xl:pl-12 pr-8 max-w-[50%] xl:max-w-[44%] space-y-2.5">
+                        ${logoUrl ? `
+                            <img src="${logoUrl}" alt="${title}" class="max-h-16 xl:max-h-20 max-w-full object-contain drop-shadow-2xl">
+                        ` : `
+                            <h1 class="text-3xl xl:text-4xl font-black text-white leading-tight drop-shadow-2xl">${title}</h1>
+                        `}
+
+                        ${isNew ? `<p class="text-sm font-bold text-blue-400">Newly Added</p>` : ''}
+
+                        <div class="flex items-center gap-2 text-xs xl:text-sm font-bold text-white/90 flex-wrap">
+                            ${releaseYear ? `<span>${releaseYear}</span>` : ''}
+                            ${cert ? `<span class="text-white/50">•</span><span class="border border-white/40 px-1.5 py-0.5 rounded text-[10px] xl:text-xs">${cert}</span>` : ''}
+                            ${runtimeStr ? `<span class="text-white/50">•</span><span>${runtimeStr}</span>` : ''}
+                            ${langCount ? `<span class="text-white/50">•</span><span>${langCount} Language${langCount > 1 ? 's' : ''}</span>` : ''}
+                        </div>
+
+                        ${overview ? `<p class="text-xs xl:text-sm text-slate-200 leading-relaxed line-clamp-3">${overview}</p>` : ''}
+
+                        ${genres.length ? `<p class="text-xs xl:text-sm font-bold text-white/90">${genres.join(' | ')}</p>` : ''}
+
+                        <div class="flex gap-1.5 pt-1.5">
+                            ${heroItems.map((_, idx) => `
+                                <span class="w-1.5 h-1.5 rounded-full transition-all duration-300 ${idx === heroIndex ? 'bg-white w-4' : 'bg-white/30'}"></span>
+                            `).join('')}
+                        </div>
                     </div>
                 </div>
             `;
@@ -1040,47 +1092,6 @@
             return JSON.parse(localStorage.getItem(`cinedb_${key}`)) || [];
         }
 
-        // ---- Custom poster override (use your own image instead of TMDB's) ----
-        function getCustomPosterMap() {
-            try { return JSON.parse(localStorage.getItem('cinedb_custom_posters')) || {}; } catch (e) { return {}; }
-        }
-        function getCustomPoster(type, id) {
-            return getCustomPosterMap()[`${type}_${id}`] || null;
-        }
-        function setCustomPoster(type, id, url) {
-            const map = getCustomPosterMap();
-            if (url) map[`${type}_${id}`] = url; else delete map[`${type}_${id}`];
-            localStorage.setItem('cinedb_custom_posters', JSON.stringify(map));
-        }
-        let posterEditTarget = null; // { type, id }
-        function openPosterEditor(type, id, title) {
-            posterEditTarget = { type, id };
-            document.getElementById('poster-edit-title').textContent = title;
-            document.getElementById('poster-edit-input').value = getCustomPoster(type, id) || '';
-            document.getElementById('poster-edit-modal').classList.remove('hidden');
-        }
-        function closePosterEditor() {
-            document.getElementById('poster-edit-modal').classList.add('hidden');
-            posterEditTarget = null;
-        }
-        function savePosterEdit() {
-            if (!posterEditTarget) return;
-            const url = document.getElementById('poster-edit-input').value.trim();
-            setCustomPoster(posterEditTarget.type, posterEditTarget.id, url);
-            closePosterEditor();
-            showToast(url ? '✓ Custom poster saved' : '✓ Reverted to TMDB poster');
-            if (currentTab === 'home') loadHomeTitles(true);
-            else if (currentTab === 'search') handleSearch();
-        }
-        function useDefaultPoster() {
-            if (!posterEditTarget) return;
-            setCustomPoster(posterEditTarget.type, posterEditTarget.id, null);
-            closePosterEditor();
-            showToast('✓ Reverted to TMDB poster');
-            if (currentTab === 'home') loadHomeTitles(true);
-            else if (currentTab === 'search') handleSearch();
-        }
-
         function toggleQuickBookmark(item) {
             let list = getListData('schedule');
             const index = list.findIndex(i => i.id === item.id);
@@ -1185,22 +1196,17 @@
                 const year = date !== 'N/A' ? date.split('-')[0] : 'N/A';
                 const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
                 const type = item.media_type || (item.title ? 'movie' : 'tv');
-                const customPoster = getCustomPoster(type, item.id);
-                const poster = customPoster || (item.poster_path ? `${IMG_URL}${item.poster_path}` : 'https://via.placeholder.com/500x750?text=No+Poster');
+                const poster = item.poster_path ? `${IMG_URL}${item.poster_path}` : 'https://via.placeholder.com/500x750?text=No+Poster';
                 const isBookmarked = schedList.some(s => s.id === item.id);
                 const releaseTime = date !== 'N/A' ? new Date(date).getTime() : 0;
                 const isNew = releaseTime > 0 && releaseTime <= Date.now() && (Date.now() - releaseTime) < (45 * 24 * 60 * 60 * 1000);
 
                 const itemPayload = JSON.stringify({ id: item.id, title, poster_path: item.poster_path, vote_average: item.vote_average, release_date: date, media_type: type }).replace(/"/g, '&quot;');
-                const safeTitle = title.replace(/'/g, "\\'");
 
                 return `
                     <div onclick="openDetails('${type}', ${item.id})" class="card-solid rounded-2xl overflow-hidden transition duration-300 cursor-pointer flex flex-col group relative">
                         <button onclick="event.stopPropagation(); toggleQuickBookmark(${itemPayload})" class="absolute top-2 left-2 z-20 w-7 h-7 rounded-xl card-solid flex items-center justify-center text-slate-200 hover:text-amber-400 border border-indigo-500/30 active:scale-95 transition shadow-lg">
                             <i class="${isBookmarked ? 'fa-solid text-amber-400' : 'fa-regular'} fa-bookmark text-xs"></i>
-                        </button>
-                        <button onclick="event.stopPropagation(); openPosterEditor('${type}', ${item.id}, '${safeTitle}')" title="Use your own poster" class="absolute bottom-2 right-2 z-20 w-7 h-7 rounded-xl card-solid flex items-center justify-center text-slate-200 hover:text-indigo-300 border border-indigo-500/30 active:scale-95 transition shadow-lg opacity-0 group-hover:opacity-100 lg:opacity-0">
-                            <i class="fa-solid fa-image text-[10px]"></i>
                         </button>
 
                         <div class="relative aspect-[2/3] bg-[#060608] overflow-hidden">
