@@ -67,6 +67,43 @@
             background-size: 200% 100%;
             animation: shimmer 1.5s infinite;
         }
+
+        /* Modern slim scrollbar — replaces the default OS scrollbar site-wide.
+           .no-scrollbar rows (providers, cast, genre chips) stay fully hidden as before. */
+        html {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.16);
+            border-radius: 999px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.32);
+            background-clip: padding-box;
+        }
+
+        /* Desktop card lift on hover — subtle, GPU-cheap (no blur), pairs with
+           the existing group-hover image zoom. */
+        .card-solid {
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+        @media (min-width: 900px) {
+            .card-solid:hover {
+                transform: translateY(-4px);
+                border-color: rgba(255, 255, 255, 0.25);
+                box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.06);
+            }
+        }
     </style>
 </head>
 <body class="bg-[#060608] text-slate-100 font-sans antialiased min-h-screen pb-24 lg:pb-8 select-none bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-indigo-950/40 via-[#060608] to-[#060608]">
@@ -168,7 +205,7 @@
 
             <!-- HERO SPOTLIGHT -->
             <div class="relative group/hero">
-                <div id="hero-container" class="relative rounded-3xl overflow-hidden glass-card border border-indigo-500/20 shadow-2xl aspect-[16/9] lg:aspect-[21/9] lg:max-h-[480px] w-full flex items-end cursor-pointer group transition duration-500">
+                <div id="hero-container" class="relative rounded-3xl overflow-hidden glass-card border border-indigo-500/20 shadow-2xl aspect-[16/9] lg:aspect-[21/7.5] lg:max-h-[320px] w-full flex items-end cursor-pointer group transition duration-500">
                     <div class="p-12 text-center w-full text-indigo-300/60 my-auto">
                         <i class="fa-solid fa-circle-notch fa-spin text-2xl text-indigo-400 mb-2"></i>
                         <p class="text-xs">Loading Spotlight...</p>
@@ -822,20 +859,20 @@
                     <div class="absolute inset-0 bg-gradient-to-r from-[#060608]/80 via-transparent to-transparent"></div>
                 </div>
 
-                <span class="absolute top-3 left-3 lg:top-5 lg:left-5 z-20 bg-black/70 text-amber-400 border border-white/15 text-[11px] lg:text-sm font-bold px-2.5 py-1 lg:px-3.5 lg:py-1.5 rounded-lg flex items-center gap-1 w-max backdrop-blur-md">
-                    <i class="fa-solid fa-star text-[9px] lg:text-xs"></i> ${rating}
+                <span class="absolute top-3 left-3 lg:top-4 lg:left-4 z-20 bg-black/70 text-amber-400 border border-white/15 text-[11px] lg:text-xs font-bold px-2.5 py-1 lg:px-3 lg:py-1 rounded-lg flex items-center gap-1 w-max backdrop-blur-md">
+                    <i class="fa-solid fa-star text-[9px] lg:text-[10px]"></i> ${rating}
                 </span>
 
-                <div class="relative z-10 p-4 lg:p-8 w-full flex flex-col gap-2 lg:gap-3">
+                <div class="relative z-10 p-4 lg:p-5 w-full flex flex-col gap-1.5 lg:gap-2">
                     ${logoUrl ? `
-                        <img src="${logoUrl}" alt="${title}" class="max-h-10 lg:max-h-16 max-w-[220px] lg:max-w-[380px] object-contain drop-shadow-2xl">
+                        <img src="${logoUrl}" alt="${title}" class="max-h-9 lg:max-h-11 max-w-[220px] lg:max-w-[300px] object-contain drop-shadow-2xl">
                     ` : `
-                        <h1 class="text-lg lg:text-3xl font-black text-white leading-tight drop-shadow-md truncate max-w-[85%]">${title}</h1>
+                        <h1 class="text-base lg:text-xl font-black text-white leading-tight drop-shadow-md truncate max-w-[85%]">${title}</h1>
                     `}
 
-                    <div class="flex gap-1.5 lg:gap-2 pt-1">
+                    <div class="flex gap-1.5 pt-0.5">
                         ${heroItems.map((_, idx) => `
-                            <span class="w-1.5 h-1.5 lg:w-2 lg:h-2 rounded-full transition-all duration-300 ${idx === heroIndex ? 'bg-white w-4 lg:w-6' : 'bg-white/30'}"></span>
+                            <span class="w-1.5 h-1.5 rounded-full transition-all duration-300 ${idx === heroIndex ? 'bg-white w-4' : 'bg-white/30'}"></span>
                         `).join('')}
                     </div>
                 </div>
@@ -1137,53 +1174,33 @@
 
             content.innerHTML = `
                 <div class="lg:flex lg:gap-10 lg:items-start">
-                    <!-- Left column: backdrop, poster, title, stats, actions (sticky on desktop) -->
+                    <!-- Left column: backdrop (title/rating overlaid on it), stats, actions (sticky on desktop) -->
                     <div class="lg:w-[38%] lg:flex-shrink-0 lg:sticky lg:top-24">
-                        <div class="relative aspect-video w-full bg-[#060608] lg:rounded-3xl lg:overflow-hidden">
+                        <div class="relative aspect-video lg:aspect-[4/3] w-full bg-[#060608] lg:rounded-3xl lg:overflow-hidden overflow-hidden">
                             <img src="${backdrop}" class="w-full h-full object-cover">
-                            <div class="absolute inset-0 bg-gradient-to-t from-[#060608] via-[#060608]/50 to-transparent lg:hidden"></div>
-                        </div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#060608] via-[#060608]/55 to-transparent"></div>
+                            <div class="absolute inset-0 bg-gradient-to-r from-[#060608]/50 via-transparent to-transparent hidden lg:block"></div>
 
-                        <div class="px-5 lg:px-0 -mt-20 lg:mt-5 relative z-10 space-y-5">
-                            <div class="flex items-end lg:items-start gap-4">
-                                <img src="${IMG_URL}${data.poster_path}" class="w-28 h-40 lg:w-36 lg:h-52 rounded-2xl border border-white/20 shadow-2xl object-cover flex-shrink-0">
-                                <div class="space-y-2 min-w-0 flex-grow lg:hidden">
-                                    <span class="text-[10px] font-bold text-slate-200 uppercase tracking-widest bg-white/10 border border-white/15 px-2 py-0.5 rounded-md inline-block">${type === 'movie' ? 'Movie' : 'TV Show'}</span>
-
-                                    ${logoUrl ? `
-                                        <img src="${logoUrl}" alt="${title}" class="max-h-12 max-w-full object-contain my-1">
-                                    ` : `
-                                        <h1 class="text-xl font-bold text-white leading-tight">${title}</h1>
-                                    `}
-
-                                    <div class="flex items-center gap-3 text-xs text-slate-300">
-                                        <span class="text-amber-400 font-bold flex items-center gap-1 bg-amber-400/10 px-2 py-0.5 rounded-md border border-amber-400/20">
-                                            <i class="fa-solid fa-star text-[10px]"></i> ${rating}
-                                        </span>
-                                        <span>•</span>
-                                        <span>${releaseDate}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="hidden lg:block space-y-2">
-                                <span class="text-[10px] font-bold text-slate-200 uppercase tracking-widest bg-white/10 border border-white/15 px-2 py-0.5 rounded-md inline-block">${type === 'movie' ? 'Movie' : 'TV Show'}</span>
+                            <div class="absolute bottom-0 left-0 right-0 p-4 lg:p-6 z-10 space-y-2">
+                                <span class="text-[10px] font-bold text-slate-200 uppercase tracking-widest bg-white/10 border border-white/15 px-2 py-0.5 rounded-md inline-block backdrop-blur-sm">${type === 'movie' ? 'Movie' : 'TV Show'}</span>
 
                                 ${logoUrl ? `
-                                    <img src="${logoUrl}" alt="${title}" class="max-h-14 max-w-full object-contain my-1">
+                                    <img src="${logoUrl}" alt="${title}" class="max-h-9 lg:max-h-12 max-w-[80%] object-contain drop-shadow-2xl my-1">
                                 ` : `
-                                    <h1 class="text-2xl font-bold text-white leading-tight">${title}</h1>
+                                    <h1 class="text-lg lg:text-2xl font-bold text-white leading-tight drop-shadow-lg">${title}</h1>
                                 `}
 
-                                <div class="flex items-center gap-3 text-sm text-slate-300">
-                                    <span class="text-amber-400 font-bold flex items-center gap-1 bg-amber-400/10 px-2 py-0.5 rounded-md border border-amber-400/20">
-                                        <i class="fa-solid fa-star text-xs"></i> ${rating}
+                                <div class="flex items-center gap-3 text-xs lg:text-sm text-slate-300">
+                                    <span class="text-amber-400 font-bold flex items-center gap-1 bg-amber-400/10 px-2 py-0.5 rounded-md border border-amber-400/20 backdrop-blur-sm">
+                                        <i class="fa-solid fa-star text-[10px]"></i> ${rating}
                                     </span>
                                     <span>•</span>
                                     <span>${releaseDate}</span>
                                 </div>
                             </div>
+                        </div>
 
+                        <div class="px-5 lg:px-0 mt-5 relative z-10 space-y-5">
                             <div class="grid grid-cols-2 gap-3 text-center">
                                 <div class="card-solid rounded-xl py-2.5">
                                     <p class="text-[9px] text-slate-400 uppercase tracking-wider mb-0.5">Release</p>
