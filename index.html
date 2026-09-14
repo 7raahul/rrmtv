@@ -124,29 +124,11 @@
         <!-- Desktop inline nav (hidden on mobile, floating pill nav below is used instead) -->
         <nav class="hidden lg:flex items-center gap-1">
             <button onclick="switchTab('home')" id="dnav-home" class="dnav-btn px-4 py-2 rounded-xl text-sm font-bold bg-white text-black transition">Home</button>
-            <button onclick="switchTab('search')" id="dnav-search" class="dnav-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition">Search</button>
+            <button onclick="switchTab('search')" id="dnav-search" title="Search" class="dnav-btn w-10 h-10 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition flex items-center justify-center">
+                <i class="fa-solid fa-magnifying-glass text-sm"></i>
+            </button>
             <button onclick="switchTab('random')" id="dnav-random" class="dnav-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition">Random</button>
             <button onclick="switchTab('schedule')" id="dnav-schedule" class="dnav-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition">My List</button>
-
-            <div class="relative">
-                <button onclick="toggleGenreMega(event)" id="dnav-genres-btn" class="dnav-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition flex items-center gap-1.5">
-                    Genres <i class="fa-solid fa-chevron-down text-[9px]"></i>
-                </button>
-                <div id="genre-mega-dropdown" class="hidden absolute top-full left-0 mt-2 w-64 card-solid border border-white/15 rounded-2xl p-3 shadow-2xl grid grid-cols-2 gap-1 z-50">
-                    <button onclick="selectMegaGenre('28')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Action</button>
-                    <button onclick="selectMegaGenre('35')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Comedy</button>
-                    <button onclick="selectMegaGenre('18')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Drama</button>
-                    <button onclick="selectMegaGenre('878')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Sci-Fi</button>
-                    <button onclick="selectMegaGenre('27')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Horror</button>
-                    <button onclick="selectMegaGenre('16')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Animation</button>
-                    <button onclick="selectMegaGenre('10749')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Romance</button>
-                    <button onclick="selectMegaGenre('53')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Thriller</button>
-                    <button onclick="selectMegaGenre('99')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Documentary</button>
-                    <button onclick="selectMegaGenre('14')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Fantasy</button>
-                    <button onclick="selectMegaGenre('9648')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Mystery</button>
-                    <button onclick="selectMegaGenre('10751')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Family</button>
-                </div>
-            </div>
         </nav>
 
         <div class="flex items-center gap-2">
@@ -190,6 +172,27 @@
                         <option value="IT" class="bg-[#0D0D10] text-white">🇮🇹 Italy</option>
                     </select>
                 </div>
+
+                <!-- GENRES (moved here from top-nav) -->
+                <div class="relative flex-shrink-0">
+                    <button onclick="toggleGenreMega(event)" id="home-genres-btn" class="flex items-center gap-2 glass-card rounded-2xl px-3 py-1.5 lg:px-4 lg:py-2.5 border border-indigo-400/30 text-indigo-200 text-xs lg:text-sm font-semibold whitespace-nowrap hover:bg-indigo-500/10 transition">
+                        <i class="fa-solid fa-tags text-indigo-400 text-xs"></i> Genres <i class="fa-solid fa-chevron-down text-[9px]"></i>
+                    </button>
+                    <div id="genre-mega-dropdown" class="hidden absolute top-full left-0 mt-2 w-64 card-solid border border-white/15 rounded-2xl p-3 shadow-2xl grid grid-cols-2 gap-1 z-50">
+                        <button onclick="selectMegaGenre('28')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Action</button>
+                        <button onclick="selectMegaGenre('35')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Comedy</button>
+                        <button onclick="selectMegaGenre('18')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Drama</button>
+                        <button onclick="selectMegaGenre('878')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Sci-Fi</button>
+                        <button onclick="selectMegaGenre('27')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Horror</button>
+                        <button onclick="selectMegaGenre('16')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Animation</button>
+                        <button onclick="selectMegaGenre('10749')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Romance</button>
+                        <button onclick="selectMegaGenre('53')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Thriller</button>
+                        <button onclick="selectMegaGenre('99')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Documentary</button>
+                        <button onclick="selectMegaGenre('14')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Fantasy</button>
+                        <button onclick="selectMegaGenre('9648')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Mystery</button>
+                        <button onclick="selectMegaGenre('10751')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Family</button>
+                    </div>
+                </div>
             </div>
 
             <!-- Genre Quick Filters (mobile only — desktop uses the top-nav Genres dropdown) -->
@@ -205,7 +208,7 @@
 
             <!-- HERO SPOTLIGHT -->
             <div class="relative group/hero">
-                <div id="hero-container" class="relative rounded-3xl overflow-hidden glass-card border border-indigo-500/20 shadow-2xl aspect-[16/9] lg:aspect-[21/7.5] lg:max-h-[320px] w-full flex items-end cursor-pointer group transition duration-500">
+                <div id="hero-container" class="relative rounded-3xl overflow-hidden glass-card border border-indigo-500/20 shadow-2xl aspect-[16/9] lg:aspect-[16/6] lg:max-h-[380px] w-full flex items-end cursor-pointer group transition duration-500">
                     <div class="p-12 text-center w-full text-indigo-300/60 my-auto">
                         <i class="fa-solid fa-circle-notch fa-spin text-2xl text-indigo-400 mb-2"></i>
                         <p class="text-xs">Loading Spotlight...</p>
@@ -465,6 +468,23 @@
         </div>
     </div>
 
+    <!-- CUSTOM POSTER EDIT MODAL -->
+    <div id="poster-edit-modal" class="fixed inset-0 z-[70] glass-modal hidden flex items-center justify-center p-4">
+        <div class="glass-card p-5 rounded-3xl max-w-xs w-full space-y-4 border border-indigo-500/30 shadow-2xl">
+            <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+                <i class="fa-solid fa-image text-indigo-400"></i> Change Poster
+            </h3>
+            <p id="poster-edit-title" class="text-[11px] text-slate-400 truncate"></p>
+            <input type="text" id="poster-edit-input" placeholder="Paste image URL…" class="w-full bg-[#060608] border border-indigo-500/30 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-400">
+            <p class="text-[10px] text-slate-500">Leave blank and save to remove a custom poster.</p>
+            <div class="flex gap-2 pt-1">
+                <button onclick="useDefaultPoster()" class="w-1/2 py-2.5 rounded-xl text-xs font-semibold glass-card text-slate-300 hover:text-white">Use TMDB Default</button>
+                <button onclick="savePosterEdit()" class="w-1/2 py-2.5 rounded-xl text-xs font-bold bg-white hover:bg-stone-200 text-black shadow-lg shadow-indigo-500/20">Save</button>
+            </div>
+            <button onclick="closePosterEditor()" class="w-full text-center text-[11px] text-slate-400 hover:text-white">Cancel</button>
+        </div>
+    </div>
+
     <!-- Bottom Navigation Bar (floating pill) -->
     <nav class="fixed bottom-4 left-4 right-4 z-[60] lg:hidden bg-black/75 backdrop-blur-2xl px-2 py-2 rounded-full flex justify-around items-center border border-white/10 shadow-2xl shadow-black/60">
         <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-row items-center gap-2 px-4 py-2.5 rounded-full bg-white text-black font-bold transition-all duration-300 shadow-lg">
@@ -661,6 +681,26 @@
             return null;
         }
 
+        // India + TV Shows should surface OTT web series, not daily-soap TV serials.
+        // TMDB has no "web series only" flag, so we resolve the actual Indian OTT
+        // platform IDs from /watch/providers/tv (name-matched, not hardcoded) and
+        // filter discover/tv to only those with_watch_providers.
+        let indianOttProviderIdsCache = null;
+        const INDIAN_OTT_NAME_PATTERNS = ['netflix', 'prime video', 'amazon', 'hotstar', 'jiocinema', 'jio cinema', 'sonyliv', 'sony liv', 'zee5', 'mx player', 'voot', 'aha', 'hoichoi', 'lionsgate play', 'apple tv', 'mubi', 'erosnow', 'eros now'];
+        async function getIndianOttProviderIds() {
+            if (indianOttProviderIdsCache) return indianOttProviderIdsCache;
+            const data = await fetchTMDB('/watch/providers/tv', '&watch_region=IN');
+            if (data && data.results && data.results.length) {
+                const ids = data.results
+                    .filter(p => INDIAN_OTT_NAME_PATTERNS.some(pat => p.provider_name.toLowerCase().includes(pat)))
+                    .map(p => p.provider_id);
+                indianOttProviderIdsCache = ids.length ? ids : [8, 119, 232];
+            } else {
+                indianOttProviderIdsCache = [8, 119, 232]; // fallback: Netflix, Prime Video, ZEE5
+            }
+            return indianOttProviderIdsCache;
+        }
+
         function changeCategoryFilter(category, btnEl) {
             document.querySelectorAll('.cat-btn').forEach(b => {
                 b.className = "cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10";
@@ -697,8 +737,8 @@
         }
         document.addEventListener('click', (e) => {
             const dropdown = document.getElementById('genre-mega-dropdown');
-            const btn = document.getElementById('dnav-genres-btn');
-            if (dropdown && !dropdown.classList.contains('hidden') && !dropdown.contains(e.target) && e.target !== btn) {
+            const btn = document.getElementById('home-genres-btn');
+            if (dropdown && !dropdown.classList.contains('hidden') && !dropdown.contains(e.target) && btn && !btn.contains(e.target)) {
                 closeGenreMega();
             }
         });
@@ -728,7 +768,7 @@
                     ${items.map((item, idx) => {
                         const type = item.media_type || (item.title ? 'movie' : 'tv');
                         const title = item.title || item.name || 'Untitled';
-                        const poster = item.poster_path ? `${IMG_URL}${item.poster_path}` : 'https://via.placeholder.com/300x450?text=No+Image';
+                        const poster = getCustomPoster(type, item.id) || (item.poster_path ? `${IMG_URL}${item.poster_path}` : 'https://via.placeholder.com/300x450?text=No+Image');
                         return `
                             <div onclick="openDetails('${type}', ${item.id})" class="relative flex-none flex items-end cursor-pointer group pl-8">
                                 <div class="relative z-0 w-28 aspect-[2/3] rounded-xl overflow-hidden border border-white/10 shadow-xl group-hover:border-white/30 transition">
@@ -792,7 +832,14 @@
             let endpoint = '/trending/all/day';
             let params = `&page=${currentPage}`;
 
-            if (currentCountry !== 'ALL') {
+            if (currentCountry === 'IN' && currentCategory === 'tv') {
+                // Web-series-only: filter by actual Indian OTT platforms instead of
+                // origin_country (which also returns broadcast TV daily soaps).
+                endpoint = '/discover/tv';
+                const ottIds = await getIndianOttProviderIds();
+                params += `&watch_region=IN&with_watch_providers=${ottIds.join('|')}&sort_by=popularity.desc`;
+                if (currentGenre) params += `&with_genres=${currentGenre}`;
+            } else if (currentCountry !== 'ALL') {
                 endpoint = currentCategory === 'tv' ? '/discover/tv' : '/discover/movie';
                 params += `&with_origin_country=${currentCountry}&sort_by=popularity.desc`;
                 if (currentGenre) params += `&with_genres=${currentGenre}`;
@@ -854,7 +901,7 @@
 
             container.innerHTML = `
                 <div class="absolute inset-0 bg-[#060608]">
-                    <img src="${backdrop}" class="w-full h-full object-cover object-center transition-all duration-700">
+                    <img src="${backdrop}" class="w-full h-full object-cover object-top transition-all duration-700">
                     <div class="absolute inset-0 bg-gradient-to-t from-[#060608] via-[#060608]/30 to-transparent"></div>
                     <div class="absolute inset-0 bg-gradient-to-r from-[#060608]/80 via-transparent to-transparent"></div>
                 </div>
@@ -993,6 +1040,47 @@
             return JSON.parse(localStorage.getItem(`cinedb_${key}`)) || [];
         }
 
+        // ---- Custom poster override (use your own image instead of TMDB's) ----
+        function getCustomPosterMap() {
+            try { return JSON.parse(localStorage.getItem('cinedb_custom_posters')) || {}; } catch (e) { return {}; }
+        }
+        function getCustomPoster(type, id) {
+            return getCustomPosterMap()[`${type}_${id}`] || null;
+        }
+        function setCustomPoster(type, id, url) {
+            const map = getCustomPosterMap();
+            if (url) map[`${type}_${id}`] = url; else delete map[`${type}_${id}`];
+            localStorage.setItem('cinedb_custom_posters', JSON.stringify(map));
+        }
+        let posterEditTarget = null; // { type, id }
+        function openPosterEditor(type, id, title) {
+            posterEditTarget = { type, id };
+            document.getElementById('poster-edit-title').textContent = title;
+            document.getElementById('poster-edit-input').value = getCustomPoster(type, id) || '';
+            document.getElementById('poster-edit-modal').classList.remove('hidden');
+        }
+        function closePosterEditor() {
+            document.getElementById('poster-edit-modal').classList.add('hidden');
+            posterEditTarget = null;
+        }
+        function savePosterEdit() {
+            if (!posterEditTarget) return;
+            const url = document.getElementById('poster-edit-input').value.trim();
+            setCustomPoster(posterEditTarget.type, posterEditTarget.id, url);
+            closePosterEditor();
+            showToast(url ? '✓ Custom poster saved' : '✓ Reverted to TMDB poster');
+            if (currentTab === 'home') loadHomeTitles(true);
+            else if (currentTab === 'search') handleSearch();
+        }
+        function useDefaultPoster() {
+            if (!posterEditTarget) return;
+            setCustomPoster(posterEditTarget.type, posterEditTarget.id, null);
+            closePosterEditor();
+            showToast('✓ Reverted to TMDB poster');
+            if (currentTab === 'home') loadHomeTitles(true);
+            else if (currentTab === 'search') handleSearch();
+        }
+
         function toggleQuickBookmark(item) {
             let list = getListData('schedule');
             const index = list.findIndex(i => i.id === item.id);
@@ -1096,18 +1184,23 @@
                 const date = item.release_date || item.first_air_date || 'N/A';
                 const year = date !== 'N/A' ? date.split('-')[0] : 'N/A';
                 const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
-                const poster = item.poster_path ? `${IMG_URL}${item.poster_path}` : 'https://via.placeholder.com/500x750?text=No+Poster';
                 const type = item.media_type || (item.title ? 'movie' : 'tv');
+                const customPoster = getCustomPoster(type, item.id);
+                const poster = customPoster || (item.poster_path ? `${IMG_URL}${item.poster_path}` : 'https://via.placeholder.com/500x750?text=No+Poster');
                 const isBookmarked = schedList.some(s => s.id === item.id);
                 const releaseTime = date !== 'N/A' ? new Date(date).getTime() : 0;
                 const isNew = releaseTime > 0 && releaseTime <= Date.now() && (Date.now() - releaseTime) < (45 * 24 * 60 * 60 * 1000);
 
                 const itemPayload = JSON.stringify({ id: item.id, title, poster_path: item.poster_path, vote_average: item.vote_average, release_date: date, media_type: type }).replace(/"/g, '&quot;');
+                const safeTitle = title.replace(/'/g, "\\'");
 
                 return `
                     <div onclick="openDetails('${type}', ${item.id})" class="card-solid rounded-2xl overflow-hidden transition duration-300 cursor-pointer flex flex-col group relative">
                         <button onclick="event.stopPropagation(); toggleQuickBookmark(${itemPayload})" class="absolute top-2 left-2 z-20 w-7 h-7 rounded-xl card-solid flex items-center justify-center text-slate-200 hover:text-amber-400 border border-indigo-500/30 active:scale-95 transition shadow-lg">
                             <i class="${isBookmarked ? 'fa-solid text-amber-400' : 'fa-regular'} fa-bookmark text-xs"></i>
+                        </button>
+                        <button onclick="event.stopPropagation(); openPosterEditor('${type}', ${item.id}, '${safeTitle}')" title="Use your own poster" class="absolute bottom-2 right-2 z-20 w-7 h-7 rounded-xl card-solid flex items-center justify-center text-slate-200 hover:text-indigo-300 border border-indigo-500/30 active:scale-95 transition shadow-lg opacity-0 group-hover:opacity-100 lg:opacity-0">
+                            <i class="fa-solid fa-image text-[10px]"></i>
                         </button>
 
                         <div class="relative aspect-[2/3] bg-[#060608] overflow-hidden">
