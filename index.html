@@ -123,7 +123,54 @@
 
         <!-- Desktop inline nav (hidden on mobile, floating pill nav below is used instead) -->
         <nav class="hidden lg:flex items-center gap-1">
-            <button onclick="switchTab('home')" id="dnav-home" class="dnav-btn px-4 py-2 rounded-xl text-sm font-bold bg-white text-black transition">Home</button>
+            <button onclick="goHomeDesktop()" id="dnav-home" class="dnav-btn px-4 py-2 rounded-xl text-sm font-bold bg-white text-black transition">Home</button>
+            <button onclick="changeCategoryFilter('movie', this)" data-cat="movie" class="dnav-cat-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition">Movies</button>
+            <button onclick="changeCategoryFilter('tv', this)" data-cat="tv" class="dnav-cat-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition">TV Shows</button>
+
+            <span class="w-px h-5 bg-white/15 mx-1"></span>
+
+            <div class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition">
+                <i class="fa-solid fa-earth-americas text-xs"></i>
+                <select id="country-select-desktop" onchange="changeCountryFilter(this.value)" class="bg-transparent text-sm font-semibold focus:outline-none cursor-pointer">
+                    <option value="ALL" class="bg-[#0D0D10] text-white">All Countries</option>
+                    <option value="IN" class="bg-[#0D0D10] text-white">🇮🇳 India</option>
+                    <option value="US" class="bg-[#0D0D10] text-white">🇺🇸 United States</option>
+                    <option value="KR" class="bg-[#0D0D10] text-white">🇰🇷 South Korea</option>
+                    <option value="JP" class="bg-[#0D0D10] text-white">🇯🇵 Japan</option>
+                    <option value="GB" class="bg-[#0D0D10] text-white">🇬🇧 United Kingdom</option>
+                    <option value="ES" class="bg-[#0D0D10] text-white">🇪🇸 Spain</option>
+                    <option value="FR" class="bg-[#0D0D10] text-white">🇫🇷 France</option>
+                    <option value="DE" class="bg-[#0D0D10] text-white">🇩🇪 Germany</option>
+                    <option value="TR" class="bg-[#0D0D10] text-white">🇹🇷 Turkey</option>
+                    <option value="CN" class="bg-[#0D0D10] text-white">🇨🇳 China</option>
+                    <option value="CA" class="bg-[#0D0D10] text-white">🇨🇦 Canada</option>
+                    <option value="BR" class="bg-[#0D0D10] text-white">🇧🇷 Brazil</option>
+                    <option value="IT" class="bg-[#0D0D10] text-white">🇮🇹 Italy</option>
+                </select>
+            </div>
+
+            <div class="relative">
+                <button onclick="toggleGenreMegaDesktop(event)" id="dnav-genres-btn" class="dnav-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition flex items-center gap-1.5">
+                    Genres <i class="fa-solid fa-chevron-down text-[9px]"></i>
+                </button>
+                <div id="genre-mega-dropdown-desktop" class="hidden absolute top-full left-0 mt-2 w-64 card-solid border border-white/15 rounded-2xl p-3 shadow-2xl grid grid-cols-2 gap-1 z-50">
+                    <button onclick="selectMegaGenre('28')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Action</button>
+                    <button onclick="selectMegaGenre('35')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Comedy</button>
+                    <button onclick="selectMegaGenre('18')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Drama</button>
+                    <button onclick="selectMegaGenre('878')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Sci-Fi</button>
+                    <button onclick="selectMegaGenre('27')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Horror</button>
+                    <button onclick="selectMegaGenre('16')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Animation</button>
+                    <button onclick="selectMegaGenre('10749')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Romance</button>
+                    <button onclick="selectMegaGenre('53')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Thriller</button>
+                    <button onclick="selectMegaGenre('99')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Documentary</button>
+                    <button onclick="selectMegaGenre('14')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Fantasy</button>
+                    <button onclick="selectMegaGenre('9648')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Mystery</button>
+                    <button onclick="selectMegaGenre('10751')" class="text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-300 hover:bg-white/10 hover:text-white transition">Family</button>
+                </div>
+            </div>
+
+            <span class="w-px h-5 bg-white/15 mx-1"></span>
+
             <button onclick="switchTab('search')" id="dnav-search" title="Search" class="dnav-btn w-10 h-10 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition flex items-center justify-center">
                 <i class="fa-solid fa-magnifying-glass text-sm"></i>
             </button>
@@ -131,9 +178,21 @@
             <button onclick="switchTab('schedule')" id="dnav-schedule" class="dnav-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition">My List</button>
         </nav>
 
-        <div class="flex items-center gap-2">
-            <button onclick="openAuthModal('signin')" class="px-3 py-1.5 rounded-xl text-xs lg:text-sm font-semibold text-slate-300 hover:text-white transition">Sign In</button>
-            <button onclick="openAuthModal('signup')" class="px-3.5 py-1.5 lg:px-5 lg:py-2 rounded-xl text-xs lg:text-sm font-bold bg-white text-black shadow-lg shadow-indigo-500/25 border border-indigo-400/30 hover:opacity-95 transition">Sign Up</button>
+        <!-- Mobile: unchanged Sign In / Sign Up -->
+        <div class="flex lg:hidden items-center gap-2">
+            <button onclick="openAuthModal('signin')" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white transition">Sign In</button>
+            <button onclick="openAuthModal('signup')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white text-black shadow-lg shadow-indigo-500/25 border border-indigo-400/30 hover:opacity-95 transition">Sign Up</button>
+        </div>
+
+        <!-- Desktop: merged Account dropdown (replaces separate Sign In / Sign Up) -->
+        <div class="hidden lg:block relative">
+            <button onclick="toggleAccountMenu(event)" id="account-menu-btn" class="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold bg-white text-black shadow-lg shadow-indigo-500/25 border border-indigo-400/30 hover:opacity-95 transition">
+                <i class="fa-solid fa-circle-user"></i> Account <i class="fa-solid fa-chevron-down text-[9px]"></i>
+            </button>
+            <div id="account-menu-dropdown" class="hidden absolute top-full right-0 mt-2 w-44 card-solid border border-white/15 rounded-2xl p-2 shadow-2xl z-50">
+                <button onclick="closeAccountMenu(); openAuthModal('signin')" class="w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold text-slate-200 hover:bg-white/10 hover:text-white transition flex items-center gap-2"><i class="fa-solid fa-right-to-bracket text-[11px]"></i> Sign In</button>
+                <button onclick="closeAccountMenu(); openAuthModal('signup')" class="w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold text-slate-200 hover:bg-white/10 hover:text-white transition flex items-center gap-2"><i class="fa-solid fa-user-plus text-[11px]"></i> Sign Up</button>
+            </div>
         </div>
       </div>
     </header>
@@ -144,12 +203,12 @@
         <!-- HOME TAB -->
         <section id="tab-home" class="space-y-4">
             
-            <!-- Category & Country Bar -->
-            <div class="flex items-center gap-2 lg:gap-3 overflow-x-auto no-scrollbar py-0.5">
-                <div class="flex items-center gap-2 lg:gap-1.5 lg:bg-white/5 lg:border lg:border-white/10 lg:rounded-2xl lg:p-1.5">
-                    <button onclick="changeCategoryFilter('all', this)" class="cat-btn active px-4 py-2 lg:px-5 lg:py-2.5 rounded-2xl text-xs lg:text-sm font-bold bg-white text-black shadow-lg shadow-indigo-500/25 whitespace-nowrap border border-indigo-400/30 lg:border-0"><i class="hidden lg:inline-block fa-solid fa-layer-group mr-2 text-[11px]"></i>All</button>
-                    <button onclick="changeCategoryFilter('movie', this)" class="cat-btn px-4 py-2 lg:px-5 lg:py-2.5 rounded-2xl text-xs lg:text-sm font-semibold glass-card lg:bg-transparent lg:border-0 lg:shadow-none text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10"><i class="hidden lg:inline-block fa-solid fa-film mr-2 text-[11px]"></i>Movies</button>
-                    <button onclick="changeCategoryFilter('tv', this)" class="cat-btn px-4 py-2 lg:px-5 lg:py-2.5 rounded-2xl text-xs lg:text-sm font-semibold glass-card lg:bg-transparent lg:border-0 lg:shadow-none text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10"><i class="hidden lg:inline-block fa-solid fa-tv mr-2 text-[11px]"></i>TV Shows</button>
+            <!-- Category & Country Bar (MOBILE ONLY — desktop uses the top-nav controls) -->
+            <div class="lg:hidden flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
+                <div class="flex items-center gap-2">
+                    <button onclick="changeCategoryFilter('all', this)" data-cat="all" class="cat-btn active px-4 py-2 rounded-2xl text-xs font-bold bg-white text-black shadow-lg shadow-indigo-500/25 whitespace-nowrap border border-indigo-400/30">All</button>
+                    <button onclick="changeCategoryFilter('movie', this)" data-cat="movie" class="cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10">Movies</button>
+                    <button onclick="changeCategoryFilter('tv', this)" data-cat="tv" class="cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10">TV Shows</button>
                 </div>
 
                 <!-- MODERN COUNTRY SELECTOR DROPDOWN -->
@@ -197,7 +256,7 @@
 
             <!-- Genre Quick Filters (mobile only — desktop uses the top-nav Genres dropdown) -->
             <div class="lg:hidden flex gap-2 overflow-x-auto no-scrollbar pb-1">
-                <button onclick="changeGenreFilter('', this)" class="genre-btn active text-[11px] font-medium px-3.5 py-1 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 whitespace-nowrap">All Genres</button>
+                <button onclick="changeGenreFilter('', this)" id="genre-all-btn" class="genre-btn active text-[11px] font-medium px-3.5 py-1 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 whitespace-nowrap">All Genres</button>
                 <button onclick="changeGenreFilter('28', this)" class="genre-btn text-[11px] font-medium px-3.5 py-1 rounded-xl glass-card text-slate-300 whitespace-nowrap">Action</button>
                 <button onclick="changeGenreFilter('35', this)" class="genre-btn text-[11px] font-medium px-3.5 py-1 rounded-xl glass-card text-slate-300 whitespace-nowrap">Comedy</button>
                 <button onclick="changeGenreFilter('18', this)" class="genre-btn text-[11px] font-medium px-3.5 py-1 rounded-xl glass-card text-slate-300 whitespace-nowrap">Drama</button>
@@ -688,15 +747,59 @@
             document.querySelectorAll('.cat-btn').forEach(b => {
                 b.className = "cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10";
             });
-            if (btnEl) btnEl.className = "cat-btn active px-4 py-2 rounded-2xl text-xs font-bold bg-white text-black shadow-lg shadow-indigo-500/25 whitespace-nowrap border border-indigo-400/30";
+            document.querySelectorAll('.dnav-cat-btn').forEach(b => {
+                b.className = "dnav-cat-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition";
+            });
+            document.querySelectorAll(`[data-cat="${category}"]`).forEach(b => {
+                if (b.classList.contains('dnav-cat-btn')) {
+                    b.className = "dnav-cat-btn px-4 py-2 rounded-xl text-sm font-bold bg-white text-black transition";
+                } else {
+                    b.className = "cat-btn active px-4 py-2 rounded-2xl text-xs font-bold bg-white text-black shadow-lg shadow-indigo-500/25 whitespace-nowrap border border-indigo-400/30";
+                }
+            });
 
             currentCategory = category;
             updateSectionTitle();
             loadHomeTitles(true);
         }
 
+        function goHomeDesktop() {
+            currentCategory = 'all';
+            currentCountry = 'ALL';
+            currentGenre = '';
+
+            document.querySelectorAll('.cat-btn').forEach(b => {
+                b.className = "cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10";
+            });
+            document.querySelectorAll('.dnav-cat-btn').forEach(b => {
+                b.className = "dnav-cat-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition";
+            });
+            document.querySelectorAll('[data-cat="all"]').forEach(b => {
+                b.className = "cat-btn active px-4 py-2 rounded-2xl text-xs font-bold bg-white text-black shadow-lg shadow-indigo-500/25 whitespace-nowrap border border-indigo-400/30";
+            });
+
+            const mobileSel = document.getElementById('country-select');
+            const desktopSel = document.getElementById('country-select-desktop');
+            if (mobileSel) mobileSel.value = 'ALL';
+            if (desktopSel) desktopSel.value = 'ALL';
+
+            document.querySelectorAll('.genre-btn').forEach(b => {
+                b.className = "genre-btn text-[11px] font-medium px-3.5 py-1 rounded-xl glass-card text-slate-300 whitespace-nowrap";
+            });
+            const allGenreBtn = document.getElementById('genre-all-btn');
+            if (allGenreBtn) allGenreBtn.className = "genre-btn active text-[11px] font-medium px-3.5 py-1 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 whitespace-nowrap";
+
+            switchTab('home');
+            updateSectionTitle();
+            loadHomeTitles(true);
+        }
+
         function changeCountryFilter(countryCode) {
             currentCountry = countryCode;
+            const mobileSel = document.getElementById('country-select');
+            const desktopSel = document.getElementById('country-select-desktop');
+            if (mobileSel) mobileSel.value = countryCode;
+            if (desktopSel) desktopSel.value = countryCode;
             updateSectionTitle();
             loadHomeTitles(true);
         }
@@ -708,10 +811,25 @@
         function closeGenreMega() {
             document.getElementById('genre-mega-dropdown')?.classList.add('hidden');
         }
+        function toggleGenreMegaDesktop(e) {
+            e.stopPropagation();
+            document.getElementById('genre-mega-dropdown-desktop').classList.toggle('hidden');
+        }
+        function closeGenreMegaDesktop() {
+            document.getElementById('genre-mega-dropdown-desktop')?.classList.add('hidden');
+        }
         function selectMegaGenre(genreId) {
             closeGenreMega();
+            closeGenreMegaDesktop();
             switchTab('home');
             changeGenreFilter(genreId, null);
+        }
+        function toggleAccountMenu(e) {
+            e.stopPropagation();
+            document.getElementById('account-menu-dropdown').classList.toggle('hidden');
+        }
+        function closeAccountMenu() {
+            document.getElementById('account-menu-dropdown')?.classList.add('hidden');
         }
         function selectSearchGenre(genreId) {
             document.getElementById('search-genre').value = genreId;
@@ -723,6 +841,16 @@
             const btn = document.getElementById('home-genres-btn');
             if (dropdown && !dropdown.classList.contains('hidden') && !dropdown.contains(e.target) && btn && !btn.contains(e.target)) {
                 closeGenreMega();
+            }
+            const dropdownD = document.getElementById('genre-mega-dropdown-desktop');
+            const btnD = document.getElementById('dnav-genres-btn');
+            if (dropdownD && !dropdownD.classList.contains('hidden') && !dropdownD.contains(e.target) && btnD && !btnD.contains(e.target)) {
+                closeGenreMegaDesktop();
+            }
+            const accountDropdown = document.getElementById('account-menu-dropdown');
+            const accountBtn = document.getElementById('account-menu-btn');
+            if (accountDropdown && !accountDropdown.classList.contains('hidden') && !accountDropdown.contains(e.target) && accountBtn && !accountBtn.contains(e.target)) {
+                closeAccountMenu();
             }
         });
 
@@ -922,10 +1050,11 @@
             container.onclick = () => openDetails(type, item.id);
 
             container.innerHTML = `
-                <div class="absolute inset-0 bg-[#060608]">
+                <!-- MOBILE: full backdrop + bottom overlay (unchanged) -->
+                <div class="lg:hidden absolute inset-0 bg-[#060608]">
                     <img src="${backdrop}" class="w-full h-full object-cover object-top transition-all duration-700">
                     <div class="absolute inset-0 bg-gradient-to-t from-[#060608] via-[#060608]/20 to-transparent"></div>
-                    <div class="absolute inset-0 bg-gradient-to-r from-[#060608] via-[#060608]/55 lg:via-[#060608]/60 to-transparent lg:to-[#060608]/5"></div>
+                    <div class="absolute inset-0 bg-gradient-to-r from-[#060608] via-[#060608]/55 to-transparent"></div>
                 </div>
 
                 <span class="absolute top-3 left-3 lg:top-4 lg:left-4 z-20 bg-black/70 text-amber-400 border border-white/15 text-[11px] lg:text-xs font-bold px-2.5 py-1 lg:px-3 lg:py-1 rounded-lg flex items-center gap-1 w-max backdrop-blur-md">
@@ -946,33 +1075,49 @@
                     </div>
                 </div>
 
-                <!-- DESKTOP: rich Netflix-style content block -->
-                <div class="hidden lg:flex absolute inset-0 z-10 items-center">
-                    <div class="pl-8 xl:pl-12 pr-8 max-w-[50%] xl:max-w-[44%] space-y-2.5">
-                        ${logoUrl ? `
-                            <img src="${logoUrl}" alt="${title}" class="max-h-16 xl:max-h-20 max-w-full object-contain drop-shadow-2xl">
-                        ` : `
-                            <h1 class="text-3xl xl:text-4xl font-black text-white leading-tight drop-shadow-2xl">${title}</h1>
-                        `}
+                <!-- DESKTOP: true 50/50 split — left solid info panel, right image half -->
+                <div class="hidden lg:flex absolute inset-0">
+                    <div class="w-1/2 h-full bg-[#0a0a0d] relative flex items-center overflow-hidden">
+                        <div class="absolute inset-y-0 -right-20 w-20 bg-gradient-to-r from-[#0a0a0d] to-transparent pointer-events-none z-10"></div>
+                        <div class="relative z-20 pl-8 xl:pl-12 pr-8 space-y-2.5 w-full">
+                            ${logoUrl ? `
+                                <img src="${logoUrl}" alt="${title}" class="max-h-16 xl:max-h-20 max-w-full object-contain drop-shadow-2xl">
+                            ` : `
+                                <h1 class="text-3xl xl:text-4xl font-black text-white leading-tight drop-shadow-2xl">${title}</h1>
+                            `}
 
-                        ${isNew ? `<p class="text-sm font-bold text-blue-400">Newly Added</p>` : ''}
+                            ${isNew ? `<p class="text-sm font-bold text-blue-400">Newly Added</p>` : ''}
 
-                        <div class="flex items-center gap-2 text-xs xl:text-sm font-bold text-white/90 flex-wrap">
-                            ${releaseYear ? `<span>${releaseYear}</span>` : ''}
-                            ${cert ? `<span class="text-white/50">•</span><span class="border border-white/40 px-1.5 py-0.5 rounded text-[10px] xl:text-xs">${cert}</span>` : ''}
-                            ${runtimeStr ? `<span class="text-white/50">•</span><span>${runtimeStr}</span>` : ''}
-                            ${langCount ? `<span class="text-white/50">•</span><span>${langCount} Language${langCount > 1 ? 's' : ''}</span>` : ''}
+                            <div class="flex items-center gap-2 text-xs xl:text-sm font-bold text-white/90 flex-wrap">
+                                ${releaseYear ? `<span>${releaseYear}</span>` : ''}
+                                ${cert ? `<span class="text-white/50">•</span><span class="border border-white/40 px-1.5 py-0.5 rounded text-[10px] xl:text-xs">${cert}</span>` : ''}
+                                ${runtimeStr ? `<span class="text-white/50">•</span><span>${runtimeStr}</span>` : ''}
+                                ${langCount ? `<span class="text-white/50">•</span><span>${langCount} Language${langCount > 1 ? 's' : ''}</span>` : ''}
+                            </div>
+
+                            ${overview ? `<p class="text-xs xl:text-sm text-slate-200 leading-relaxed line-clamp-3 max-w-md">${overview}</p>` : ''}
+
+                            ${genres.length ? `<p class="text-xs xl:text-sm font-bold text-white/90">${genres.join(' | ')}</p>` : ''}
+
+                            <div class="flex gap-2.5 pt-1">
+                                <button onclick="event.stopPropagation(); openDetails('${type}', ${item.id})" class="px-5 py-2.5 rounded-xl bg-white text-black text-xs xl:text-sm font-bold flex items-center gap-2 hover:bg-stone-200 transition">
+                                    <i class="fa-solid fa-play"></i> Watch Now
+                                </button>
+                                <button onclick="event.stopPropagation(); openDetails('${type}', ${item.id})" class="px-5 py-2.5 rounded-xl card-solid text-white text-xs xl:text-sm font-bold flex items-center gap-2 hover:bg-white/10 transition">
+                                    <i class="fa-solid fa-circle-info"></i> More Info
+                                </button>
+                            </div>
+
+                            <div class="flex gap-1.5 pt-1.5">
+                                ${heroItems.map((_, idx) => `
+                                    <span class="w-1.5 h-1.5 rounded-full transition-all duration-300 ${idx === heroIndex ? 'bg-white w-4' : 'bg-white/30'}"></span>
+                                `).join('')}
+                            </div>
                         </div>
+                    </div>
 
-                        ${overview ? `<p class="text-xs xl:text-sm text-slate-200 leading-relaxed line-clamp-3">${overview}</p>` : ''}
-
-                        ${genres.length ? `<p class="text-xs xl:text-sm font-bold text-white/90">${genres.join(' | ')}</p>` : ''}
-
-                        <div class="flex gap-1.5 pt-1.5">
-                            ${heroItems.map((_, idx) => `
-                                <span class="w-1.5 h-1.5 rounded-full transition-all duration-300 ${idx === heroIndex ? 'bg-white w-4' : 'bg-white/30'}"></span>
-                            `).join('')}
-                        </div>
+                    <div class="w-1/2 h-full relative overflow-hidden">
+                        <img src="${backdrop}" class="w-full h-full object-cover object-center">
                     </div>
                 </div>
             `;
