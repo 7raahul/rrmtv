@@ -1600,3 +1600,176 @@
                                                 <div onclick="openActorModal(${c.id})" class="flex-none w-24 card-solid p-2 rounded-2xl text-center flex flex-col items-center cursor-pointer hover:border-white/30 transition">
                                                     <img src="${photo}" class="w-14 h-14 rounded-full object-cover border border-white/20 mb-2 shadow-md" loading="lazy">
                                                     <p class="text-[11px] font-semibold text-slate-100 truncate w-full">${c.name}</p>
+                                                    <p class="text-[9px] text-slate-400 truncate w-full mt-0.5">${c.character || ''}</p>
+                                                </div>
+                                            `;
+                                        }).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            ${similarResults.length > 0 ? `
+                                <div>
+                                    <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-3">You May Also Like</h3>
+                                    <div id="similar-grid" class="grid grid-cols-3 lg:grid-cols-5 gap-3"></div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            if (hasEpisodesTab) {
+                loadSeasonEpisodes(id, validSeasons[0].season_number, document.querySelector('.season-btn'));
+            }
+            if (similarResults.length > 0) {
+                renderGrid(similarResults, 'similar-grid');
+            }
+        }
+
+        function switchDetailTab(tab) {
+            ['overview', 'episodes', 'more'].forEach(t => {
+                const panel = document.getElementById(`dpanel-${t}`);
+                const btn = document.getElementById(`dtab-${t}`);
+                if (panel) panel.classList.toggle('hidden', t !== tab);
+                if (btn) btn.className = `detail-tab-btn pb-2 text-xs font-bold whitespace-nowrap transition border-b-2 ${t === tab ? 'text-white border-white' : 'text-slate-400 border-transparent'}`;
+            });
+        }
+
+        async function openActorModal(personId) {
+            const modal = document.getElementById('actor-modal');
+            const content = document.getElementById('actor-modal-content');
+            modal.classList.remove('hidden');
+
+            content.innerHTML = `<div class="p-8 text-center text-indigo-300/60"><i class="fa-solid fa-circle-notch fa-spin text-2xl text-indigo-400 mb-2"></i><p class="text-xs">Loading Actor Profile...</p></div>`;
+
+            const data = await fetchTMDB(`/person/${personId}`, '&append_to_response=combined_credits');
+            if (!data) return;
+
+            const photo = data.profile_path ? `${IMG_URL}${data.profile_path}` : 'https://via.placeholder.com/300?text=No+Photo';
+            const topWorks = data.combined_credits?.cast?.slice(0, 6) || [];
+
+            content.innerHTML = `
+                <div class="flex items-center gap-4 mb-4">
+                    <img src="${photo}" class="w-20 h-20 rounded-2xl object-cover border border-indigo-500/30 shadow-lg">
+                    <div>
+                        <h2 class="text-base font-bold text-white">${data.name}</h2>
+                        <p class="text-[11px] text-indigo-400">${data.known_for_department || 'Acting'}</p>
+                        <p class="text-[10px] text-slate-400 mt-1"><i class="fa-solid fa-cake-candles mr-1"></i>${data.birthday || 'N/A'}</p>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <h3 class="text-xs font-bold text-indigo-300 uppercase tracking-wider">Biography</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed max-h-32 overflow-y-auto no-scrollbar">${data.biography || 'No biography available.'}</p>
+                    
+                    <h3 class="text-xs font-bold text-indigo-300 uppercase tracking-wider pt-2">Known For</h3>
+                    <div class="grid grid-cols-3 gap-2">
+                        ${topWorks.map(w => `
+                            <div onclick="closeActorModal(); openDetails('${w.media_type}', ${w.id})" class="card-solid p-1.5 rounded-xl cursor-pointer text-center">
+                                <img src="${w.poster_path ? IMG_URL + w.poster_path : 'https://via.placeholder.com/150'}" class="w-full aspect-[2/3] object-cover rounded-lg mb-1">
+                                <p class="text-[10px] font-semibold text-white truncate">${w.title || w.name}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function closeActorModal() {
+            document.getElementById('actor-modal').classList.add('hidden');
+        }
+
+        async function loadSeasonEpisodes(tvId, seasonNumber, btnEl) {
+            if (btnEl) {
+                document.querySelectorAll('.season-btn').forEach(b => {
+                    b.className = "season-btn bg-slate-800/80 text-slate-300 border border-white/10 px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition";
+                });
+                btnEl.className = "season-btn bg-white text-black border border-white font-bold px-3.5 py-1.5 rounded-xl text-xs whitespace-nowrap transition";
+            }
+
+            const container = document.getElementById('episodes-container');
+            container.innerHTML = `<div class="py-6 text-center text-slate-400 text-xs"><i class="fa-solid fa-circle-notch fa-spin text-lg text-white mb-1"></i><p>Loading episodes...</p></div>`;
+
+            const data = await fetchTMDB(`/tv/${tvId}/season/${seasonNumber}`);
+
+            if (!data || !data.episodes || data.episodes.length === 0) {
+                container.innerHTML = `<p class="text-center text-slate-400 py-4 text-xs">No episodes found.</p>`;
+                return;
+            }
+
+            container.className = "grid grid-cols-1 lg:grid-cols-2 gap-4 pt-2";
+            container.innerHTML = data.episodes.map(ep => {
+                const thumbnail = ep.still_path ? `${IMG_URL}${ep.still_path}` : 'https://via.placeholder.com/400x225?text=No+Thumbnail';
+                const rating = ep.vote_average ? ep.vote_average.toFixed(1) : 'N/A';
+                const airDate = ep.air_date || 'TBA';
+                const runtime = ep.runtime ? `${ep.runtime} min` : null;
+                const overview = ep.overview ? ep.overview : 'No description available.';
+
+                return `
+                    <div class="card-solid rounded-2xl overflow-hidden border border-white/10 flex flex-col transition hover:border-white/30">
+                        <!-- Thumbnail (Left Side) -->
+                        <div class="relative aspect-video bg-[#060608] overflow-hidden flex-shrink-0">
+                            <img src="${thumbnail}" class="w-full h-full object-cover" loading="lazy">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+
+                            <!-- Episode Number Badge (Top-Left) -->
+                            <span class="absolute top-3 left-3 bg-white text-black font-black text-sm px-3 py-1.5 rounded-lg shadow-lg">
+                                ${String(ep.episode_number).padStart(2, '0')}
+                            </span>
+
+                            <!-- Rating Badge (Top-Right) -->
+                            <span class="absolute top-3 right-3 bg-amber-400 text-black font-bold text-[11px] px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-lg">
+                                <i class="fa-solid fa-star text-[9px]"></i> ${rating}
+                            </span>
+                        </div>
+
+                        <!-- Details (Right Side / Below on mobile) -->
+                        <div class="p-4 flex-grow flex flex-col justify-between space-y-2.5">
+                            <!-- Title -->
+                            <h4 class="text-sm font-bold text-white line-clamp-2">${ep.name}</h4>
+
+                            <!-- Meta Info: Date + Runtime -->
+                            <div class="flex items-center gap-3 text-xs text-slate-400">
+                                <span class="flex items-center gap-1">
+                                    <i class="fa-regular fa-calendar text-[10px]"></i> ${airDate}
+                                </span>
+                                ${runtime ? `<span class="text-slate-500">•</span><span class="flex items-center gap-1"><i class="fa-regular fa-clock text-[10px]"></i> ${runtime}</span>` : ''}
+                            </div>
+
+                            <!-- Overview -->
+                            <p class="text-[13px] text-slate-300 leading-relaxed line-clamp-2 flex-grow">${overview}</p>
+
+                            <!-- Action Buttons -->
+                            <div class="flex gap-2 pt-2">
+                                <button onclick="showToast('✓ Marked as watched')" class="flex-1 py-2 rounded-lg bg-white text-black text-xs font-bold hover:bg-slate-100 transition">
+                                    <i class="fa-solid fa-check text-[10px] mr-1.5"></i> Watched
+                                </button>
+                                <button onclick="showToast('+ Added to schedule')" class="flex-1 py-2 rounded-lg border border-white/30 text-white text-xs font-bold hover:bg-white/10 transition">
+                                    <i class="fa-solid fa-calendar-plus text-[10px] mr-1.5"></i> Schedule
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function closeModalManual() {
+            window.history.back();
+        }
+
+        function closeModalDOM() {
+            document.getElementById('details-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            document.title = 'CineDB';
+            window.history.pushState({ modalOpen: false, tab: currentTab }, '', window.location.pathname);
+        }
+
+        function showGridSkeleton(targetId) {
+            document.getElementById(targetId).innerHTML = Array(10).fill(0).map(() => `
+                <div class="skeleton rounded-2xl aspect-[2/3] border border-indigo-500/10"></div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
