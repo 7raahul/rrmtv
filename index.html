@@ -114,7 +114,7 @@
     <!-- Fixed Header -->
     <header class="sticky top-0 z-40 glass-header px-4 lg:px-8 py-3">
       <div class="max-w-7xl mx-auto flex items-center justify-between">
-        <div class="flex items-center gap-2.5 cursor-pointer" onclick="switchTab('home')">
+        <div class="flex items-center gap-2.5 cursor-pointer" onclick="goHomeAndRefresh()">
             <div class="w-9 h-9 rounded-2xl bg-gradient-to-tr from-stone-200 via-white to-stone-300 flex items-center justify-center shadow-lg shadow-white/20 border border-white/30">
                 <i class="fa-solid fa-play text-slate-950 text-xs font-black"></i>
             </div>
@@ -124,15 +124,15 @@
         <!-- Desktop inline nav (hidden on mobile, floating pill nav below is used instead) -->
         <nav class="hidden lg:flex items-center gap-1">
             <button onclick="goHomeDesktop()" id="dnav-home" class="dnav-btn px-4 py-2 rounded-xl text-sm font-bold bg-white text-black transition">Home</button>
-            <button onclick="changeCategoryFilter('movie', this)" data-cat="movie" class="dnav-cat-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition">Movies</button>
-            <button onclick="changeCategoryFilter('tv', this)" data-cat="tv" class="dnav-cat-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition">TV Shows</button>
+            <button onclick="changeCategoryFilter('movie', this)" data-cat="movie" class="dnav-cat-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition flex items-center gap-2"><i class="fa-solid fa-film text-xs"></i> Movies</button>
+            <button onclick="changeCategoryFilter('tv', this)" data-cat="tv" class="dnav-cat-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition flex items-center gap-2"><i class="fa-solid fa-tv text-xs"></i> TV Shows</button>
 
             <span class="w-px h-5 bg-white/15 mx-1"></span>
 
             <div class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition">
                 <i class="fa-solid fa-earth-americas text-xs"></i>
                 <select id="country-select-desktop" onchange="changeCountryFilter(this.value)" class="bg-transparent text-sm font-semibold focus:outline-none cursor-pointer">
-                    <option value="ALL" class="bg-[#0D0D10] text-white">All Countries</option>
+                    <option value="ALL" class="bg-[#0D0D10] text-white">Country</option>
                     <option value="IN" class="bg-[#0D0D10] text-white">🇮🇳 India</option>
                     <option value="US" class="bg-[#0D0D10] text-white">🇺🇸 United States</option>
                     <option value="KR" class="bg-[#0D0D10] text-white">🇰🇷 South Korea</option>
@@ -206,16 +206,16 @@
             <!-- Category & Country Bar (MOBILE ONLY — desktop uses the top-nav controls) -->
             <div class="lg:hidden flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
                 <div class="flex items-center gap-2">
-                    <button onclick="changeCategoryFilter('all', this)" data-cat="all" class="cat-btn active px-4 py-2 rounded-2xl text-xs font-bold bg-white text-black shadow-lg shadow-indigo-500/25 whitespace-nowrap border border-indigo-400/30">All</button>
-                    <button onclick="changeCategoryFilter('movie', this)" data-cat="movie" class="cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10">Movies</button>
-                    <button onclick="changeCategoryFilter('tv', this)" data-cat="tv" class="cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10">TV Shows</button>
+                    <button onclick="changeCategoryFilter('all', this)" data-cat="all" class="cat-btn active px-4 py-2 rounded-2xl text-xs font-bold bg-white text-black shadow-lg shadow-indigo-500/25 whitespace-nowrap border border-indigo-400/30 flex items-center gap-1.5 transition"><i class="fa-solid fa-layer-group text-[10px]"></i> All</button>
+                    <button onclick="changeCategoryFilter('movie', this)" data-cat="movie" class="cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10 hover:text-white flex items-center gap-1.5 transition"><i class="fa-solid fa-film text-[10px]"></i> Movies</button>
+                    <button onclick="changeCategoryFilter('tv', this)" data-cat="tv" class="cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10 hover:text-white flex items-center gap-1.5 transition"><i class="fa-solid fa-tv text-[10px]"></i> TV Shows</button>
                 </div>
 
                 <!-- MODERN COUNTRY SELECTOR DROPDOWN -->
                 <div class="relative flex-shrink-0 flex items-center glass-card rounded-2xl px-3 py-1.5 lg:px-4 lg:py-2.5 border border-indigo-400/30">
                     <i class="fa-solid fa-earth-americas text-indigo-400 text-xs mr-2 pointer-events-none"></i>
                     <select id="country-select" onchange="changeCountryFilter(this.value)" class="bg-transparent text-indigo-200 text-xs lg:text-sm font-semibold focus:outline-none cursor-pointer pr-1">
-                        <option value="ALL" class="bg-[#0D0D10] text-white">All Countries (Global)</option>
+                        <option value="ALL" class="bg-[#0D0D10] text-white">Country</option>
                         <option value="IN" class="bg-[#0D0D10] text-white">🇮🇳 India</option>
                         <option value="US" class="bg-[#0D0D10] text-white">🇺🇸 United States</option>
                         <option value="KR" class="bg-[#0D0D10] text-white">🇰🇷 South Korea</option>
@@ -314,25 +314,6 @@
                     <button onclick="clearRecentSearches()" class="text-xs font-semibold text-slate-400 hover:text-white underline transition">Clear All</button>
                 </div>
                 <div id="recent-searches-row" class="flex gap-2 flex-wrap"></div>
-            </div>
-
-            <!-- SEARCH BY GENRE (Desktop only) -->
-            <div class="hidden lg:block space-y-3">
-                <h2 class="text-base font-bold text-white tracking-wide">Search by Genre</h2>
-                <div class="grid grid-cols-4 xl:grid-cols-6 gap-4">
-                    <button onclick="selectSearchGenre('28')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-red-500/25 to-red-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-explosion text-2xl"></i>Action</button>
-                    <button onclick="selectSearchGenre('35')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-amber-500/25 to-amber-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-face-laugh-beam text-2xl"></i>Comedy</button>
-                    <button onclick="selectSearchGenre('18')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-purple-500/25 to-purple-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-masks-theater text-2xl"></i>Drama</button>
-                    <button onclick="selectSearchGenre('878')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-blue-500/25 to-blue-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-user-astronaut text-2xl"></i>Sci-Fi</button>
-                    <button onclick="selectSearchGenre('27')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-rose-600/25 to-rose-600/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-ghost text-2xl"></i>Horror</button>
-                    <button onclick="selectSearchGenre('16')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-pink-500/25 to-pink-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-palette text-2xl"></i>Animation</button>
-                    <button onclick="selectSearchGenre('10749')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-fuchsia-500/25 to-fuchsia-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-heart text-2xl"></i>Romance</button>
-                    <button onclick="selectSearchGenre('53')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-slate-500/25 to-slate-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-magnifying-glass text-2xl"></i>Thriller</button>
-                    <button onclick="selectSearchGenre('99')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-teal-500/25 to-teal-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-video text-2xl"></i>Documentary</button>
-                    <button onclick="selectSearchGenre('14')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-violet-500/25 to-violet-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-dragon text-2xl"></i>Fantasy</button>
-                    <button onclick="selectSearchGenre('9648')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-cyan-500/25 to-cyan-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-question text-2xl"></i>Mystery</button>
-                    <button onclick="selectSearchGenre('10751')" class="aspect-[3/2] rounded-2xl bg-gradient-to-br from-emerald-500/25 to-emerald-500/5 border border-white/10 hover:border-white/30 flex flex-col items-center justify-center gap-2 text-white font-bold text-sm transition hover:scale-[1.02]"><i class="fa-solid fa-users text-2xl"></i>Family</button>
-                </div>
             </div>
 
             <!-- Search Filters Bar -->
@@ -567,8 +548,10 @@
         let heroItems = [];
         let heroIndex = 0;
         let heroTimer = null;
+        let heroEnrichToken = 0;
         let pendingItem = null;
         let pendingKey = null;
+        let pendingQuickBookmark = false;
 
         document.addEventListener('DOMContentLoaded', () => {
             loadHomeTitles(true);
@@ -660,6 +643,7 @@
 
         function switchTabDOM(tabName) {
             currentTab = tabName;
+            if (tabName !== 'search') document.title = 'CineDB';
 
             const inactiveClass = "nav-btn flex flex-col items-center gap-1 px-3 py-1.5 rounded-full text-stone-400 hover:text-white transition-all duration-300";
             const activeClass = "nav-btn flex flex-row items-center gap-2 px-4 py-2.5 rounded-full bg-white text-black font-bold transition-all duration-300 shadow-lg";
@@ -745,16 +729,16 @@
 
         function changeCategoryFilter(category, btnEl) {
             document.querySelectorAll('.cat-btn').forEach(b => {
-                b.className = "cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10";
+                b.className = "cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10 hover:text-white flex items-center gap-1.5 transition";
             });
             document.querySelectorAll('.dnav-cat-btn').forEach(b => {
-                b.className = "dnav-cat-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition";
+                b.className = "dnav-cat-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition flex items-center gap-2";
             });
             document.querySelectorAll(`[data-cat="${category}"]`).forEach(b => {
                 if (b.classList.contains('dnav-cat-btn')) {
-                    b.className = "dnav-cat-btn px-4 py-2 rounded-xl text-sm font-bold bg-white text-black transition";
+                    b.className = "dnav-cat-btn px-4 py-2 rounded-xl text-sm font-bold bg-white text-black shadow-lg shadow-indigo-500/25 transition flex items-center gap-2";
                 } else {
-                    b.className = "cat-btn active px-4 py-2 rounded-2xl text-xs font-bold bg-white text-black shadow-lg shadow-indigo-500/25 whitespace-nowrap border border-indigo-400/30";
+                    b.className = "cat-btn active px-4 py-2 rounded-2xl text-xs font-bold bg-white text-black shadow-lg shadow-indigo-500/25 whitespace-nowrap border border-indigo-400/30 flex items-center gap-1.5 transition";
                 }
             });
 
@@ -769,13 +753,13 @@
             currentGenre = '';
 
             document.querySelectorAll('.cat-btn').forEach(b => {
-                b.className = "cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10";
+                b.className = "cat-btn px-4 py-2 rounded-2xl text-xs font-semibold glass-card text-indigo-200 whitespace-nowrap hover:bg-indigo-500/10 hover:text-white flex items-center gap-1.5 transition";
             });
             document.querySelectorAll('.dnav-cat-btn').forEach(b => {
-                b.className = "dnav-cat-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition";
+                b.className = "dnav-cat-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition flex items-center gap-2";
             });
             document.querySelectorAll('[data-cat="all"]').forEach(b => {
-                b.className = "cat-btn active px-4 py-2 rounded-2xl text-xs font-bold bg-white text-black shadow-lg shadow-indigo-500/25 whitespace-nowrap border border-indigo-400/30";
+                b.className = "cat-btn active px-4 py-2 rounded-2xl text-xs font-bold bg-white text-black shadow-lg shadow-indigo-500/25 whitespace-nowrap border border-indigo-400/30 flex items-center gap-1.5 transition";
             });
 
             const mobileSel = document.getElementById('country-select');
@@ -792,6 +776,11 @@
             switchTab('home');
             updateSectionTitle();
             loadHomeTitles(true);
+        }
+
+        // Logo click = Home + full refresh (alias, same full-reset behavior)
+        function goHomeAndRefresh() {
+            goHomeDesktop();
         }
 
         function changeCountryFilter(countryCode) {
@@ -969,19 +958,22 @@
 
             if (data && data.results && data.results.length > 0) {
                 if (reset) {
-                    const rawHero = data.results.slice(0, 5);
-                    heroItems = await Promise.all(rawHero.map(async raw => {
-                        const hType = raw.media_type || (raw.title ? 'movie' : 'tv');
-                        const certAppend = hType === 'movie' ? 'release_dates' : 'content_ratings';
-                        const [details, logoUrl] = await Promise.all([
-                            fetchTMDB(`/${hType}/${raw.id}`, `&append_to_response=${certAppend}`),
-                            fetchTitleLogo(hType, raw.id)
-                        ]);
-                        return { ...raw, _type: hType, _details: details, _logoUrl: logoUrl };
-                    }));
+                    // Render grid + basic hero IMMEDIATELY — don't block on extra
+                    // per-item detail fetches (that was causing filter clicks to
+                    // feel broken/unresponsive).
+                    heroItems = data.results.slice(0, 5);
                     heroIndex = 0;
                     startHeroAutoSlide();
                     renderTop10(data.results.slice(0, 10));
+                    renderGrid(data.results, 'home-grid', false);
+                    currentPage++;
+                    if (currentPage > data.total_pages) hasMore = false;
+                    isFetching = false;
+
+                    // Enrich hero items (logo, runtime, cert, genres) in the
+                    // background, then re-render just the hero banner.
+                    enrichHeroItems(heroItems);
+                    return;
                 }
                 renderGrid(data.results, 'home-grid', !reset);
                 currentPage++;
@@ -994,6 +986,23 @@
             }
 
             isFetching = false;
+        }
+
+        async function enrichHeroItems(rawHero) {
+            const enrichToken = ++heroEnrichToken;
+            const enriched = await Promise.all(rawHero.map(async raw => {
+                const hType = raw.media_type || (raw.title ? 'movie' : 'tv');
+                const certAppend = hType === 'movie' ? 'release_dates' : 'content_ratings';
+                const [details, logoUrl] = await Promise.all([
+                    fetchTMDB(`/${hType}/${raw.id}`, `&append_to_response=${certAppend}`),
+                    fetchTitleLogo(hType, raw.id)
+                ]);
+                return { ...raw, _type: hType, _details: details, _logoUrl: logoUrl };
+            }));
+            // If the user switched filters again while this was in flight, drop it.
+            if (enrichToken !== heroEnrichToken) return;
+            heroItems = enriched;
+            renderHeroBanner(heroItems[heroIndex]);
         }
 
         function startHeroAutoSlide() {
@@ -1057,8 +1066,9 @@
                     <div class="absolute inset-0 bg-gradient-to-r from-[#060608] via-[#060608]/55 to-transparent"></div>
                 </div>
 
-                <span class="absolute top-3 left-3 lg:top-4 lg:left-4 z-20 bg-black/70 text-amber-400 border border-white/15 text-[11px] lg:text-xs font-bold px-2.5 py-1 lg:px-3 lg:py-1 rounded-lg flex items-center gap-1 w-max backdrop-blur-md">
-                    <i class="fa-solid fa-star text-[9px] lg:text-[10px]"></i> ${rating}
+                <!-- MOBILE: rating sits over the (full-bleed) image, top-left -->
+                <span class="lg:hidden absolute top-3 left-3 z-20 bg-black/70 text-amber-400 border border-white/15 text-[11px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 w-max backdrop-blur-md">
+                    <i class="fa-solid fa-star text-[9px]"></i> ${rating}
                 </span>
 
                 <!-- MOBILE: compact bottom overlay -->
@@ -1099,15 +1109,6 @@
 
                             ${genres.length ? `<p class="text-xs xl:text-sm font-bold text-white/90">${genres.join(' | ')}</p>` : ''}
 
-                            <div class="flex gap-2.5 pt-1">
-                                <button onclick="event.stopPropagation(); openDetails('${type}', ${item.id})" class="px-5 py-2.5 rounded-xl bg-white text-black text-xs xl:text-sm font-bold flex items-center gap-2 hover:bg-stone-200 transition">
-                                    <i class="fa-solid fa-play"></i> Watch Now
-                                </button>
-                                <button onclick="event.stopPropagation(); openDetails('${type}', ${item.id})" class="px-5 py-2.5 rounded-xl card-solid text-white text-xs xl:text-sm font-bold flex items-center gap-2 hover:bg-white/10 transition">
-                                    <i class="fa-solid fa-circle-info"></i> More Info
-                                </button>
-                            </div>
-
                             <div class="flex gap-1.5 pt-1.5">
                                 ${heroItems.map((_, idx) => `
                                     <span class="w-1.5 h-1.5 rounded-full transition-all duration-300 ${idx === heroIndex ? 'bg-white w-4' : 'bg-white/30'}"></span>
@@ -1118,6 +1119,10 @@
 
                     <div class="w-1/2 h-full relative overflow-hidden">
                         <img src="${backdrop}" class="w-full h-full object-cover object-center">
+                        <!-- DESKTOP: rating sits over the image half, top -->
+                        <span class="absolute top-4 right-4 z-20 bg-black/70 text-amber-400 border border-white/15 text-xs font-bold px-3 py-1 rounded-lg flex items-center gap-1 w-max backdrop-blur-md">
+                            <i class="fa-solid fa-star text-[10px]"></i> ${rating}
+                        </span>
                     </div>
                 </div>
             `;
@@ -1206,7 +1211,14 @@
                 const genre = document.getElementById('search-genre').value;
                 const year = document.getElementById('search-year').value;
 
-                if (query) saveRecentSearch(query);
+                if (query) {
+                    saveRecentSearch(query);
+                    document.title = `Search: ${query} — CineDB`;
+                    window.history.replaceState({ modalOpen: false, tab: 'search' }, '', `${window.location.pathname}?q=${encodeURIComponent(query)}`);
+                } else {
+                    document.title = 'CineDB';
+                    window.history.replaceState({ modalOpen: false, tab: 'search' }, '', window.location.pathname);
+                }
 
                 showGridSkeleton('search-grid');
 
@@ -1245,15 +1257,20 @@
                 list.splice(index, 1);
                 localStorage.setItem('cinedb_schedule', JSON.stringify(list));
                 showToast(`Removed "${item.title || item.name}" from Schedule`);
+                if (currentTab === 'schedule') renderUserLists();
+                if (currentTab === 'home') renderGrid([], 'home-grid', false, true);
             } else {
-                item.userDate = new Date().toISOString().split('T')[0];
-                list.push(item);
-                localStorage.setItem('cinedb_schedule', JSON.stringify(list));
-                showToast(`Scheduled "${item.title || item.name}" for Today!`);
-            }
+                pendingItem = item;
+                pendingKey = 'schedule';
+                pendingQuickBookmark = true;
+                const dateModal = document.getElementById('date-modal');
+                const dateInput = document.getElementById('custom-date-input');
+                const titleEl = document.getElementById('date-modal-title');
 
-            if (currentTab === 'schedule') renderUserLists();
-            if (currentTab === 'home') renderGrid([], 'home-grid', false, true); 
+                titleEl.innerHTML = `<i class="fa-solid fa-calendar-day text-indigo-400"></i> Schedule Plan Date`;
+                dateInput.value = new Date().toISOString().split('T')[0];
+                dateModal.classList.remove('hidden');
+            }
         }
 
         function handleListAction(item, key) {
@@ -1269,6 +1286,7 @@
             } else {
                 pendingItem = item;
                 pendingKey = key;
+                pendingQuickBookmark = false;
                 const dateModal = document.getElementById('date-modal');
                 const dateInput = document.getElementById('custom-date-input');
                 const titleEl = document.getElementById('date-modal-title');
@@ -1286,22 +1304,30 @@
             if (!pendingItem || !pendingKey) return;
             const dateVal = document.getElementById('custom-date-input').value;
             let list = getListData(pendingKey);
-            
+
             pendingItem.userDate = dateVal || new Date().toISOString().split('T')[0];
             list.push(pendingItem);
-            
+
             localStorage.setItem(`cinedb_${pendingKey}`, JSON.stringify(list));
             showToast(`Added to ${pendingKey === 'schedule' ? 'Schedule' : 'Watched List'}!`);
+
+            const wasQuickBookmark = pendingQuickBookmark;
+            const confirmedItem = pendingItem;
             closeDateModal();
-            
+
             if (currentTab === 'schedule') renderUserLists();
-            openDetails(pendingItem.media_type, pendingItem.id);
+            if (wasQuickBookmark) {
+                if (currentTab === 'home') renderGrid([], 'home-grid', false, true);
+            } else {
+                openDetails(confirmedItem.media_type, confirmedItem.id);
+            }
         }
 
         function closeDateModal() {
             document.getElementById('date-modal').classList.add('hidden');
             pendingItem = null;
             pendingKey = null;
+            pendingQuickBookmark = false;
         }
 
         function switchListSubTab(sub) {
@@ -1401,6 +1427,9 @@
             }
 
             const title = data.title || data.name;
+            document.title = `${title} — CineDB`;
+            const titleSlug = title.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            window.history.replaceState({ modalOpen: true, tab: currentTab, type, id }, '', `${window.location.pathname}?type=${type}&id=${id}&title=${encodeURIComponent(titleSlug)}`);
             const backdrop = data.backdrop_path ? `${BACKDROP_URL}${data.backdrop_path}` : `${IMG_URL}${data.poster_path}`;
             const rating = data.vote_average ? data.vote_average.toFixed(1) : 'N/A';
             const releaseDate = data.release_date || data.first_air_date || 'N/A';
@@ -1690,6 +1719,7 @@
         function closeModalDOM() {
             document.getElementById('details-modal').classList.add('hidden');
             document.body.style.overflow = 'auto';
+            document.title = 'CineDB';
             window.history.pushState({ modalOpen: false, tab: currentTab }, '', window.location.pathname);
         }
 
