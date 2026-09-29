@@ -540,11 +540,35 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             populateYearSelect();
-            loadHomeTitles(true);
+            restoreNavigationState();
             setupHistoryState();
             setupInfiniteScroll();
-            checkShareableLink();
+
+            const params = new URLSearchParams(window.location.search);
+            const sharedId = params.get('id');
+            const sharedType = params.get('type');
+
+            if (sharedId && sharedType) {
+                openDetails(sharedType, sharedId);
+            } else if (currentTab === 'search') {
+                switchTabDOM('search');
+            } else {
+                updateSectionTitle();
+                loadHomeTitles(true);
+            }
         });
+
+        // Global image fallback for dynamically-rendered TMDB images.
+        // This catches poster/backdrop/logo/episode/cast image failures too.
+        document.addEventListener('error', (event) => {
+            const img = event.target;
+            if (!(img instanceof HTMLImageElement)) return;
+            if (img.dataset.fallbackApplied === '1') return;
+
+            img.dataset.fallbackApplied = '1';
+            img.style.display = 'none';
+            if (img.parentElement) img.parentElement.classList.add('image-failed');
+        }, true);
 
         function populateYearSelect() {
             const current = new Date().getFullYear();
@@ -577,13 +601,64 @@
             if (sharedId && sharedType) openDetails(sharedType, sharedId);
         }
 
+        function restoreNavigationState() {
+            const params = new URLSearchParams(window.location.search);
+            const hasDetails = !!(params.get('id') && params.get('type'));
+            const hasSearch = params.has('q');
+
+            if (hasDetails) {
+                const savedCategory = sessionStorage.getItem('mtdv_active_category');
+                currentCategory = savedCategory === 'movie' || savedCategory === 'tv' ? savedCategory : 'all';
+                currentTab = sessionStorage.getItem('mtdv_active_tab') || 'home';
+                return;
+            }
+
+            if (hasSearch) {
+                currentTab = 'search';
+                sessionStorage.setItem('mtdv_active_tab', 'search');
+                return;
+            }
+
+            const savedCategory = sessionStorage.getItem('mtdv_active_category');
+            const savedTab = sessionStorage.getItem('mtdv_active_tab');
+
+            if (savedTab === 'search') {
+                currentTab = 'search';
+                return;
+            }
+
+            if (savedCategory === 'movie' || savedCategory === 'tv') {
+                currentCategory = savedCategory;
+                currentTab = 'home';
+                syncMobileBottomNav(savedCategory);
+                return;
+            }
+
+            currentCategory = 'all';
+            currentTab = 'home';
+            sessionStorage.setItem('mtdv_active_category', 'all');
+            sessionStorage.setItem('mtdv_active_tab', 'home');
+        }
+
         function setupHistoryState() {
-            window.history.replaceState({ modalOpen: false, tab: 'home' }, '');
+            const params = new URLSearchParams(window.location.search);
+            const currentState = {
+                modalOpen: !!(params.get('id') && params.get('type')),
+                tab: currentTab,
+                category: currentCategory
+            };
+
+            // Do not overwrite a meaningful URL (search/details) during refresh.
+            window.history.replaceState(currentState, '', window.location.href);
+
             window.addEventListener('popstate', (e) => {
                 const modal = document.getElementById('details-modal');
                 if (!modal.classList.contains('hidden')) {
                     closeModalDOM();
                 } else if (e.state && e.state.tab) {
+                    if (e.state.category === 'movie' || e.state.category === 'tv' || e.state.category === 'all') {
+                        currentCategory = e.state.category;
+                    }
                     switchTabDOM(e.state.tab);
                 }
             });
@@ -602,7 +677,18 @@
             }
 
             if (currentTab === tabName && tabName !== 'home') return;
-            window.history.pushState({ modalOpen: false, tab: tabName }, '');
+
+            sessionStorage.setItem('mtdv_active_tab', tabName);
+            if (tabName !== 'search') {
+                sessionStorage.setItem('mtdv_active_category', currentCategory);
+            }
+
+            window.history.pushState({
+                modalOpen: false,
+                tab: tabName,
+                category: currentCategory
+            }, '', tabName === 'search' ? `${window.location.pathname}?tab=search` : window.location.pathname);
+
             switchTabDOM(tabName);
         }
 
@@ -624,18 +710,44 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        async function fetchTMDB(endpoint, params = '') {
+        async function fetchTMDB(endpoint, params = '', retryCount = 0) {
             const cacheKey = `mtdv_cache_${endpoint}_${params}`;
             const cached = sessionStorage.getItem(cacheKey);
-            if (cached) return JSON.parse(cached);
+
+            if (cached) {
+                try {
+                    return JSON.parse(cached);
+                } catch (_) {
+                    sessionStorage.removeItem(cacheKey);
+                }
+            }
 
             try {
-                const res = await fetch(`${BASE_URL}${endpoint}?api_key=${API_KEY}${params}`);
+                const controller = new AbortController();
+                const timeout = setTimeout(() => controller.abort(), 12000);
+
+                const res = await fetch(
+                    `${BASE_URL}${endpoint}?api_key=${API_KEY}${params}`,
+                    { signal: controller.signal, cache: 'no-store' }
+                );
+                clearTimeout(timeout);
+
+                if (!res.ok) throw new Error(`TMDB HTTP ${res.status}`);
+
                 const data = await res.json();
-                if (data) sessionStorage.setItem(cacheKey, JSON.stringify(data));
+
+                // Never cache an error-shaped/empty API response.
+                if (data && !data.status_code) {
+                    try { sessionStorage.setItem(cacheKey, JSON.stringify(data)); } catch (_) {}
+                }
                 return data;
             } catch (err) {
-                console.error("API Fetch Error:", err);
+                console.error(`API Fetch Error (attempt ${retryCount + 1}):`, endpoint, err);
+
+                if (retryCount < 2) {
+                    await new Promise(resolve => setTimeout(resolve, 450 * (retryCount + 1)));
+                    return fetchTMDB(endpoint, params, retryCount + 1);
+                }
                 return null;
             }
         }
@@ -700,6 +812,10 @@
             currentCategory = category;
             currentSort = 'trending';
             currentGenre = '';
+
+            sessionStorage.setItem('mtdv_active_category', category);
+            sessionStorage.setItem('mtdv_active_tab', 'home');
+
             switchTab('home');
             updateSectionTitle();
             loadHomeTitles(true);
@@ -860,7 +976,7 @@
                     return `
                         <div onclick="openDetails('${type}', ${item.id})" class="card-solid flex-none w-28 lg:w-32 rounded-xl overflow-hidden cursor-pointer group">
                             <div class="relative aspect-[2/3] bg-[#060608] overflow-hidden">
-                                <img src="${poster}" alt="${title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
+                                ${poster ? `<img src="${poster}" alt="${title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy" decoding="async">` : ''}
                                 <span class="absolute top-1.5 right-1.5 bg-[#060608]/90 text-amber-400 font-bold text-[9px] px-1.5 py-0.5 rounded-md flex items-center gap-0.5 border border-indigo-500/20">
                                     <i class="fa-solid fa-star text-[8px]"></i> ${rating}
                                 </span>
@@ -1273,7 +1389,7 @@
                 const date = item.release_date || item.first_air_date || 'N/A';
                 const year = date !== 'N/A' ? date.split('-')[0] : 'N/A';
                 const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
-                const poster = item.poster_path ? `${IMG_URL}${item.poster_path}` : 'https://via.placeholder.com/500x750?text=No+Poster';
+                const poster = item.poster_path ? `${IMG_URL}${item.poster_path}` : '';
                 const releaseTime = date !== 'N/A' ? new Date(date).getTime() : 0;
                 const isNew = releaseTime > 0 && releaseTime <= Date.now() && (Date.now() - releaseTime) < (45 * 24 * 60 * 60 * 1000);
 
@@ -1301,6 +1417,9 @@
         }
 
         async function openDetails(type, id) {
+            sessionStorage.setItem('mtdv_active_tab', currentTab);
+            sessionStorage.setItem('mtdv_active_category', currentCategory);
+
             const newUrl = `${window.location.pathname}?type=${type}&id=${id}`;
             window.history.pushState({ modalOpen: true, tab: currentTab, type, id }, '', newUrl);
 
@@ -1328,7 +1447,9 @@
             document.title = `${title} — MtDv`;
             const titleSlug = title.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
             window.history.replaceState({ modalOpen: true, tab: currentTab, type, id }, '', `${window.location.pathname}?type=${type}&id=${id}&title=${encodeURIComponent(titleSlug)}`);
-            const backdrop = data.backdrop_path ? `${BACKDROP_URL}${data.backdrop_path}` : `${IMG_URL}${data.poster_path}`;
+            const backdrop = data.backdrop_path
+                ? `${BACKDROP_URL}${data.backdrop_path}`
+                : (data.poster_path ? `${IMG_URL}${data.poster_path}` : '');
             // 16:9 backdrop slideshow — landscape TMDB backdrops only, best-rated first, capped at 8
             const backdropList = (data.images?.backdrops || [])
                 .filter(b => b.iso_639_1 === null || b.iso_639_1 === 'en')
@@ -2084,7 +2205,15 @@
             document.body.style.overflow = 'auto';
             document.title = 'MtDv';
             stopDetailBackdropRotation();
-            window.history.pushState({ modalOpen: false, tab: currentTab }, '', window.location.pathname);
+
+            sessionStorage.setItem('mtdv_active_tab', currentTab);
+            sessionStorage.setItem('mtdv_active_category', currentCategory);
+
+            window.history.replaceState(
+                { modalOpen: false, tab: currentTab, category: currentCategory },
+                '',
+                currentTab === 'search' ? `${window.location.pathname}?tab=search` : window.location.pathname
+            );
         }
 
         function showGridSkeleton(targetId) {
