@@ -104,6 +104,17 @@
         }
 
         @media (max-width: 899px) {
+            /* Mobile-only: remove the entire top header (MtDv + hamburger + top row).
+               Desktop header remains unchanged at >= 900px. */
+            .glass-header {
+                display: none !important;
+            }
+
+            /* With the mobile header removed, start the page at the hero itself. */
+            main {
+                padding-top: 0 !important;
+            }
+
             /* Compact screenshot-style floating bottom navigation. */
             .mobile-bottom-nav {
                 display: flex;
