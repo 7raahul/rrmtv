@@ -795,17 +795,36 @@
 
             try {
                 const controller = new AbortController();
-                const timeout = setTimeout(() => controller.abort(), 5500);
+                const timeout = setTimeout(() => controller.abort(), 4500);
 
                 const res = await fetch(
                     `${BASE_URL}${endpoint}?api_key=${API_KEY}${params}`,
-                    { signal: controller.signal, cache: 'no-store' }
+                    {
+                        signal: controller.signal,
+                        cache: 'no-store',
+                        headers: { 'Accept': 'application/json' }
+                    }
                 );
                 clearTimeout(timeout);
 
-                if (!res.ok) throw new Error(`TMDB HTTP ${res.status}`);
+                if (!res.ok) {
+                    const status = res.status;
+                    let message = `TMDB HTTP ${status}`;
+                    try {
+                        const errData = await res.clone().json();
+                        if (errData?.status_message) message = errData.status_message;
+                    } catch (_) {}
+                    window.__mtdvLastApiError = { status, message, endpoint };
+                    // Never retry authentication/permission failures.
+                    if (status === 401 || status === 403) {
+                        console.error('TMDB authentication/permission error:', message);
+                        return null;
+                    }
+                    throw new Error(message);
+                }
 
                 const data = await res.json();
+                window.__mtdvLastApiError = null;
 
                 // Never cache an error-shaped/empty API response.
                 if (data && !data.status_code) {
@@ -815,8 +834,8 @@
             } catch (err) {
                 console.error(`API Fetch Error (attempt ${retryCount + 1}):`, endpoint, err);
 
-                if (retryCount < 1) {
-                    await new Promise(resolve => setTimeout(resolve, 350));
+                if (retryCount < 1 && !window.__mtdvLastApiError?.status?.toString().match(/^40[13]$/)) {
+                    await new Promise(resolve => setTimeout(resolve, 250));
                     return fetchTMDB(endpoint, params, retryCount + 1);
                 }
                 return null;
@@ -1277,7 +1296,22 @@
             } else {
                 hasMore = false;
                 if (reset) {
-                    document.getElementById('home-grid').innerHTML = `<div class="col-span-full text-center text-slate-400 py-12 text-xs">No content found for this selection.</div>`;
+                    const apiError = window.__mtdvLastApiError;
+                    const reason = apiError?.status === 401
+                        ? 'TMDB API key is invalid or not authorized.'
+                        : apiError?.status === 403
+                            ? 'TMDB denied access to this API key.'
+                            : 'TMDB is not responding right now.';
+                    const hero = document.getElementById('hero-container');
+                    if (hero) {
+                        hero.innerHTML = `<div class="p-10 text-center text-slate-400">
+                            <i class="fa-solid fa-triangle-exclamation text-2xl text-amber-400 mb-2"></i>
+                            <p class="text-sm text-white font-semibold">Unable to load Spotlight</p>
+                            <p class="text-[11px] mt-1 text-slate-500">${reason}</p>
+                            <button onclick="loadHomeTitles(true)" class="mt-4 px-4 py-2 rounded-xl bg-white text-black font-bold text-xs">Try Again</button>
+                        </div>`;
+                    }
+                    document.getElementById('home-grid').innerHTML = `<div class="col-span-full text-center text-slate-400 py-12 text-xs">${reason}</div>`;
                 }
             }
 
@@ -1536,28 +1570,61 @@
 
             content.innerHTML = `<div class="p-16 text-center text-slate-400"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-white mb-3"></i><p class="text-xs">Loading details...</p></div>`;
 
-            // Load the main details independently. Optional title-logo fetching must never
-            // block the details page. If the combined request fails, fall back to the basic
-            // details endpoint so the page can still open.
-            let data = await fetchTMDB(
-                `/${type}/${id}`,
-                `&append_to_response=credits,watch/providers,images,videos,${type === 'movie' ? 'release_dates' : 'content_ratings'}&include_image_language=en,hi,null&include_video_language=en,hi,null`
-            );
+            // Keep the first details request small and reliable. Heavy optional data
+            // (images/videos/providers) must never prevent the basic details screen from opening.
+            // This also avoids a long append_to_response chain becoming the single point of failure.
+            let data = await fetchTMDB(`/${type}/${id}`);
 
             if (!data) {
-                data = await fetchTMDB(`/${type}/${id}`);
-            }
-
-            if (!data) {
-                content.innerHTML = `<div class="p-12 text-center text-slate-400 text-xs"><i class="fa-solid fa-triangle-exclamation text-amber-400 text-2xl mb-3"></i><p>Details could not be loaded.</p><button onclick="location.reload()" class="mt-4 px-4 py-2 rounded-xl bg-white/10 border border-white/15 text-white text-xs font-semibold">Retry</button></div>`;
+                const apiError = window.__mtdvLastApiError;
+                const reason = apiError?.status === 401
+                    ? 'TMDB API key is invalid or not authorized.'
+                    : apiError?.status === 403
+                        ? 'TMDB denied access to this API key.'
+                        : 'TMDB did not respond in time.';
+                content.innerHTML = `<div class="p-12 text-center text-slate-400 text-xs">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-400 text-2xl mb-3"></i>
+                    <p class="text-white font-semibold mb-1">Details could not be loaded.</p>
+                    <p class="text-slate-500">${reason}</p>
+                    <button onclick="openDetails('${type}', ${id})" class="mt-4 px-4 py-2 rounded-xl bg-white text-black text-xs font-bold">Try Again</button>
+                </div>`;
                 return;
             }
 
-            // TV series use aggregate credits so cast from different seasons is not lost.
-            if (type === 'tv') {
-                const aggregateCredits = await fetchTMDB(`/tv/${id}/aggregate_credits`);
-                if (aggregateCredits) data.credits = aggregateCredits;
+            // Optional requests start together. They are intentionally not allowed to
+            // block the basic details page longer than the short API timeout.
+            const optionalPromise = Promise.allSettled([
+                fetchTMDB(`/${type}/${id}/credits`),
+                fetchTMDB(`/${type}/${id}/watch/providers`),
+                fetchTMDB(`/${type}/${id}/images`, '&include_image_language=en,hi,null'),
+                fetchTMDB(`/${type}/${id}/videos`, '&include_video_language=en,hi,null'),
+                type === 'movie'
+                    ? fetchTMDB(`/${type}/${id}/release_dates`)
+                    : fetchTMDB(`/${type}/${id}/content_ratings`)
+            ]);
+
+            // TV aggregate credits are also optional and must never block the first render.
+            const aggregatePromise = type === 'tv'
+                ? fetchTMDB(`/tv/${id}/aggregate_credits`)
+                : Promise.resolve(null);
+
+            const optionalResults = await optionalPromise;
+            const [creditsResult, providersResult, imagesResult, videosResult, ratingResult] = optionalResults;
+
+            if (creditsResult.status === 'fulfilled' && creditsResult.value) data.credits = creditsResult.value;
+            if (providersResult.status === 'fulfilled' && providersResult.value) data['watch/providers'] = providersResult.value;
+            if (imagesResult.status === 'fulfilled' && imagesResult.value) data.images = imagesResult.value;
+            if (videosResult.status === 'fulfilled' && videosResult.value) data.videos = videosResult.value;
+            if (ratingResult.status === 'fulfilled' && ratingResult.value) {
+                if (type === 'movie') data.release_dates = ratingResult.value;
+                else data.content_ratings = ratingResult.value;
             }
+
+            const aggregateCredits = await Promise.race([
+                aggregatePromise,
+                new Promise(resolve => setTimeout(() => resolve(null), 1200))
+            ]);
+            if (aggregateCredits) data.credits = aggregateCredits;
 
             // Title logo is optional. Start rendering without it, then fill it in when available.
             let logoUrl = null;
