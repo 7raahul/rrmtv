@@ -14,10 +14,6 @@
                     colors: {
                         indigo: { 50:'#FFFFFF',100:'#F5F5F5',200:'#E5E5E5',300:'#D4D4D4',400:'#B0B0B0',500:'#FFFFFF',600:'#9A9A9A',700:'#7A7A7A',800:'#5C5C5C',900:'#404040',950:'#1A1A1A' }
                     },
-                    // Default Tailwind 'lg' is 1024px — too high. Phones running
-                    // "Request Desktop Site" report ~980px, so the desktop
-                    // layout (top nav, split modal, scaled-up text) never
-                    // triggered there. 900px catches that case reliably.
                     screens: { 'lg': '900px' }
                 }
             }
@@ -47,11 +43,6 @@
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
         }
-        /* No backdrop-filter: used for items repeated inside scrolling
-           grids/lists (poster cards, badges, episode cards). backdrop-blur
-           on dozens of simultaneously-visible elements is the #1 cause of
-           scroll jank on mid-range phones — this keeps the same look
-           without the GPU cost. */
         .card-solid {
             background: rgba(15, 15, 18, 0.92);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -68,8 +59,6 @@
             animation: shimmer 1.5s infinite;
         }
 
-        /* Modern slim scrollbar — replaces the default OS scrollbar site-wide.
-           .no-scrollbar rows (providers, cast, genre chips) stay fully hidden as before. */
         html {
             scrollbar-width: thin;
             scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
@@ -92,30 +81,23 @@
             background-clip: padding-box;
         }
 
-        /* Desktop card lift on hover — subtle, GPU-cheap (no blur), pairs with
-           the existing group-hover image zoom. */
         .card-solid {
             transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease;
         }
 
-        /* Mobile floating navigation — screenshot-style glass pill */
         .mobile-bottom-nav {
             display: none;
         }
 
         @media (max-width: 899px) {
-            /* Mobile-only: remove the entire top header (MtDv + hamburger + top row).
-               Desktop header remains unchanged at >= 900px. */
             .glass-header {
                 display: none !important;
             }
 
-            /* With the mobile header removed, start the page at the hero itself. */
             main {
                 padding-top: 0 !important;
             }
 
-            /* Compact screenshot-style floating bottom navigation. */
             .mobile-bottom-nav {
                 display: flex;
                 position: fixed;
@@ -190,17 +172,14 @@
                 transform: scale(.95);
             }
 
-            /* Replace the mobile top tab row with the floating nav. */
             .mobile-top-tabs {
                 display: none !important;
             }
 
-            /* Keep the last posters clear of the floating navigation. */
             main {
                 padding-bottom: 96px !important;
             }
 
-            /* Mobile-only: make the hero truly edge-to-edge. */
             #tab-home .group\/hero {
                 margin-left: -1rem;
                 margin-right: -1rem;
@@ -213,23 +192,18 @@
                 border-radius: 0;
             }
 
-            /* Mobile-only: remove the catalog controls shown below the hero. */
             #tab-home #catalog-filter-bar {
                 display: none !important;
             }
 
-            /* Mobile-only: remove the extra section title; keep poster/logo titles. */
             #tab-home #section-title-row {
                 display: none !important;
             }
 
-            /* Mobile-only: no genre sections/headings (Action, Comedy, etc.).
-               Keep the main poster grid so only poster/title content remains. */
             #tab-home #genre-rows-section {
                 display: none !important;
             }
 
-            /* Mobile details page: stronger hierarchy and contrast on dark UI. */
             #details-modal .detail-stat-grid {
                 gap: 10px !important;
             }
@@ -300,8 +274,6 @@
                 filter: none;
             }
 
-            /* Mobile-only: details/actor overlays must be solid black.
-               Do not show the page behind them through blur/transparency. */
             .glass-modal {
                 background: #000 !important;
                 backdrop-filter: none !important;
@@ -329,14 +301,13 @@
     <!-- Toast Container -->
     <div id="toast-container" class="fixed top-5 right-5 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
-    <!-- Fixed Header (Lionsgate Play style: brand row + tab row) -->
+    <!-- Fixed Header -->
     <header class="sticky top-0 z-40 glass-header">
       <div class="max-w-7xl mx-auto flex items-center justify-between px-4 lg:px-8 py-3">
         <div class="flex items-center gap-10">
             <div class="flex items-center cursor-pointer" onclick="setTopTab('all')">
                 <span class="text-2xl font-black tracking-wider text-white leading-none">MtDv</span>
             </div>
-            <!-- Desktop-only tabs (mobile keeps the second row below) -->
             <nav class="hidden lg:flex items-center gap-7">
                 <button onclick="setTopTab('all')" id="dttab-all" class="dtoptab-btn px-1 py-2 text-sm font-bold text-white border-b-2 border-amber-400 transition">Home</button>
                 <button onclick="setTopTab('movie')" id="dttab-movie" class="dtoptab-btn px-1 py-2 text-sm font-semibold text-slate-400 border-b-2 border-transparent hover:text-white transition">Movies</button>
@@ -389,7 +360,6 @@
         </div>
       </div>
 
-      <!-- Legacy mobile top tabs hidden in favor of the screenshot-style floating bottom nav. -->
       <div class="lg:hidden mobile-top-tabs max-w-7xl mx-auto flex items-center gap-6 px-4 lg:px-8 border-t border-white/10">
           <button onclick="setTopTab('all')" id="ttab-all" class="toptab-btn px-1 py-3 text-sm font-bold text-white border-b-2 border-amber-400 transition">Home</button>
           <button onclick="setTopTab('movie')" id="ttab-movie" class="toptab-btn px-1 py-3 text-sm font-semibold text-slate-400 border-b-2 border-transparent hover:text-white transition">Movies</button>
@@ -397,7 +367,7 @@
       </div>
     </header>
 
-    <!-- Screenshot-style mobile floating navigation -->
+    <!-- Mobile floating navigation -->
     <nav id="mobile-bottom-nav" class="mobile-bottom-nav" aria-label="Mobile navigation">
         <button type="button" id="mobile-nav-home" class="mobile-nav-btn active" onclick="setTopTab('all')" aria-label="Home">
             <i class="fa-solid fa-house"></i>
@@ -439,10 +409,10 @@
                 </button>
             </div>
 
-            <!-- TOP 10 TODAY (Desktop only) -->
+            <!-- TOP 10 TODAY -->
             <div id="top10-section" class="hidden lg:block space-y-3"></div>
 
-            <!-- CATALOG FILTER BAR (Movies / TV Shows tabs, desktop only) -->
+            <!-- CATALOG FILTER BAR -->
             <div id="catalog-filter-bar" class="hidden lg:flex items-center gap-2.5 flex-wrap">
                 <button data-sort="trending" onclick="setCatalogSort('trending')" class="sort-pill-btn px-4 py-2 rounded-xl text-sm font-bold bg-white text-black transition">Trending</button>
                 <button data-sort="popular" onclick="setCatalogSort('popular')" class="sort-pill-btn px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 bg-white/[0.04] border border-white/10 hover:border-white/30 transition">Popular</button>
@@ -483,7 +453,7 @@
                 </select>
             </div>
 
-            <!-- GENRE ROWS (Movies / TV Shows tabs only) -->
+            <!-- GENRE ROWS -->
             <div id="genre-rows-section" class="hidden space-y-7"></div>
 
             <div id="section-title-row" class="flex justify-between items-center pt-2">
@@ -509,7 +479,7 @@
                 <input type="text" id="search-input" oninput="handleSearch()" placeholder="Search Movies, TV Shows, Cast..." class="w-full glass-card rounded-2xl pl-11 pr-4 py-3.5 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-indigo-400 transition">
             </div>
 
-            <!-- Recent Searches (Desktop only) -->
+            <!-- Recent Searches -->
             <div id="recent-searches-wrap" class="hidden">
                 <div class="flex justify-between items-center mb-2">
                     <span class="text-xs font-semibold text-slate-400">Recent Searches</span>
@@ -561,7 +531,7 @@
         <div id="modal-content" class="max-w-2xl lg:max-w-6xl mx-auto pb-28 lg:pb-16 lg:pt-10"></div>
     </div>
 
-    <!-- Media Lightbox (desktop) -->
+    <!-- Media Lightbox -->
     <div id="media-lightbox" class="fixed inset-0 z-[90] hidden bg-black/95 items-center justify-center" onclick="if (event.target === this) closeLightbox()">
         <button onclick="closeLightbox()" class="absolute top-4 right-4 w-10 h-10 rounded-2xl glass-card flex items-center justify-center text-white border border-white/15">
             <i class="fa-solid fa-xmark"></i>
@@ -629,8 +599,6 @@
             }
         });
 
-        // Global image fallback for dynamically-rendered TMDB images.
-        // This catches poster/backdrop/logo/episode/cast image failures too.
         document.addEventListener('error', (event) => {
             const img = event.target;
             if (!(img instanceof HTMLImageElement)) return;
@@ -719,7 +687,6 @@
                 category: currentCategory
             };
 
-            // Do not overwrite a meaningful URL (search/details) during refresh.
             window.history.replaceState(currentState, '', window.location.href);
 
             window.addEventListener('popstate', (e) => {
@@ -736,8 +703,6 @@
         }
 
         function switchTab(tabName) {
-            // Close any open modals first — otherwise the tab switches
-            // behind the modal and it looks like the nav button did nothing.
             const detailsModal = document.getElementById('details-modal');
             if (detailsModal && !detailsModal.classList.contains('hidden')) {
                 closeModalDOM();
@@ -807,7 +772,6 @@
 
                 const data = await res.json();
 
-                // Never cache an error-shaped/empty API response.
                 if (data && !data.status_code) {
                     try { sessionStorage.setItem(cacheKey, JSON.stringify(data)); } catch (_) {}
                 }
@@ -834,10 +798,6 @@
             return null;
         }
 
-        // India + TV Shows should surface OTT web series, not daily-soap TV serials.
-        // TMDB has no "web series only" flag, so we resolve the actual Indian OTT
-        // platform IDs from /watch/providers/tv (name-matched, not hardcoded) and
-        // filter discover/tv to only those with_watch_providers.
         let indianOttProviderIdsCache = null;
         const INDIAN_OTT_NAME_PATTERNS = ['netflix', 'prime video', 'amazon', 'hotstar', 'jiocinema', 'jio cinema', 'sonyliv', 'sony liv', 'zee5', 'mx player', 'voot', 'aha', 'hoichoi', 'lionsgate play', 'apple tv', 'mubi', 'erosnow', 'eros now'];
         async function getIndianOttProviderIds() {
@@ -849,12 +809,11 @@
                     .map(p => p.provider_id);
                 indianOttProviderIdsCache = ids.length ? ids : [8, 119, 232];
             } else {
-                indianOttProviderIdsCache = [8, 119, 232]; // fallback: Netflix, Prime Video, ZEE5
+                indianOttProviderIdsCache = [8, 119, 232];
             }
             return indianOttProviderIdsCache;
         }
 
-        // Keep desktop tabs, legacy mobile tabs, and the new floating mobile nav in sync.
         function syncMobileBottomNav(active) {
             const ids = ['home', 'movie', 'tv', 'search'];
             ids.forEach(id => {
@@ -863,7 +822,6 @@
             });
         }
 
-        // Home / Movies / TV Shows top tab row
         function setTopTab(category) {
             syncMobileBottomNav(category === 'all' ? 'home' : category);
             document.querySelectorAll('.toptab-btn').forEach(b => {
@@ -873,7 +831,6 @@
             const activeEl = document.getElementById(idMap[category]);
             if (activeEl) activeEl.className = "toptab-btn px-1 py-3 text-sm font-bold text-white border-b-2 border-amber-400 transition";
 
-            // Desktop header tabs
             document.querySelectorAll('.dtoptab-btn').forEach(b => {
                 b.className = "dtoptab-btn px-1 py-2 text-sm font-semibold text-slate-400 border-b-2 border-transparent hover:text-white transition";
             });
@@ -912,8 +869,6 @@
             }
         }
 
-        // Genre id/name lists — movie and tv use different TMDB genre sets
-        // for Action/Sci-Fi, so each type has its own row list.
         const GENRE_ROWS = {
             movie: [
                 { id: 28, name: 'Action' },
@@ -933,7 +888,6 @@
             ]
         };
 
-        // Full genre catalog used by the Genre filter dropdown (catalog bar)
         const GENRE_FULL = {
             movie: [
                 { id: 28, name: 'Action' }, { id: 12, name: 'Adventure' },
@@ -1007,8 +961,6 @@
 
         let genreRowToken = 0;
 
-        // Renders one horizontal-scroll poster row per genre on the
-        // Movies / TV Shows tabs, above the main Popular grid.
         async function loadGenreRows(type) {
             const section = document.getElementById('genre-rows-section');
             const token = ++genreRowToken;
@@ -1029,7 +981,7 @@
             for (const g of genres) {
                 const endpoint = type === 'tv' ? '/discover/tv' : '/discover/movie';
                 const data = await fetchTMDB(endpoint, `&with_genres=${g.id}&sort_by=popularity.desc`);
-                if (token !== genreRowToken) return; // user switched tabs mid-fetch
+                if (token !== genreRowToken) return;
 
                 const row = document.getElementById(`genre-row-${type}-${g.id}`);
                 if (!row) continue;
@@ -1045,7 +997,7 @@
                     const poster = item.poster_path ? `${IMG_URL}${item.poster_path}` : 'https://via.placeholder.com/300x450?text=No+Poster';
                     const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
                     return `
-                        <div onclick="openDetails('${type}', ${item.id})" class="card-solid flex-none w-28 lg:w-32 rounded-xl overflow-hidden cursor-pointer group">
+                        <div onclick="openDetails('${type}',${item.id})" class="card-solid flex-none w-28 lg:w-32 rounded-xl overflow-hidden cursor-pointer group">
                             <div class="relative aspect-[2/3] bg-[#060608] overflow-hidden">
                                 ${poster ? `<img src="${poster}" alt="${title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy" decoding="async">` : ''}
                                 <span class="absolute top-1.5 right-1.5 bg-[#060608]/90 text-amber-400 font-bold text-[9px] px-1.5 py-0.5 rounded-md flex items-center gap-0.5 border border-indigo-500/20">
@@ -1143,7 +1095,7 @@
         function updateSectionTitle() {
             const sortLabels = { trending: 'Trending', popular: 'Popular', new: 'New Releases', top_rated: 'Top Rated' };
             const titles = { all: "Trending Movies & Shows", movie: "Movies", tv: "TV Shows" };
-            let titleText = currentCategory === 'all' ? titles.all : `${sortLabels[currentSort] || 'Trending'} ${titles[currentCategory]}`;
+            let titleText = currentCategory === 'all' ? titles.all : `${sortLabels[currentSort] \vert{}\vert{} 'Trending'}${titles[currentCategory]}`;
             if (currentGenre) {
                 const g = (GENRE_FULL[currentCategory] || []).find(x => x.id == currentGenre);
                 if (g) titleText += ` • ${g.name}`;
@@ -1188,8 +1140,6 @@
             const hasCatalogFilters = currentCategory !== 'all' && (currentSort !== 'trending' || currentGenre);
 
             if (currentCountry === 'IN' && currentCategory === 'tv' && currentSort === 'trending' && !currentGenre) {
-                // Web-series-only: filter by actual Indian OTT platforms instead of
-                // origin_country (which also returns broadcast TV daily soaps).
                 endpoint = '/discover/tv';
                 const ottIds = await getIndianOttProviderIds();
                 params += `&watch_region=IN&with_watch_providers=${ottIds.join('|')}&sort_by=popularity.desc`;
@@ -1221,9 +1171,6 @@
 
             if (data && data.results && data.results.length > 0) {
                 if (reset) {
-                    // Render grid + basic hero IMMEDIATELY — don't block on extra
-                    // per-item detail fetches (that was causing filter clicks to
-                    // feel broken/unresponsive).
                     heroItems = data.results.slice(0, 5);
                     heroIndex = 0;
                     startHeroAutoSlide();
@@ -1233,8 +1180,6 @@
                     if (currentPage > data.total_pages) hasMore = false;
                     isFetching = false;
 
-                    // Enrich hero items (logo, runtime, cert, genres) in the
-                    // background, then re-render just the hero banner.
                     enrichHeroItems(heroItems);
                     return;
                 }
@@ -1262,7 +1207,6 @@
                 ]);
                 return { ...raw, _type: hType, _details: details, _logoUrl: logoUrl };
             }));
-            // If the user switched filters again while this was in flight, drop it.
             if (enrichToken !== heroEnrichToken) return;
             heroItems = enriched;
             renderHeroBanner(heroItems[heroIndex]);
@@ -1300,7 +1244,7 @@
             const heroNextEp = type === 'tv' ? details.next_episode_to_air : null;
             let heroUpcoming = '';
             if (heroNextEp && heroNextEp.air_date) {
-                heroUpcoming = `Next: S${heroNextEp.season_number}E${heroNextEp.episode_number} — ${fmtHeroDate(heroNextEp.air_date)}`;
+                heroUpcoming = `Next: S${heroNextEp.season_number}E${heroNextEp.episode_number} —${fmtHeroDate(heroNextEp.air_date)}`;
             } else if (type === 'movie' && heroAirDate && heroAirDate > heroTodayStr) {
                 heroUpcoming = `Releasing ${fmtHeroDate(heroAirDate)}`;
             }
@@ -1311,7 +1255,6 @@
             `).join('');
 
             container.innerHTML = `
-                <!-- MOBILE: full-width 16:9 banner -->
                 <div class="lg:hidden relative aspect-video w-full overflow-hidden">
                     <img src="${backdrop}" class="absolute inset-0 w-full h-full object-cover object-center">
                     <div class="absolute inset-0 bg-gradient-to-t from-[#060608] via-[#060608]/15 to-transparent"></div>
@@ -1325,7 +1268,6 @@
                     <div class="absolute bottom-3 right-3 z-10 flex gap-1">${dots}</div>
                 </div>
 
-                <!-- DESKTOP: 16:9 image on the left (rating top-right), black info panel on the right -->
                 <div class="hidden lg:flex relative w-full items-stretch bg-black">
                     <div class="relative w-[46%] max-w-[820px] aspect-video flex-shrink-0 overflow-hidden">
                         <img src="${backdrop}" class="w-full h-full object-cover object-center">
@@ -1362,7 +1304,6 @@
             `;
         }
 
-        /* ENHANCED SEARCH LOGIC */
         function getRecentSearches() {
             try { return JSON.parse(localStorage.getItem('mtdv_recent_searches')) || []; } catch (e) { return []; }
         }
@@ -1453,7 +1394,7 @@
             const html = items.map(item => {
                 const type = item.media_type || (item.title ? 'movie' : 'tv');
                 const cardKey = `${type}_${item.id}`;
-                if (seenKeys.has(cardKey)) return ''; // duplicate across pages — skip
+                if (seenKeys.has(cardKey)) return '';
                 seenKeys.add(cardKey);
 
                 const title = item.title || item.name || 'Untitled';
@@ -1465,7 +1406,7 @@
                 const isNew = releaseTime > 0 && releaseTime <= Date.now() && (Date.now() - releaseTime) < (45 * 24 * 60 * 60 * 1000);
 
                 return `
-                    <div onclick="openDetails('${type}', ${item.id})" class="card-solid rounded-2xl overflow-hidden transition duration-300 cursor-pointer flex flex-col group relative">
+                    <div onclick="openDetails('${type}',${item.id})" class="card-solid rounded-2xl overflow-hidden transition duration-300 cursor-pointer flex flex-col group relative">
                         <div class="relative aspect-[2/3] bg-[#060608] overflow-hidden">
                             <img src="${poster}" alt="${title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
                             <span class="absolute top-2 right-2 bg-[#060608]/90 text-amber-400 font-bold text-[10px] px-2 py-0.5 rounded-lg flex items-center gap-1 border border-indigo-500/20 shadow-md">
@@ -1519,7 +1460,6 @@
             const backdrop = data.backdrop_path
                 ? `${BACKDROP_URL}${data.backdrop_path}`
                 : (data.poster_path ? `${IMG_URL}${data.poster_path}` : '');
-            // 16:9 backdrop slideshow — landscape TMDB backdrops only, best-rated first, capped at 8
             const backdropList = (data.images?.backdrops || [])
                 .filter(b => b.iso_639_1 === null || b.iso_639_1 === 'en')
                 .sort((a, b) => b.vote_average - a.vote_average)
@@ -1539,7 +1479,6 @@
             const validSeasons = (data.seasons || []).filter(s => s.season_number > 0);
             const hasEpisodesTab = type === 'tv' && validSeasons.length > 0;
 
-            // Desktop extras: full cast, media galleries, chips, overview length
             const allCast = data.credits?.cast || [];
             const videoOrder = ['Trailer', 'Teaser', 'Clip', 'Featurette', 'Behind the Scenes', 'Bloopers'];
             const videosList = (data.videos?.results || [])
@@ -1562,7 +1501,6 @@
             const chipGenres = (data.genres || []).slice(0, 4).map(g => g.name);
             const overviewText = data.overview || 'No overview available.';
 
-            // --- Desktop details header data ---
             const fmtLong = d => d ? new Date(d).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
             const statusMap = { 'Returning Series': 'Returning', 'In Production': 'In Production', 'Post Production': 'Post Production' };
             const statusText = statusMap[data.status] || data.status || '—';
@@ -1603,8 +1541,7 @@
             const statBoxesHtml = statBoxes.map(([l, v, sub]) => `
                 <div class="detail-stat-card rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 min-w-0">
                     <p class="text-[10px] text-slate-500 uppercase tracking-wider mb-1">${l}</p>
-                    <p class="text-sm font-bold text-white truncate" title="${v}">${v}</p>
-                    ${sub ? `<p class="text-[11px] font-semibold text-amber-400 truncate mt-0.5" title="${sub}">${sub}</p>` : ''}
+                    <p class="text-sm font-bold text-white truncate" title="${v}">${v}</p>${sub ? `<p class="text-[11px] font-semibold text-amber-400 truncate mt-0.5" title="${sub}">${sub}</p>` : ''}
                 </div>`).join('');
 
             const prodCompanies = (data.production_companies || []).map(c => c.name).slice(0, 4).join(', ');
@@ -1616,7 +1553,7 @@
             const crewLinePeople = (type === 'tv' ? (data.created_by || []) : crewAll.filter(c => c.job === 'Director'))
                 .filter((p, i, a) => a.findIndex(x => x.id === p.id) === i).slice(0, 3);
             const crewLineHtml = crewLinePeople.length ? `
-                <p class="text-sm text-slate-400">${crewLabel} ${crewLinePeople.map(p => `<button onclick="openActorModal(${p.id})" class="text-slate-100 font-semibold hover:text-amber-400 transition">${p.name}</button>`).join(', ')}</p>` : '';
+                <p class="text-sm text-slate-400">${crewLabel}${crewLinePeople.map(p => `<button onclick="openActorModal(${p.id})" class="text-slate-100 font-semibold hover:text-amber-400 transition">${p.name}</button>`).join(', ')}</p>` : '';
             const crewDetailNames = crewLinePeople.map(p => p.name).join(', ');
 
             const detailRows = [
@@ -1645,10 +1582,8 @@
             const revenueText = type === 'movie' ? fmtMoney(data.revenue) : null;
             const collection = type === 'movie' ? data.belongs_to_collection : null;
 
-            const similarIds = new Set(similarResults.map(r => r.id));
             const hdrMeta = [type === 'movie' ? 'Movie' : 'TV Show', releaseYear !== 'N/A' ? releaseYear : '', chipRuntime ? chipRuntime + ' min' : ''].filter(Boolean).join('  •  ');
 
-            // Upcoming release info — future movie release, or a TV show's next episode to air
             const isUpcomingMovie = type === 'movie' && releaseDate !== 'N/A' && releaseDate > todayStr;
             const nextEp = type === 'tv' ? data.next_episode_to_air : null;
             const providerName = primaryProvider;
@@ -1669,617 +1604,7 @@
                     </div>`;
             }
 
-            content.innerHTML = `
-                <!-- DESKTOP HEADER: 16:9 image left (rating top-right), black info panel right -->
-                <div class="hidden lg:block">
-                    <div class="relative flex items-stretch bg-black border border-white/10">
-                        <div class="relative w-1/2 max-w-[700px] aspect-video flex-shrink-0 overflow-hidden bg-[#060608]">
-                            <img id="detail-backdrop-a-d" src="${backdrop}" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-100">
-                            <img id="detail-backdrop-b-d" src="${backdrop}" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-0">
-                            <div class="absolute inset-0 bg-black/10"></div>
-                            <span class="absolute top-3 right-3 z-20 bg-black/70 text-amber-400 border border-white/15 text-sm font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 backdrop-blur-md">
-                                <i class="fa-solid fa-star text-xs"></i> ${rating}
-                            </span>
-                        </div>
-
-                        <div class="flex-1 min-w-0 flex flex-col justify-center gap-3 px-10 py-6 bg-black">
-                            <div class="flex items-center justify-between gap-3">
-                                <p class="text-sm text-slate-400">${hdrMeta}</p>
-                            </div>
-
-                            ${logoUrl ? `<img src="${logoUrl}" alt="${title}" class="max-h-20 max-w-[80%] object-contain object-left drop-shadow-2xl">`
-                                      : `<h1 class="text-3xl font-black text-white leading-tight">${title}</h1>`}
-
-                            ${chipGenres.length ? `<div class="flex flex-wrap gap-2">${chipGenres.map(g => `<span class="text-xs font-semibold text-amber-300 bg-amber-400/10 border border-amber-400/20 px-3 py-1 rounded-full">${g}</span>`).join('')}</div>` : ''}
-
-                            <div>
-                                <p id="hdr-overview" class="text-sm text-slate-300 leading-relaxed ${overviewText.length > 200 ? 'line-clamp-3' : ''}">${overviewText}</p>
-                                ${overviewText.length > 200 ? `<button onclick="toggleHdrOverview(this)" class="mt-1 text-xs font-semibold text-amber-400 hover:text-amber-300 transition">Read more</button>` : ''}
-                            </div>
-
-                            ${crewLineHtml}
-                            ${upcomingHtml}
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-6 gap-3 mt-4">${statBoxesHtml}</div>
-                </div>
-
-                <div class="lg:flex lg:gap-10 lg:items-start">
-                    <!-- Left column (mobile only): backdrop with title overlaid, stats -->
-                    <div class="lg:hidden">
-                        <div class="relative aspect-video w-full bg-[#060608] overflow-hidden">
-                            <img id="detail-backdrop-a" src="${backdrop}" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-100">
-                            <img id="detail-backdrop-b" src="${backdrop}" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 opacity-0">
-                            <div class="absolute inset-0 bg-gradient-to-t from-[#060608]/70 via-transparent to-transparent"></div>
-
-                            <span class="absolute top-3 left-3 z-20 bg-black/70 text-amber-400 border border-white/15 text-[11px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 backdrop-blur-md">
-                                <i class="fa-solid fa-star text-[9px]"></i> ${rating}
-                            </span>
-
-                            <div class="absolute bottom-0 left-0 right-0 p-4 lg:p-6 z-10 space-y-2">
-                                <span class="text-[10px] font-bold text-slate-200 uppercase tracking-widest bg-white/10 border border-white/15 px-2 py-0.5 rounded-md inline-block backdrop-blur-sm">${type === 'movie' ? 'Movie' : 'TV Show'}</span>
-
-                                ${logoUrl ? `
-                                    <img src="${logoUrl}" alt="${title}" class="max-h-9 lg:max-h-12 max-w-[80%] object-contain drop-shadow-2xl my-1">
-                                ` : `
-                                    <h1 class="text-lg lg:text-2xl font-bold text-white leading-tight drop-shadow-lg">${title}</h1>
-                                `}
-                            </div>
-                        </div>
-
-                        <div class="px-5 lg:px-0 mt-5 relative z-10 space-y-5">
-                            ${chipGenres.length ? `<div class="flex flex-wrap gap-2">${chipGenres.map(g => `<span class="text-[11px] font-semibold text-amber-300 bg-amber-400/10 border border-amber-400/20 px-2.5 py-1 rounded-full">${g}</span>`).join('')}</div>` : ''}
-                            <div class="detail-stat-grid grid grid-cols-2 gap-3">${statBoxesHtml}</div>
-
-                            ${upcomingHtml}
-                        </div>
-                    </div>
-
-                    <!-- Right column: tabs + content -->
-                    <div class="px-5 lg:px-0 lg:flex-1 lg:min-w-0 lg:pt-6 mt-5 lg:mt-0 space-y-5">
-                        <!-- Detail Tabs -->
-                        <div class="detail-tabs flex gap-5 border-b border-white/10 lg:sticky lg:top-0 lg:z-20 lg:bg-[#060608]/95 lg:backdrop-blur lg:pt-2">
-                            <button onclick="switchDetailTab('overview')" id="dtab-overview" class="detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-white border-b-2 border-amber-400 transition">Overview</button>
-                            ${hasEpisodesTab ? `<button onclick="switchDetailTab('episodes')" id="dtab-episodes" class="detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-slate-400 border-b-2 border-transparent transition">Season</button>` : ''}
-                            <button onclick="switchDetailTab('more')" id="dtab-more" class="detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-slate-400 border-b-2 border-transparent transition">Cast & More</button>
-                            ${hasMedia ? `<button onclick="switchDetailTab('media')" id="dtab-media" class="detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-slate-400 border-b-2 border-transparent transition">Media</button>` : ''}
-                        </div>
-
-                        <!-- Overview Panel -->
-                        <div id="dpanel-overview" class="space-y-5">
-                            <!-- Overview comes first; OTT is intentionally kept below the information cards. -->
-                            <div class="card-solid p-4 rounded-2xl lg:hidden">
-                                <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-1.5">Overview</h3>
-                                <p id="overview-text" class="text-xs text-slate-300 leading-relaxed">${overviewText}</p>
-                            </div>
-
-                            ${detailRows.length > 0 ? `
-                                <div class="card-solid p-4 rounded-2xl">
-                                    <h3 class="text-xs font-bold text-amber-400 uppercase tracking-wider mb-3">Details</h3>
-                                    <div class="grid grid-cols-2 gap-x-6 gap-y-3">
-                                        ${detailRows.map(([l, v]) => `
-                                            <div class="min-w-0">
-                                                <p class="text-[10px] text-slate-500 uppercase tracking-wider mb-0.5">${l}</p>
-                                                <p class="text-sm text-slate-200 leading-snug">${v}</p>
-                                            </div>
-                                        `).join('')}
-                                    </div>
-                                </div>` : ''}
-
-                            ${(budgetText || revenueText) ? `
-                                <div class="grid grid-cols-2 gap-3">
-                                    ${budgetText ? `<div class="card-solid rounded-2xl p-4"><p class="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Budget</p><p class="text-xl font-bold text-white">${budgetText}</p></div>` : ''}
-                                    ${revenueText ? `<div class="card-solid rounded-2xl p-4"><p class="text-[10px] text-slate-500 uppercase tracking-wider mb-1">Revenue</p><p class="text-xl font-bold text-amber-400">${revenueText}</p></div>` : ''}
-                                </div>` : ''}
-
-                            ${providers.length > 0 ? `
-                                <div class="card-solid p-3.5 rounded-2xl">
-                                    <p class="text-xs font-semibold text-slate-200 mb-2.5">Available On</p>
-                                    <div class="flex gap-3 overflow-x-auto no-scrollbar py-1">
-                                        ${providers.map(p => `
-                                            <div class="flex-none w-11 h-11 rounded-2xl overflow-hidden bg-[#060608] border border-white/15 p-1 flex items-center justify-center shadow-lg">
-                                                <img src="${IMG_URL}${p.logo_path}" alt="" aria-hidden="true" class="w-full h-full object-contain rounded-xl ott-provider-logo">
-                                            </div>
-                                        `).join('')}
-                                    </div>
-                                </div>
-                            ` : ''}
-
-                            ${collection ? `
-                                <div id="collection-wrap" data-cid="${collection.id}" class="">
-                                    <h3 class="text-sm font-bold text-amber-400 uppercase tracking-wider mb-3">${collection.name}</h3>
-                                    <div id="collection-grid" class="grid grid-cols-3 lg:grid-cols-5 gap-3"></div>
-                                </div>` : ''}
-                        </div>
-
-                        <!-- Episodes Panel -->
-                        ${hasEpisodesTab ? `
-                            <div id="dpanel-episodes" class="hidden space-y-4">
-                                <div class="flex justify-between items-center">
-                                    <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider">Seasons & Episodes</h3>
-                                    <span class="text-[10px] text-slate-400">${validSeasons.length} Seasons</span>
-                                </div>
-
-                                <div class="flex gap-2 overflow-x-auto no-scrollbar py-1">
-                                    ${validSeasons.map((s, idx) => `
-                                        <button onclick="loadSeasonEpisodes(${id}, ${s.season_number}, this)" class="season-btn ${idx === 0 ? 'bg-white text-black border-white font-bold' : 'bg-slate-800/80 text-slate-300 border-white/10'} px-3.5 py-1.5 rounded-xl text-xs font-semibold border whitespace-nowrap transition hover:border-white/30">
-                                            ${s.name}
-                                        </button>
-                                    `).join('')}
-                                </div>
-
-                                <div id="episodes-container" class="grid lg:grid-cols-2 gap-3 pt-2"></div>
-                            </div>
-                        ` : ''}
-
-                        <!-- Media Panel (desktop only — its tab is hidden on mobile) -->
-                        ${hasMedia ? `
-                            <div id="dpanel-media" class="hidden space-y-4">
-                                <div class="flex items-center gap-2 flex-wrap">
-                                    ${mediaKinds.map((k, i) => `
-                                        <button id="mkind-${k}" onclick="setMediaKind('${k}')" class="media-kind-btn ${i === 0 ? 'bg-white text-black border-white font-bold' : 'bg-slate-800/80 text-slate-300 border-white/10'} px-3.5 py-1.5 rounded-xl text-xs font-semibold border whitespace-nowrap transition capitalize">${k} (${mediaSets[k].length})</button>
-                                    `).join('')}
-                                </div>
-                                <div id="media-grid"></div>
-                            </div>
-                        ` : ''}
-
-                        <!-- Cast & More Panel -->
-                        <div id="dpanel-more" class="hidden space-y-6">
-                            ${cast.length > 0 ? `
-                                <div class="lg:hidden">
-                                    <div class="flex items-center justify-between mb-4">
-                                        <h3 class="text-sm font-bold text-amber-400 uppercase tracking-wider">Cast</h3>
-                                        <span class="text-[10px] text-slate-500">${allCast.length} members</span>
-                                    </div>
-                                    <div class="grid grid-cols-2 gap-3">
-                                        ${allCast.map(c => {
-                                            const photo = c.profile_path ? `${IMG_URL}${c.profile_path}` : '';
-                                            const initials = (c.name || '?').split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
-                                            const originalName = c.original_name && c.original_name !== c.name ? c.original_name : '';
-                                            return `
-                                                <div onclick="openActorModal(${c.id})" class="card-solid rounded-2xl overflow-hidden cursor-pointer group border border-white/10 hover:border-white/25 transition">
-                                                    <div class="relative aspect-[2/3] bg-[#0D0D10] overflow-hidden">
-                                                        ${photo
-                                                            ? `<img src="${photo}" alt="${c.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">`
-                                                            : `<div class="w-full h-full flex items-center justify-center text-4xl font-black text-slate-600">${initials}</div>`}
-                                                        <div class="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/90 to-transparent pointer-events-none"></div>
-                                                    </div>
-                                                    <div class="p-3">
-                                                        <p class="text-sm font-bold text-slate-100 truncate" title="${c.name || ''}">${c.name || 'Unknown'}</p>
-                                                        ${originalName ? `<p class="text-[10px] text-slate-400 truncate mt-1" title="${originalName}">Original: ${originalName}</p>` : ''}
-                                                        <p class="text-[11px] text-amber-400/90 truncate mt-1.5" title="${c.character || ''}">${c.character || '—'}</p>
-                                                    </div>
-                                                </div>
-                                            `;
-                                        }).join('')}
-                                    </div>
-                                </div>
-                            ` : ''}
-
-                            ${allCast.length > 0 ? `
-                                <div class="hidden lg:block">
-                                    <div class="flex items-center justify-between mb-4">
-                                        <h3 class="text-sm font-bold text-amber-400 uppercase tracking-wider">Cast</h3>
-                                        ${allCast.length > 12 ? `<button data-total="${allCast.length}" onclick="toggleCastAll(this)" class="text-xs font-semibold text-slate-300 hover:text-white border border-white/15 hover:border-white/40 rounded-lg px-3 py-1.5 transition">View all (${Math.min(allCast.length, 60)})</button>` : ''}
-                                    </div>
-                                    <div id="cast-desktop-row" data-open="0" class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
-                                        ${allCast.slice(0, 60).map((c, i) => {
-                                            const initials = (c.name || '?').split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
-                                            return `
-                                                <div onclick="openActorModal(${c.id})" class="cast-card ${i >= 12 ? 'cast-extra hidden ' : ''}flex-none w-36 card-solid rounded-2xl overflow-hidden cursor-pointer group">
-                                                    <div class="relative aspect-[2/3] bg-[#0D0D10] overflow-hidden">
-                                                        ${c.profile_path
-                                                            ? `<img src="${IMG_URL}${c.profile_path}" alt="${c.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">`
-                                                            : `<div class="w-full h-full flex items-center justify-center text-3xl font-black text-slate-600">${initials}</div>`}
-                                                    </div>
-                                                    <div class="p-2.5">
-                                                        <p class="text-xs font-semibold text-slate-100 truncate">${c.name}</p>
-                                                        <p class="text-[11px] text-slate-400 truncate mt-0.5">${c.character || ''}</p>
-                                                    </div>
-                                                </div>`;
-                                        }).join('')}
-                                    </div>
-                                </div>
-                            ` : ''}
-
-                            ${crewRow.length > 0 ? `
-                                <div>
-                                    <h3 class="text-sm font-bold text-amber-400 uppercase tracking-wider mb-4">Crew</h3>
-                                    <div class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
-                                        ${crewRow.map(c => {
-                                            const initials = (c.name || '?').split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
-                                            return `
-                                                <div onclick="openActorModal(${c.id})" class="flex-none w-32 card-solid rounded-2xl overflow-hidden cursor-pointer group">
-                                                    <div class="relative aspect-[2/3] bg-[#0D0D10] overflow-hidden">
-                                                        ${c.profile_path
-                                                            ? `<img src="${IMG_URL}${c.profile_path}" alt="${c.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">`
-                                                            : `<div class="w-full h-full flex items-center justify-center text-3xl font-black text-slate-600">${initials}</div>`}
-                                                    </div>
-                                                    <div class="p-2.5">
-                                                        <p class="text-xs font-semibold text-slate-100 truncate">${c.name}</p>
-                                                        <p class="text-[11px] text-amber-400/90 truncate mt-0.5" title="${c.jobs.join(', ')}">${c.jobs.join(' • ')}</p>
-                                                    </div>
-                                                </div>`;
-                                        }).join('')}
-                                    </div>
-                                </div>
-                            ` : ''}
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            if (hasEpisodesTab) {
-                loadSeasonEpisodes(id, validSeasons[0].season_number, document.querySelector('.season-btn'));
-            }
-            if (hasMedia) setMediaKind(mediaKinds[0]);
-            if (collection) {
-                fetchTMDB(`/collection/${collection.id}`).then(col => {
-                    const wrap = document.getElementById('collection-wrap');
-                    if (!wrap || wrap.dataset.cid != col?.id) return;
-                    const parts = (col.parts || [])
-                        .filter(pt => pt.id !== id)
-                        .sort((a, b) => (a.release_date || '9999').localeCompare(b.release_date || '9999'))
-                        .map(pt => ({ ...pt, media_type: 'movie' }));
-                    if (!parts.length) { wrap.remove(); return; }
-                    renderGrid(parts, 'collection-grid');
-                });
-            }
-
-            startDetailBackdropRotation(backdropList);
-        }
-
-        // Rotates the details-modal backdrop through a title's TMDB 16:9 backdrops
-        // every 3.5s, crossfading between two stacked <img> layers.
-        let detailBackdropTimer = null;
-        function stopDetailBackdropRotation() {
-            if (detailBackdropTimer) {
-                clearInterval(detailBackdropTimer);
-                detailBackdropTimer = null;
-            }
-        }
-        function startDetailBackdropRotation(urls) {
-            stopDetailBackdropRotation();
-            if (!urls || urls.length <= 1) return;
-
-            let idx = 0;
-            let showingA = true;
-            detailBackdropTimer = setInterval(() => {
-                // Two image pairs: mobile left column ('') and desktop header ('-d')
-                const pairs = ['', '-d'].map(sfx => [
-                    document.getElementById('detail-backdrop-a' + sfx),
-                    document.getElementById('detail-backdrop-b' + sfx)
-                ]).filter(([a, b]) => a && b);
-                if (!pairs.length) { stopDetailBackdropRotation(); return; }
-
-                idx = (idx + 1) % urls.length;
-                const nextUrl = urls[idx];
-                pairs.forEach(([imgA, imgB]) => {
-                    const incoming = showingA ? imgB : imgA;
-                    const outgoing = showingA ? imgA : imgB;
-                    incoming.src = nextUrl;
-                    incoming.classList.remove('opacity-0');
-                    incoming.classList.add('opacity-100');
-                    outgoing.classList.remove('opacity-100');
-                    outgoing.classList.add('opacity-0');
-                });
-                showingA = !showingA;
-            }, 3500);
-        }
-
-        function switchDetailTab(tab) {
-            ['overview', 'episodes', 'more', 'media'].forEach(t => {
-                const panel = document.getElementById(`dpanel-${t}`);
-                const btn = document.getElementById(`dtab-${t}`);
-                if (panel) panel.classList.toggle('hidden', t !== tab);
-                if (btn) btn.className = `detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap transition border-b-2 ${t === tab ? 'text-white border-amber-400' : 'text-slate-400 border-transparent'}`;
-            });
-        }
-
-        // ---- Desktop details helpers: overview, cast, media gallery, lightbox ----
-        function toggleHdrOverview(btn) {
-            const p = document.getElementById('hdr-overview');
-            const clamped = p.classList.toggle('line-clamp-3');
-            btn.textContent = clamped ? 'Read more' : 'Show less';
-        }
-
-        function copyDetailLink() {
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(window.location.href)
-                    .then(() => showToast('Link copied'))
-                    .catch(() => showToast('Could not copy link'));
-            } else {
-                showToast('Could not copy link');
-            }
-        }
-
-        function toggleCastAll(btn) {
-            const row = document.getElementById('cast-desktop-row');
-            const open = row.dataset.open === '1';
-            row.dataset.open = open ? '0' : '1';
-            row.className = open ? 'flex gap-4 overflow-x-auto no-scrollbar pb-2' : 'grid grid-cols-4 xl:grid-cols-5 gap-4';
-            row.querySelectorAll('.cast-extra').forEach(e => e.classList.toggle('hidden', open));
-            row.querySelectorAll('.cast-card').forEach(c => {
-                c.classList.toggle('w-36', open);
-                c.classList.toggle('w-full', !open);
-            });
-            btn.textContent = open ? `View all (${Math.min(parseInt(btn.dataset.total), 60)})` : 'Show less';
-        }
-
-        let currentMediaSets = {};
-        let currentMediaKind = 'backdrops';
-        let lightboxIndex = 0;
-
-        function setMediaKind(kind) {
-            currentMediaKind = kind;
-            document.querySelectorAll('.media-kind-btn').forEach(b => {
-                const on = b.id === `mkind-${kind}`;
-                b.className = `media-kind-btn ${on ? 'bg-white text-black border-white font-bold' : 'bg-slate-800/80 text-slate-300 border-white/10'} px-3.5 py-1.5 rounded-xl text-xs font-semibold border whitespace-nowrap transition capitalize`;
-            });
-            const grid = document.getElementById('media-grid');
-            if (!grid) return;
-            if (kind === 'videos') {
-                grid.className = 'grid grid-cols-2 xl:grid-cols-3 gap-4';
-                grid.innerHTML = (currentMediaSets.videos || []).map(v => `
-                    <a href="https://www.youtube.com/watch?v=${v.key}" target="_blank" rel="noopener noreferrer" class="card-solid rounded-xl overflow-hidden group block">
-                        <div class="relative aspect-video bg-[#060608] overflow-hidden">
-                            <img src="https://img.youtube.com/vi/${v.key}/hqdefault.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
-                            <div class="absolute inset-0 flex items-center justify-center bg-black/25 group-hover:bg-black/10 transition">
-                                <span class="w-12 h-12 rounded-full bg-white/90 text-black flex items-center justify-center"><i class="fa-solid fa-play text-sm ml-0.5"></i></span>
-                            </div>
-                            <span class="absolute top-2 left-2 bg-black/70 text-[10px] font-bold text-amber-400 border border-white/15 px-2 py-0.5 rounded-md">${v.type}</span>
-                        </div>
-                        <p class="text-xs font-semibold text-slate-100 line-clamp-2 p-2.5">${v.name}</p>
-                    </a>
-                `).join('');
-                return;
-            }
-            const cfg = {
-                backdrops: { cols: 'grid-cols-2 xl:grid-cols-3', ratio: 'aspect-video', fit: 'object-cover', size: 'w780' },
-                posters: { cols: 'grid-cols-3 xl:grid-cols-4', ratio: 'aspect-[2/3]', fit: 'object-cover', size: 'w500' },
-                logos: { cols: 'grid-cols-2 xl:grid-cols-3', ratio: 'aspect-video', fit: 'object-contain p-5', size: 'w500' }
-            }[kind];
-            grid.className = `grid ${cfg.cols} gap-3`;
-            grid.innerHTML = (currentMediaSets[kind] || []).map((im, i) => `
-                <div onclick="openLightbox(${i})" class="card-solid rounded-xl overflow-hidden cursor-pointer group ${kind === 'logos' ? 'bg-white/[0.04]' : 'bg-[#060608]'}">
-                    <div class="${cfg.ratio} overflow-hidden">
-                        <img src="https://image.tmdb.org/t/p/${cfg.size}${im.file_path}" class="w-full h-full ${cfg.fit} group-hover:scale-105 transition duration-500" loading="lazy">
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function openLightbox(idx) {
-            lightboxIndex = idx;
-            const box = document.getElementById('media-lightbox');
-            box.classList.remove('hidden');
-            box.classList.add('flex');
-            renderLightbox();
-        }
-        function renderLightbox() {
-            const list = currentMediaSets[currentMediaKind] || [];
-            if (!list.length) return;
-            document.getElementById('lightbox-img').src = `https://image.tmdb.org/t/p/original${list[lightboxIndex].file_path}`;
-            document.getElementById('lightbox-count').textContent = `${lightboxIndex + 1} / ${list.length}`;
-        }
-        function lightboxNav(dir) {
-            const list = currentMediaSets[currentMediaKind] || [];
-            if (!list.length) return;
-            lightboxIndex = (lightboxIndex + dir + list.length) % list.length;
-            renderLightbox();
-        }
-        function closeLightbox() {
-            const box = document.getElementById('media-lightbox');
-            box.classList.add('hidden');
-            box.classList.remove('flex');
-            document.getElementById('lightbox-img').src = '';
-        }
-        document.addEventListener('keydown', (e) => {
-            const box = document.getElementById('media-lightbox');
-            if (!box || box.classList.contains('hidden')) return;
-            if (e.key === 'Escape') closeLightbox();
-            else if (e.key === 'ArrowRight') lightboxNav(1);
-            else if (e.key === 'ArrowLeft') lightboxNav(-1);
-        });
-
-        async function openActorModal(personId) {
-            const modal = document.getElementById('actor-modal');
-            const content = document.getElementById('actor-modal-content');
-            modal.classList.remove('hidden');
-
-            content.innerHTML = `<div class="p-8 text-center text-indigo-300/60"><i class="fa-solid fa-circle-notch fa-spin text-2xl text-indigo-400 mb-2"></i><p class="text-xs">Loading Actor Profile...</p></div>`;
-
-            const data = await fetchTMDB(`/person/${personId}`, '&append_to_response=combined_credits');
-            if (!data) return;
-
-            const photo = data.profile_path ? `${IMG_URL}${data.profile_path}` : 'https://via.placeholder.com/300?text=No+Photo';
-            const credCast = data.combined_credits?.cast || [];
-            const seenWorks = new Set();
-            const crewWorks = (data.combined_credits?.crew || []).filter(w => {
-                const k = `${w.media_type}_${w.id}`;
-                if (seenWorks.has(k)) return false;
-                seenWorks.add(k);
-                return true;
-            });
-            const topWorks = credCast.length ? credCast.slice(0, 6) : crewWorks.slice(0, 6);
-
-            content.innerHTML = `
-                <div class="flex items-center gap-4 mb-4">
-                    <img src="${photo}" class="w-20 h-20 rounded-full object-cover border border-indigo-500/30 shadow-lg">
-                    <div>
-                        <h2 class="text-base font-bold text-white">${data.name}</h2>
-                        <p class="text-[11px] text-indigo-400">${data.known_for_department || 'Acting'}</p>
-                        <p class="text-[10px] text-slate-400 mt-1"><i class="fa-solid fa-cake-candles mr-1"></i>${data.birthday || 'N/A'}</p>
-                    </div>
-                </div>
-                <div class="space-y-3">
-                    <h3 class="text-xs font-bold text-indigo-300 uppercase tracking-wider">Biography</h3>
-                    <p class="text-xs text-slate-300 leading-relaxed max-h-32 overflow-y-auto no-scrollbar">${data.biography || 'No biography available.'}</p>
-                    
-                    <h3 class="text-xs font-bold text-indigo-300 uppercase tracking-wider pt-2">Known For</h3>
-                    <div class="grid grid-cols-3 gap-2">
-                        ${topWorks.map(w => `
-                            <div onclick="closeActorModal(); openDetails('${w.media_type}', ${w.id})" class="card-solid p-1.5 rounded-xl cursor-pointer text-center">
-                                <img src="${w.poster_path ? IMG_URL + w.poster_path : 'https://via.placeholder.com/150'}" class="w-full aspect-[2/3] object-cover rounded-lg mb-1">
-                                <p class="text-[10px] font-semibold text-white truncate">${w.title || w.name}</p>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-        }
-
-        function closeActorModal() {
-            document.getElementById('actor-modal').classList.add('hidden');
-        }
-
-        async function loadSeasonEpisodes(tvId, seasonNumber, btnEl) {
-            if (btnEl) {
-                document.querySelectorAll('.season-btn').forEach(b => {
-                    b.className = "season-btn bg-slate-800/80 text-slate-300 border border-white/10 px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition";
-                });
-                btnEl.className = "season-btn bg-white text-black border border-white font-bold px-3.5 py-1.5 rounded-xl text-xs whitespace-nowrap transition";
-            }
-
-            const container = document.getElementById('episodes-container');
-            container.innerHTML = `<div class="py-6 text-center text-slate-400 text-xs"><i class="fa-solid fa-circle-notch fa-spin text-lg text-white mb-1"></i><p>Loading episodes...</p></div>`;
-
-            const data = await fetchTMDB(`/tv/${tvId}/season/${seasonNumber}`);
-
-            if (!data || !data.episodes || data.episodes.length === 0) {
-                container.innerHTML = `<p class="text-center text-slate-400 py-4 text-xs">No episodes found.</p>`;
-                return;
-            }
-
-            const epToday = new Date().toISOString().split('T')[0];
-            container.className = "grid grid-cols-1 lg:grid-cols-2 gap-4 pt-2";
-            container.innerHTML = data.episodes.map(ep => {
-                const thumbnail = ep.still_path ? `${IMG_URL}${ep.still_path}` : 'https://via.placeholder.com/400x225?text=No+Thumbnail';
-                const rating = ep.vote_average ? ep.vote_average.toFixed(1) : 'N/A';
-                const airDate = ep.air_date || 'TBA';
-                const runtime = ep.runtime ? `${ep.runtime} min` : null;
-                const overview = ep.overview ? ep.overview : 'No description available.';
-                const isUpcomingEp = ep.air_date && ep.air_date > epToday;
-
-                const epCastId = `ep-cast-${tvId}-${seasonNumber}-${ep.episode_number}`;
-
-                return `
-                    <div class="card-solid rounded-2xl overflow-hidden border border-white/10 flex flex-col lg:flex-row transition hover:border-white/30">
-                        <!-- Thumbnail (Left Side) -->
-                        <div class="relative aspect-video bg-[#060608] overflow-hidden flex-shrink-0 lg:w-56 lg:self-start">
-                            <img src="${thumbnail}" class="w-full h-full object-cover" loading="lazy">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
-
-                            <!-- Episode Number Badge (Top-Left) -->
-                            <span class="absolute top-3 left-3 lg:top-2 lg:left-2 bg-white text-black font-black text-sm lg:text-xs px-3 lg:px-2 py-1.5 lg:py-1 rounded-lg shadow-lg">
-                                ${String(ep.episode_number).padStart(2, '0')}
-                            </span>
-
-                            ${isUpcomingEp ? `<span class="flex absolute bottom-2 left-2 bg-amber-400/15 text-amber-300 border border-amber-400/40 text-[10px] font-bold px-2 py-0.5 rounded-md backdrop-blur-sm">UPCOMING</span>` : ''}
-
-                            <!-- Rating Badge (Top-Right) -->
-                            <span class="absolute top-3 right-3 lg:top-2 lg:right-2 bg-amber-400 text-black font-bold text-[11px] lg:text-[10px] px-2.5 lg:px-2 py-1 lg:py-0.5 rounded-lg flex items-center gap-1 shadow-lg">
-                                <i class="fa-solid fa-star text-[9px]"></i> ${rating}
-                            </span>
-                        </div>
-
-                        <!-- Details (Right Side / Below on mobile) -->
-                        <div class="p-4 flex-grow flex flex-col justify-between space-y-2.5">
-                            <!-- Title -->
-                            <h4 class="text-sm font-bold text-white line-clamp-2">${ep.name}</h4>
-
-                            <!-- Meta Info: Date + Runtime -->
-                            <div class="flex items-center gap-3 text-xs text-slate-400">
-                                <span class="flex items-center gap-1">
-                                    <i class="fa-regular fa-calendar text-[10px]"></i> ${airDate}
-                                </span>
-                                ${runtime ? `<span class="text-slate-500">•</span><span class="flex items-center gap-1"><i class="fa-regular fa-clock text-[10px]"></i> ${runtime}</span>` : ''}
-                            </div>
-
-                            <!-- Overview -->
-                            <p class="text-[13px] text-slate-300 leading-relaxed line-clamp-2 flex-grow">${overview}</p>
-
-                            <!-- Cast toggle -->
-                            <button onclick="toggleEpisodeCast(${tvId}, ${seasonNumber}, ${ep.episode_number}, '${epCastId}', this)" class="ep-cast-btn self-start flex items-center gap-1.5 text-[11px] font-semibold text-slate-300 border border-white/15 rounded-lg px-2.5 py-1 hover:border-white/40 hover:text-white transition">
-                                <i class="fa-solid fa-users text-[10px]"></i> Cast <i class="fa-solid fa-chevron-down text-[9px] ep-cast-chevron transition-transform"></i>
-                            </button>
-                            <div id="${epCastId}" class="hidden pt-1"></div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // Fetches and toggles the cast list for a single episode inline.
-        async function toggleEpisodeCast(tvId, seasonNumber, episodeNumber, containerId, btnEl) {
-            const container = document.getElementById(containerId);
-            const chevron = btnEl.querySelector('.ep-cast-chevron');
-
-            if (!container.classList.contains('hidden')) {
-                container.classList.add('hidden');
-                chevron.classList.remove('rotate-180');
-                return;
-            }
-
-            container.classList.remove('hidden');
-            chevron.classList.add('rotate-180');
-
-            if (container.dataset.loaded === 'true') return;
-
-            container.innerHTML = `<div class="text-[11px] text-slate-400 py-1"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading cast...</div>`;
-
-            const data = await fetchTMDB(`/tv/${tvId}/season/${seasonNumber}/episode/${episodeNumber}/credits`);
-            const people = [...(data?.cast || []), ...(data?.guest_stars || [])];
-
-            if (!people.length) {
-                container.innerHTML = `<p class="text-[11px] text-slate-500 py-1">No cast info available for this episode.</p>`;
-                container.dataset.loaded = 'true';
-                return;
-            }
-
-            container.innerHTML = `
-                <div class="flex gap-2.5 overflow-x-auto no-scrollbar py-1">
-                    ${people.map(c => {
-                        const photo = c.profile_path ? `${IMG_URL}${c.profile_path}` : 'https://via.placeholder.com/150?text=No+Photo';
-                        return `
-                            <div onclick="openActorModal(${c.id})" class="flex-none w-16 text-center flex flex-col items-center cursor-pointer">
-                                <img src="${photo}" class="w-11 h-11 rounded-full object-cover border border-white/20 mb-1 shadow-md" loading="lazy">
-                                <p class="text-[9px] font-semibold text-slate-100 truncate w-full">${c.name}</p>
-                                <p class="text-[8px] text-slate-400 truncate w-full">${c.character || ''}</p>
-                            </div>
-                        `;
-                    }).join('')}
-                </div>
-            `;
-            container.dataset.loaded = 'true';
-        }
-
-        function closeModalManual() {
-            window.history.back();
-        }
-
-        function closeModalDOM() {
-            document.getElementById('details-modal').classList.add('hidden');
-            document.body.style.overflow = 'auto';
-            document.title = 'MtDv';
-            stopDetailBackdropRotation();
-
-            sessionStorage.setItem('mtdv_active_tab', currentTab);
-            sessionStorage.setItem('mtdv_active_category', currentCategory);
-
-            window.history.replaceState(
-                { modalOpen: false, tab: currentTab, category: currentCategory },
-                '',
-                currentTab === 'search' ? `${window.location.pathname}?tab=search` : window.location.pathname
-            );
-        }
-
-        function showGridSkeleton(targetId) {
-            document.getElementById(targetId).innerHTML = Array(10).fill(0).map(() => `
-                <div class="skeleton rounded-2xl aspect-[2/3] border border-indigo-500/10"></div>
-            `).join('');
+            content.innerHTML = ``;
         }
     </script>
 </body>
