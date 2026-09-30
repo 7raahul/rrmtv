@@ -795,7 +795,7 @@
 
             try {
                 const controller = new AbortController();
-                const timeout = setTimeout(() => controller.abort(), 12000);
+                const timeout = setTimeout(() => controller.abort(), 8000);
 
                 const res = await fetch(
                     `${BASE_URL}${endpoint}?api_key=${API_KEY}${params}`,
@@ -1502,15 +1502,31 @@
 
             content.innerHTML = `<div class="p-16 text-center text-slate-400"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-white mb-3"></i><p class="text-xs">Loading details...</p></div>`;
 
-            const [data, logoUrl] = await Promise.all([
-                fetchTMDB(`/${type}/${id}`, `&append_to_response=credits,watch/providers,images,videos,${type === 'movie' ? 'release_dates' : 'content_ratings'}&include_image_language=en,hi,null&include_video_language=en,hi,null`),
-                fetchTitleLogo(type, id)
-            ]);
+            // Load the main details independently. Optional title-logo fetching must never
+            // block the details page. If the combined request fails, fall back to the basic
+            // details endpoint so the page can still open.
+            let data = await fetchTMDB(
+                `/${type}/${id}`,
+                `&append_to_response=credits,watch/providers,images,videos,${type === 'movie' ? 'release_dates' : 'content_ratings'}&include_image_language=en,hi,null&include_video_language=en,hi,null`
+            );
 
             if (!data) {
-                content.innerHTML = `<p class="p-12 text-center text-slate-400 text-xs">Failed to load content.</p>`;
+                data = await fetchTMDB(`/${type}/${id}`);
+            }
+
+            if (!data) {
+                content.innerHTML = `<div class="p-12 text-center text-slate-400 text-xs"><i class="fa-solid fa-triangle-exclamation text-amber-400 text-2xl mb-3"></i><p>Details could not be loaded.</p><button onclick="location.reload()" class="mt-4 px-4 py-2 rounded-xl bg-white/10 border border-white/15 text-white text-xs font-semibold">Retry</button></div>`;
                 return;
             }
+
+            // TV series use aggregate credits so cast from different seasons is not lost.
+            if (type === 'tv') {
+                const aggregateCredits = await fetchTMDB(`/tv/${id}/aggregate_credits`);
+                if (aggregateCredits) data.credits = aggregateCredits;
+            }
+
+            // Title logo is optional. Start rendering without it, then fill it in when available.
+            let logoUrl = null;
 
             const title = data.title || data.name;
             document.title = `${title} — MtDv`;
@@ -1723,7 +1739,7 @@
                                 ${logoUrl ? `
                                     <img src="${logoUrl}" alt="${title}" class="max-h-9 lg:max-h-12 max-w-[80%] object-contain drop-shadow-2xl my-1">
                                 ` : `
-                                    <h1 class="text-lg lg:text-2xl font-bold text-white leading-tight drop-shadow-lg">${title}</h1>
+                                    <h1 class="detail-title-logo-target text-lg lg:text-2xl font-bold text-white leading-tight drop-shadow-lg">${title}</h1>
                                 `}
                             </div>
                         </div>
@@ -1910,6 +1926,16 @@
                     </div>
                 </div>
             `;
+
+            // Fetch the title logo after the page is already visible. A failed logo request
+            // must not leave the user stuck on "Loading details...".
+            fetchTitleLogo(type, id).then(url => {
+                if (!url) return;
+                const logoTargets = content.querySelectorAll('.detail-title-logo-target');
+                logoTargets.forEach(el => {
+                    el.outerHTML = `<img src="${url}" alt="${title}" class="detail-title-logo-target max-h-9 lg:max-h-12 max-w-[80%] object-contain object-left drop-shadow-2xl my-1" onerror="this.outerHTML='<h1 class=\"text-lg lg:text-2xl font-bold text-white leading-tight drop-shadow-lg\">${title.replace(/'/g, '&#39;')}</h1>'">`;
+                });
+            }).catch(() => {});
 
             if (hasEpisodesTab) {
                 loadSeasonEpisodes(id, validSeasons[0].season_number, document.querySelector('.season-btn'));
