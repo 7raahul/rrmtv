@@ -587,7 +587,7 @@
     </div>
 
     <script>
-        const API_KEY = 'eb902ee838cf20c488b7245545a6b9ef';
+        const API_KEY = '9c95420163879f1c4726c540b305cbc6';
         const BASE_URL = 'https://api.themoviedb.org/3';
         const IMG_URL = 'https://image.tmdb.org/t/p/w500';
         const BACKDROP_URL = 'https://image.tmdb.org/t/p/w1280';
@@ -795,36 +795,17 @@
 
             try {
                 const controller = new AbortController();
-                const timeout = setTimeout(() => controller.abort(), 4500);
+                const timeout = setTimeout(() => controller.abort(), 12000);
 
                 const res = await fetch(
                     `${BASE_URL}${endpoint}?api_key=${API_KEY}${params}`,
-                    {
-                        signal: controller.signal,
-                        cache: 'no-store',
-                        headers: { 'Accept': 'application/json' }
-                    }
+                    { signal: controller.signal, cache: 'no-store' }
                 );
                 clearTimeout(timeout);
 
-                if (!res.ok) {
-                    const status = res.status;
-                    let message = `TMDB HTTP ${status}`;
-                    try {
-                        const errData = await res.clone().json();
-                        if (errData?.status_message) message = errData.status_message;
-                    } catch (_) {}
-                    window.__mtdvLastApiError = { status, message, endpoint };
-                    // Never retry authentication/permission failures.
-                    if (status === 401 || status === 403) {
-                        console.error('TMDB authentication/permission error:', message);
-                        return null;
-                    }
-                    throw new Error(message);
-                }
+                if (!res.ok) throw new Error(`TMDB HTTP ${res.status}`);
 
                 const data = await res.json();
-                window.__mtdvLastApiError = null;
 
                 // Never cache an error-shaped/empty API response.
                 if (data && !data.status_code) {
@@ -834,8 +815,8 @@
             } catch (err) {
                 console.error(`API Fetch Error (attempt ${retryCount + 1}):`, endpoint, err);
 
-                if (retryCount < 1 && !window.__mtdvLastApiError?.status?.toString().match(/^40[13]$/)) {
-                    await new Promise(resolve => setTimeout(resolve, 250));
+                if (retryCount < 2) {
+                    await new Promise(resolve => setTimeout(resolve, 450 * (retryCount + 1)));
                     return fetchTMDB(endpoint, params, retryCount + 1);
                 }
                 return null;
@@ -857,28 +838,10 @@
         // TMDB has no "web series only" flag, so we resolve the actual Indian OTT
         // platform IDs from /watch/providers/tv (name-matched, not hardcoded) and
         // filter discover/tv to only those with_watch_providers.
-        let indianOttProviderIdsCache = [8, 119, 232];
+        let indianOttProviderIdsCache = null;
         const INDIAN_OTT_NAME_PATTERNS = ['netflix', 'prime video', 'amazon', 'hotstar', 'jiocinema', 'jio cinema', 'sonyliv', 'sony liv', 'zee5', 'mx player', 'voot', 'aha', 'hoichoi', 'lionsgate play', 'apple tv', 'mubi', 'erosnow', 'eros now'];
         async function getIndianOttProviderIds() {
-            // Return a usable fallback immediately so Home/TV never gets stuck
-            // waiting for the optional provider-discovery request. Refresh it
-            // in the background for better coverage.
-            const fallback = [8, 119, 232];
-            if (indianOttProviderIdsCache && indianOttProviderIdsCache.length) {
-                const current = indianOttProviderIdsCache.slice();
-                fetchTMDB('/watch/providers/tv', '&watch_region=IN').then(data => {
-                    if (data && data.results && data.results.length) {
-                        const ids = data.results
-                            .filter(p => p && INDIAN_OTT_NAME_PATTERNS.some(pat => (p.provider_name || '').toLowerCase().includes(pat)))
-                            .map(p => p.provider_id);
-                        if (ids.length) indianOttProviderIdsCache = [...new Set(ids)];
-                    }
-                }).catch(() => {});
-                return current;
-            }
-            indianOttProviderIdsCache = fallback.slice();
-            return indianOttProviderIdsCache;
-            /*
+            if (indianOttProviderIdsCache) return indianOttProviderIdsCache;
             const data = await fetchTMDB('/watch/providers/tv', '&watch_region=IN');
             if (data && data.results && data.results.length) {
                 const ids = data.results
@@ -889,7 +852,6 @@
                 indianOttProviderIdsCache = [8, 119, 232]; // fallback: Netflix, Prime Video, ZEE5
             }
             return indianOttProviderIdsCache;
-            */
         }
 
         // Keep desktop tabs, legacy mobile tabs, and the new floating mobile nav in sync.
@@ -1211,19 +1173,6 @@
         async function loadHomeTitles(reset = false) {
             if (isFetching) return;
             isFetching = true;
-            const loadToken = Date.now() + Math.random();
-            window.__mtdvHomeLoadToken = loadToken;
-            let watchdog = setTimeout(() => {
-                if (window.__mtdvHomeLoadToken !== loadToken || !isFetching) return;
-                isFetching = false;
-                hasMore = false;
-                const loader = document.getElementById('infinite-loader');
-                if (loader) loader.classList.add('hidden');
-                const grid = document.getElementById('home-grid');
-                if (grid && !grid.children.length) {
-                    grid.innerHTML = `<div class="col-span-full text-center py-16 text-slate-400 text-xs space-y-3"><i class="fa-solid fa-cloud-arrow-down text-2xl text-slate-500"></i><p>Unable to load content right now.</p><button onclick="window.__mtdvHomeLoadToken=0; loadHomeTitles(true)" class="px-4 py-2 rounded-xl bg-white text-black font-bold text-xs">Try Again</button></div>`;
-                }
-            }, 14000);
 
             if (reset) {
                 currentPage = 1;
@@ -1283,7 +1232,6 @@
                     currentPage++;
                     if (currentPage > data.total_pages) hasMore = false;
                     isFetching = false;
-                    clearTimeout(watchdog);
 
                     // Enrich hero items (logo, runtime, cert, genres) in the
                     // background, then re-render just the hero banner.
@@ -1296,28 +1244,11 @@
             } else {
                 hasMore = false;
                 if (reset) {
-                    const apiError = window.__mtdvLastApiError;
-                    const reason = apiError?.status === 401
-                        ? 'TMDB API key is invalid or not authorized.'
-                        : apiError?.status === 403
-                            ? 'TMDB denied access to this API key.'
-                            : 'TMDB is not responding right now.';
-                    const hero = document.getElementById('hero-container');
-                    if (hero) {
-                        hero.innerHTML = `<div class="p-10 text-center text-slate-400">
-                            <i class="fa-solid fa-triangle-exclamation text-2xl text-amber-400 mb-2"></i>
-                            <p class="text-sm text-white font-semibold">Unable to load Spotlight</p>
-                            <p class="text-[11px] mt-1 text-slate-500">${reason}</p>
-                            <button onclick="loadHomeTitles(true)" class="mt-4 px-4 py-2 rounded-xl bg-white text-black font-bold text-xs">Try Again</button>
-                        </div>`;
-                    }
-                    document.getElementById('home-grid').innerHTML = `<div class="col-span-full text-center text-slate-400 py-12 text-xs">${reason}</div>`;
+                    document.getElementById('home-grid').innerHTML = `<div class="col-span-full text-center text-slate-400 py-12 text-xs">No content found for this selection.</div>`;
                 }
             }
 
             isFetching = false;
-            clearTimeout(watchdog);
-            window.__mtdvHomeLoadToken = 0;
         }
 
         async function enrichHeroItems(rawHero) {
@@ -1325,9 +1256,10 @@
             const enriched = await Promise.all(rawHero.map(async raw => {
                 const hType = raw.media_type || (raw.title ? 'movie' : 'tv');
                 const certAppend = hType === 'movie' ? 'release_dates' : 'content_ratings';
-                const details = await fetchTMDB(`/${hType}/${raw.id}`, `&append_to_response=${certAppend}`).catch(() => null);
-                let logoUrl = null;
-                try { logoUrl = await fetchTitleLogo(hType, raw.id); } catch (_) {}
+                const [details, logoUrl] = await Promise.all([
+                    fetchTMDB(`/${hType}/${raw.id}`, `&append_to_response=${certAppend}`),
+                    fetchTitleLogo(hType, raw.id)
+                ]);
                 return { ...raw, _type: hType, _details: details, _logoUrl: logoUrl };
             }));
             // If the user switched filters again while this was in flight, drop it.
@@ -1559,9 +1491,6 @@
             sessionStorage.setItem('mtdv_active_tab', currentTab);
             sessionStorage.setItem('mtdv_active_category', currentCategory);
 
-            const requestToken = (window.__mtdvDetailsRequestToken || 0) + 1;
-            window.__mtdvDetailsRequestToken = requestToken;
-
             const newUrl = `${window.location.pathname}?type=${type}&id=${id}`;
             window.history.pushState({ modalOpen: true, tab: currentTab, type, id }, '', newUrl);
 
@@ -1573,80 +1502,15 @@
 
             content.innerHTML = `<div class="p-16 text-center text-slate-400"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-white mb-3"></i><p class="text-xs">Loading details...</p></div>`;
 
-            // Only the small basic-details request is allowed to control the first render.
-            // A hard 6s watchdog prevents the spinner from hanging forever.
-            const basicData = await Promise.race([
-                fetchTMDB(`/${type}/${id}`),
-                new Promise(resolve => setTimeout(() => resolve(null), 6000))
+            const [data, logoUrl] = await Promise.all([
+                fetchTMDB(`/${type}/${id}`, `&append_to_response=credits,watch/providers,images,videos,${type === 'movie' ? 'release_dates' : 'content_ratings'}&include_image_language=en,hi,null&include_video_language=en,hi,null`),
+                fetchTitleLogo(type, id)
             ]);
 
-            if (!basicData) {
-                const apiError = window.__mtdvLastApiError;
-                const reason = apiError?.status === 401
-                    ? 'TMDB API key is invalid or not authorized.'
-                    : apiError?.status === 403
-                        ? 'TMDB denied access to this API key.'
-                        : apiError?.status === 429
-                            ? 'TMDB rate limit reached. Please try again in a moment.'
-                            : 'TMDB details request timed out or failed.';
-                content.innerHTML = `<div class="p-12 text-center text-slate-400 text-xs">
-                    <i class="fa-solid fa-triangle-exclamation text-amber-400 text-2xl mb-3"></i>
-                    <p class="text-white font-semibold mb-1">Details could not be loaded.</p>
-                    <p class="text-slate-500">${reason}</p>
-                    <button onclick="openDetails('${type}', ${id})" class="mt-4 px-4 py-2 rounded-xl bg-white text-black text-xs font-bold">Try Again</button>
-                </div>`;
+            if (!data) {
+                content.innerHTML = `<p class="p-12 text-center text-slate-400 text-xs">Failed to load content.</p>`;
                 return;
             }
-
-            // IMPORTANT: render the page NOW using only basic details.
-            // Credits, OTT, images, videos and ratings are background enrichment.
-            renderDetailsPage(type, id, basicData);
-
-            // Start all enrichment requests in parallel. None of these can block the first render.
-            const optionalPromise = Promise.allSettled([
-                fetchTMDB(`/${type}/${id}/credits`),
-                fetchTMDB(`/${type}/${id}/watch/providers`),
-                fetchTMDB(`/${type}/${id}/images`, '&include_image_language=en,hi,null'),
-                fetchTMDB(`/${type}/${id}/videos`, '&include_video_language=en,hi,null'),
-                type === 'movie'
-                    ? fetchTMDB(`/${type}/${id}/release_dates`)
-                    : fetchTMDB(`/${type}/${id}/content_ratings`)
-            ]);
-
-            const aggregatePromise = type === 'tv'
-                ? fetchTMDB(`/tv/${id}/aggregate_credits`)
-                : Promise.resolve(null);
-
-            // Enrich the already-visible page when optional data arrives.
-            optionalPromise.then(async results => {
-                if (window.__mtdvDetailsRequestToken !== requestToken) return;
-
-                const [creditsResult, providersResult, imagesResult, videosResult, ratingResult] = results;
-                const data = { ...basicData };
-                if (creditsResult.status === 'fulfilled' && creditsResult.value) data.credits = creditsResult.value;
-                if (providersResult.status === 'fulfilled' && providersResult.value) data['watch/providers'] = providersResult.value;
-                if (imagesResult.status === 'fulfilled' && imagesResult.value) data.images = imagesResult.value;
-                if (videosResult.status === 'fulfilled' && videosResult.value) data.videos = videosResult.value;
-                if (ratingResult.status === 'fulfilled' && ratingResult.value) {
-                    if (type === 'movie') data.release_dates = ratingResult.value;
-                    else data.content_ratings = ratingResult.value;
-                }
-
-                const aggregateCredits = await Promise.race([
-                    aggregatePromise,
-                    new Promise(resolve => setTimeout(() => resolve(null), 1200))
-                ]);
-                if (aggregateCredits) data.credits = aggregateCredits;
-
-                if (window.__mtdvDetailsRequestToken !== requestToken) return;
-                // Re-render only after enrichment is ready; the user has already seen the page.
-                renderDetailsPage(type, id, data);
-            }).catch(() => {});
-        }
-
-        function renderDetailsPage(type, id, data) {
-            const content = document.getElementById('modal-content');
-            let logoUrl = null;
 
             const title = data.title || data.name;
             document.title = `${title} — MtDv`;
@@ -1859,7 +1723,7 @@
                                 ${logoUrl ? `
                                     <img src="${logoUrl}" alt="${title}" class="max-h-9 lg:max-h-12 max-w-[80%] object-contain drop-shadow-2xl my-1">
                                 ` : `
-                                    <h1 class="detail-title-logo-target text-lg lg:text-2xl font-bold text-white leading-tight drop-shadow-lg">${title}</h1>
+                                    <h1 class="text-lg lg:text-2xl font-bold text-white leading-tight drop-shadow-lg">${title}</h1>
                                 `}
                             </div>
                         </div>
@@ -2046,16 +1910,6 @@
                     </div>
                 </div>
             `;
-
-            // Fetch the title logo after the page is already visible. A failed logo request
-            // must not leave the user stuck on "Loading details...".
-            fetchTitleLogo(type, id).then(url => {
-                if (!url) return;
-                const logoTargets = content.querySelectorAll('.detail-title-logo-target');
-                logoTargets.forEach(el => {
-                    el.outerHTML = `<img src="${url}" alt="${title}" class="detail-title-logo-target max-h-9 lg:max-h-12 max-w-[80%] object-contain object-left drop-shadow-2xl my-1" onerror="this.outerHTML='<h1 class=\"text-lg lg:text-2xl font-bold text-white leading-tight drop-shadow-lg\">${title.replace(/'/g, '&#39;')}</h1>'">`;
-                });
-            }).catch(() => {});
 
             if (hasEpisodesTab) {
                 loadSeasonEpisodes(id, validSeasons[0].season_number, document.querySelector('.season-btn'));
