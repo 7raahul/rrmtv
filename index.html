@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StreamPulse - Movie & TV Details</title>
+    <title>StreamPulse - Discovery & Details</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -38,6 +38,7 @@
             background-color: #050505;
             color: #e2e8f0;
             font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
         }
         .glass-pill {
             background: rgba(28, 29, 36, 0.90);
@@ -53,27 +54,66 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+        .skeleton {
+            background: linear-gradient(90deg, #0f1015 25%, #1d212e 50%, #0f1015 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col pb-28">
+<body class="min-h-screen flex flex-col pb-24">
 
-    <!-- DETAILS CONTAINER -->
-    <main class="max-w-md w-full mx-auto relative min-h-screen">
+    <!-- 1. MAIN GRID / HOME PAGE VIEW -->
+    <div id="app-view" class="max-w-md w-full mx-auto px-4 pt-4 space-y-6">
+        <!-- App Title / Search Overlay Header -->
+        <div class="flex items-center justify-between">
+            <h1 class="text-xl font-extrabold text-white flex items-center gap-2">
+                <i class="fa-solid fa-play-circle text-indigo-500"></i> StreamPulse
+            </h1>
+            <button onclick="toggleSearchInput()" class="w-9 h-9 rounded-full bg-brand-card border border-brand-border text-gray-300 flex items-center justify-center">
+                <i class="fa-solid fa-magnifying-glass text-xs"></i>
+            </button>
+        </div>
 
-        <!-- 1. HEADER HERO BACKDROP SECTION -->
+        <!-- Inline Search Field (Hidden by default) -->
+        <div id="search-box" class="hidden">
+            <input type="text" id="search-input" onkeyup="handleSearch(event)" placeholder="Search movies, tv shows..." 
+                   class="w-full bg-brand-card border border-brand-border text-xs px-4 py-3 rounded-2xl outline-none focus:border-amber-500 text-white">
+        </div>
+
+        <h2 id="grid-title" class="text-sm font-bold text-gray-400 uppercase tracking-wider">Trending Now</h2>
+
+        <!-- Cards Grid -->
+        <div id="content-grid" class="grid grid-cols-2 gap-3">
+            <!-- Dynamic Content Cards -->
+        </div>
+    </div>
+
+    <!-- 2. SCREENSHOT MATCH DETAILS VIEW (Hidden initially) -->
+    <div id="details-view" class="hidden max-w-md w-full mx-auto relative min-h-screen">
+        
+        <!-- Back Button Overlay -->
+        <button onclick="closeDetails()" class="fixed top-4 left-4 z-50 w-9 h-9 rounded-xl bg-black/60 backdrop-blur-md border border-white/10 text-white flex items-center justify-center hover:bg-black/80 transition">
+            <i class="fa-solid fa-arrow-left text-xs"></i>
+        </button>
+
+        <!-- TOP HERO BACKDROP SECTION -->
         <section class="relative h-[420px] w-full overflow-hidden">
-            <!-- Background Image -->
-            <div id="hero-backdrop" class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://image.tmdb.org/t/p/original/mq4o6s73SjQ7O6pL4N1lV69jH54.jpg');"></div>
+            <div id="hero-backdrop" class="absolute inset-0 bg-cover bg-center"></div>
             
-            <!-- Dark Gradient Overlays for Image 1 look -->
+            <!-- Dark Gradient Overlays for Image look -->
             <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-brand-bg"></div>
             <div class="absolute inset-0 bg-gradient-to-t from-brand-bg via-brand-bg/40 to-transparent"></div>
 
             <!-- Top Badges (Rating & Share) -->
-            <div class="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
+            <div class="absolute top-4 right-4 flex items-center gap-2 z-10">
                 <div id="rating-badge" class="bg-black/60 backdrop-blur-md border border-amber-500/30 text-amber-400 font-extrabold text-xs px-2.5 py-1 rounded-lg flex items-center gap-1.5 shadow-lg">
                     <i class="fa-solid fa-star text-[11px] text-amber-400"></i>
-                    <span id="rating-val">7.9</span>
+                    <span id="rating-val">0.0</span>
                 </div>
 
                 <button onclick="shareDetails()" class="w-9 h-9 rounded-xl bg-black/60 backdrop-blur-md border border-white/10 text-white flex items-center justify-center hover:bg-black/80 transition">
@@ -81,37 +121,35 @@
                 </button>
             </div>
 
-            <!-- Poster Title & Type Overlay (Bottom left of backdrop) -->
+            <!-- Poster Title & Type Overlay -->
             <div class="absolute bottom-4 left-4 right-4 z-10 space-y-1">
                 <span id="media-type" class="text-[10px] font-black uppercase tracking-widest text-gray-300">MOVIE</span>
-                <h1 id="media-title" class="text-3xl font-black text-white leading-tight drop-shadow-md">Spider-Man: Brand New Day</h1>
+                <h1 id="media-title" class="text-3xl font-black text-white leading-tight drop-shadow-md">Loading...</h1>
             </div>
         </section>
 
-        <!-- 2. GENRE CHIPS (Image 1 Style) -->
+        <!-- GOLDEN GENRE CHIPS -->
         <section class="px-4 py-2">
             <div id="genre-container" class="flex items-center gap-2 overflow-x-auto hide-scrollbar">
-                <span class="bg-brand-goldBg border border-brand-goldBorder/60 text-amber-400 text-xs font-semibold px-3.5 py-1.5 rounded-xl flex-shrink-0">Science Fiction</span>
-                <span class="bg-brand-goldBg border border-brand-goldBorder/60 text-amber-400 text-xs font-semibold px-3.5 py-1.5 rounded-xl flex-shrink-0">Action</span>
-                <span class="bg-brand-goldBg border border-brand-goldBorder/60 text-amber-400 text-xs font-semibold px-3.5 py-1.5 rounded-xl flex-shrink-0">Adventure</span>
+                <!-- Dynamic Genre Chips -->
             </div>
         </section>
 
-        <!-- 3. METADATA CARDS GRID (Image 1 Style) -->
+        <!-- 2x2 METADATA CARDS GRID -->
         <section class="px-4 py-4 grid grid-cols-2 gap-3">
             <div class="bg-brand-card/90 border border-brand-border/80 p-3.5 rounded-2xl space-y-1">
                 <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider block">RELEASE</span>
-                <span id="meta-release" class="text-sm font-extrabold text-white block">Jul 29, 2026</span>
+                <span id="meta-release" class="text-sm font-extrabold text-white block">-</span>
             </div>
 
             <div class="bg-brand-card/90 border border-brand-border/80 p-3.5 rounded-2xl space-y-1">
                 <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider block">RUNTIME</span>
-                <span id="meta-runtime" class="text-sm font-extrabold text-white block">145 min</span>
+                <span id="meta-runtime" class="text-sm font-extrabold text-white block">-</span>
             </div>
 
             <div class="bg-brand-card/90 border border-brand-border/80 p-3.5 rounded-2xl space-y-1">
                 <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider block">LANGUAGE</span>
-                <span id="meta-lang" class="text-sm font-extrabold text-white block">English</span>
+                <span id="meta-lang" class="text-sm font-extrabold text-white block">-</span>
             </div>
 
             <div class="bg-brand-card/90 border border-brand-border/80 p-3.5 rounded-2xl space-y-1">
@@ -120,7 +158,7 @@
             </div>
         </section>
 
-        <!-- 4. NAVIGATION TABS (Overview, Cast & More, Media) -->
+        <!-- NAVIGATION TABS -->
         <section class="px-4 pt-2">
             <div class="flex items-center gap-6 border-b border-brand-border/60 text-xs font-bold pb-2">
                 <button onclick="switchTab('overview')" id="tab-overview-btn" class="text-white relative pb-2 transition">
@@ -136,75 +174,55 @@
             </div>
         </section>
 
-        <!-- 5. TAB CONTENT AREAS -->
+        <!-- TAB CONTENT AREAS -->
         <section class="px-4 py-4 space-y-4">
             
             <!-- OVERVIEW TAB -->
             <div id="tab-overview" class="space-y-4">
                 <div class="bg-brand-card/90 border border-brand-border/80 p-4 rounded-3xl space-y-2">
                     <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider">OVERVIEW</h3>
-                    <p id="overview-text" class="text-xs text-gray-300 leading-relaxed font-normal">
-                        Fighting crime full-time as Spider-Man in a world that doesn't remember him—and the pressure of seeing his old friends move on without him—sparks a change in Peter Parker he may not have the power to control. But that transformation might also be the only thing that can stop a powerful villain no one can even see.
-                    </p>
+                    <p id="overview-text" class="text-xs text-gray-300 leading-relaxed font-normal"></p>
                 </div>
             </div>
 
             <!-- CAST TAB -->
             <div id="tab-cast" class="hidden space-y-3">
                 <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider">TOP CAST</h3>
-                <div id="cast-grid" class="grid grid-cols-2 gap-3">
-                    <div class="bg-brand-card border border-brand-border p-2.5 rounded-2xl flex items-center gap-3">
-                        <img src="https://via.placeholder.com/100" class="w-10 h-10 rounded-full object-cover">
-                        <div>
-                            <h4 class="text-xs font-bold text-white">Tom Holland</h4>
-                            <p class="text-[10px] text-gray-400">Peter Parker</p>
-                        </div>
-                    </div>
-                    <div class="bg-brand-card border border-brand-border p-2.5 rounded-2xl flex items-center gap-3">
-                        <img src="https://via.placeholder.com/100" class="w-10 h-10 rounded-full object-cover">
-                        <div>
-                            <h4 class="text-xs font-bold text-white">Zendaya</h4>
-                            <p class="text-[10px] text-gray-400">MJ</p>
-                        </div>
-                    </div>
-                </div>
+                <div id="cast-grid" class="grid grid-cols-2 gap-3"></div>
             </div>
 
             <!-- MEDIA TAB -->
             <div id="tab-media" class="hidden space-y-3">
-                <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider">TRAILERS & MEDIA</h3>
-                <div id="media-container" class="aspect-video bg-brand-card rounded-2xl border border-brand-border overflow-hidden flex items-center justify-center text-xs text-gray-500">
-                    <span>Trailer Video Player</span>
-                </div>
+                <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider">TRAILERS</h3>
+                <div id="media-container" class="space-y-3"></div>
             </div>
 
         </section>
+    </div>
 
-    </main>
-
-    <!-- FLOATING PILL BOTTOM NAVIGATION (Image 1 Style) -->
+    <!-- FLOATING PILL BOTTOM NAVIGATION -->
     <div class="fixed bottom-4 left-0 right-0 z-50 flex justify-center px-4">
         <div class="glass-pill rounded-full p-1.5 flex items-center justify-between w-full max-w-xs transition-all duration-300">
             <!-- Home -->
-            <button onclick="setActiveNav('home')" id="nav-home" class="flex-1 py-2 rounded-full flex flex-col items-center justify-center text-gray-400 hover:text-white transition">
+            <button onclick="navClick('home')" id="nav-home" class="flex-1 py-2 rounded-full flex flex-col items-center justify-center text-white bg-white/10 transition">
                 <i class="fa-solid fa-house text-sm"></i>
                 <span class="text-[10px] font-semibold mt-0.5">Home</span>
             </button>
 
             <!-- Movies -->
-            <button onclick="setActiveNav('movies')" id="nav-movies" class="flex-1 py-2 rounded-full flex flex-col items-center justify-center text-white bg-white/10 transition">
+            <button onclick="navClick('movie')" id="nav-movie" class="flex-1 py-2 rounded-full flex flex-col items-center justify-center text-gray-400 hover:text-white transition">
                 <i class="fa-solid fa-clapperboard text-sm"></i>
                 <span class="text-[10px] font-semibold mt-0.5">Movies</span>
             </button>
 
             <!-- TV Shows -->
-            <button onclick="setActiveNav('tv')" id="nav-tv" class="flex-1 py-2 rounded-full flex flex-col items-center justify-center text-gray-400 hover:text-white transition">
+            <button onclick="navClick('tv')" id="nav-tv" class="flex-1 py-2 rounded-full flex flex-col items-center justify-center text-gray-400 hover:text-white transition">
                 <i class="fa-solid fa-tv text-sm"></i>
                 <span class="text-[10px] font-semibold mt-0.5">TV Shows</span>
             </button>
 
             <!-- Search -->
-            <button onclick="setActiveNav('search')" id="nav-search" class="flex-1 py-2 rounded-full flex flex-col items-center justify-center text-gray-400 hover:text-white transition">
+            <button onclick="toggleSearchInput()" id="nav-search" class="flex-1 py-2 rounded-full flex flex-col items-center justify-center text-gray-400 hover:text-white transition">
                 <i class="fa-solid fa-magnifying-glass text-sm"></i>
                 <span class="text-[10px] font-semibold mt-0.5">Search</span>
             </button>
@@ -216,69 +234,125 @@
         Link copied to clipboard!
     </div>
 
-    <!-- TMDB API INTEGRATION LOGIC -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
         const TMDB_API_KEY = '0d516ae53b334d92b86cfc7c958d192f';
         const BASE_URL = 'https://api.themoviedb.org/3';
+        const IMG_URL = 'https://image.tmdb.org/t/p/w500';
+
+        let currentTab = 'home';
 
         window.addEventListener('DOMContentLoaded', () => {
-            const params = new URLSearchParams(window.location.search);
-            const id = params.get('id') || '550'; // Default Spider-Man / Movie ID
-            const type = params.get('type') || 'movie';
-
-            fetchDetails(id, type);
+            fetchGridContent('trending/all/day');
         });
 
-        async function fetchDetails(id, type) {
+        // FETCH MAIN GRID
+        async function fetchGridContent(endpoint) {
+            const grid = document.getElementById('content-grid');
+            grid.innerHTML = Array(6).fill(0).map(() => `<div class="aspect-[2/3] skeleton rounded-2xl"></div>`).join('');
+
             try {
-                const res = await fetch(`${BASE_URL}/${type}/${id}?api_key=${TMDB_API_KEY}&append_to_response=credits,release_dates,content_ratings`);
+                const res = await fetch(`${BASE_URL}/${endpoint}?api_key=${TMDB_API_KEY}`);
                 const data = await res.json();
-
-                // 1. Title & Backdrop
-                document.getElementById('media-title').textContent = data.title || data.name;
-                document.getElementById('media-type').textContent = type.toUpperCase();
-                if (data.backdrop_path) {
-                    document.getElementById('hero-backdrop').style.backgroundImage = `url('https://image.tmdb.org/t/p/original${data.backdrop_path}')`;
-                }
-
-                // 2. Rating & Overview
-                document.getElementById('rating-val').textContent = data.vote_average ? data.vote_average.toFixed(1) : 'N/A';
-                document.getElementById('overview-text').textContent = data.overview || 'No overview available.';
-
-                // 3. Metadata
-                const releaseDate = data.release_date || data.first_air_date || 'N/A';
-                document.getElementById('meta-release').textContent = releaseDate;
-                document.getElementById('meta-runtime').textContent = data.runtime ? `${data.runtime} min` : (data.episode_run_time?.[0] ? `${data.episode_run_time[0]} min` : 'N/A');
-                document.getElementById('meta-lang').textContent = data.spoken_languages?.[0]?.english_name || data.original_language || 'English';
-
-                // 4. Genre Chips
-                if (data.genres && data.genres.length) {
-                    const genreContainer = document.getElementById('genre-container');
-                    genreContainer.innerHTML = data.genres.map(g => `
-                        <span class="bg-brand-goldBg border border-brand-goldBorder/60 text-amber-400 text-xs font-semibold px-3.5 py-1.5 rounded-xl flex-shrink-0">${g.name}</span>
-                    `).join('');
-                }
-
-                // 5. Cast
-                if (data.credits && data.credits.cast) {
-                    const castGrid = document.getElementById('cast-grid');
-                    castGrid.innerHTML = data.credits.cast.slice(0, 4).map(c => `
-                        <div class="bg-brand-card border border-brand-border p-2.5 rounded-2xl flex items-center gap-3">
-                            <img src="${c.profile_path ? 'https://image.tmdb.org/t/p/w185' + c.profile_path : 'https://via.placeholder.com/100'}" class="w-10 h-10 rounded-full object-cover">
-                            <div class="overflow-hidden">
-                                <h4 class="text-xs font-bold text-white truncate">${c.name}</h4>
-                                <p class="text-[10px] text-gray-400 truncate">${c.character || 'Actor'}</p>
-                            </div>
-                        </div>
-                    `).join('');
-                }
-
+                renderGrid(data.results || []);
             } catch (e) {
-                console.error("Error fetching data:", e);
+                console.error(e);
             }
         }
 
-        // TAB SWITCHING LOGIC
+        function renderGrid(items) {
+            const grid = document.getElementById('content-grid');
+            grid.innerHTML = '';
+
+            items.forEach(item => {
+                if (!item.poster_path) return;
+                const type = item.media_type || (currentTab === 'tv' ? 'tv' : 'movie');
+                const card = document.createElement('div');
+                card.className = "bg-brand-card border border-brand-border rounded-2xl overflow-hidden cursor-pointer group";
+                card.onclick = () => openDetails(item.id, type);
+
+                card.innerHTML = `
+                    <div class="relative aspect-[2/3] bg-brand-bg">
+                        <img src="${IMG_URL}${item.poster_path}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" loading="lazy">
+                        <div class="absolute top-2 right-2 bg-black/60 backdrop-blur-md px-1.5 py-0.5 rounded text-[10px] font-bold text-amber-400 border border-amber-500/20">
+                            ★ ${item.vote_average?.toFixed(1) || 'N/A'}
+                        </div>
+                    </div>
+                    <div class="p-2.5">
+                        <h4 class="text-xs font-bold text-white truncate">${item.title || item.name}</h4>
+                        <p class="text-[10px] text-gray-500 mt-0.5 uppercase">${type}</p>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // OPEN DETAILS PAGE (Image Match)
+        async function openDetails(id, type = 'movie') {
+            document.getElementById('app-view').classList.add('hidden');
+            document.getElementById('details-view').classList.remove('hidden');
+            window.scrollTo(0, 0);
+
+            try {
+                const res = await fetch(`${BASE_URL}/${type}/${id}?api_key=${TMDB_API_KEY}&append_to_response=credits,videos`);
+                const data = await res.json();
+
+                document.getElementById('media-title').textContent = data.title || data.name;
+                document.getElementById('media-type').textContent = type.toUpperCase();
+                
+                if (data.backdrop_path || data.poster_path) {
+                    document.getElementById('hero-backdrop').style.backgroundImage = `url('https://image.tmdb.org/t/p/original${data.backdrop_path || data.poster_path}')`;
+                }
+
+                document.getElementById('rating-val').textContent = data.vote_average ? data.vote_average.toFixed(1) : 'N/A';
+                document.getElementById('overview-text').textContent = data.overview || 'No overview available.';
+
+                // Metadata
+                document.getElementById('meta-release').textContent = data.release_date || data.first_air_date || 'N/A';
+                document.getElementById('meta-runtime').textContent = data.runtime ? `${data.runtime} min` : (data.episode_run_time?.[0] ? `${data.episode_run_time[0]} min` : 'N/A');
+                document.getElementById('meta-lang').textContent = data.spoken_languages?.[0]?.english_name || 'English';
+
+                // Golden Genres
+                const genreContainer = document.getElementById('genre-container');
+                genreContainer.innerHTML = (data.genres || []).map(g => `
+                    <span class="bg-brand-goldBg border border-brand-goldBorder/60 text-amber-400 text-xs font-semibold px-3.5 py-1.5 rounded-xl flex-shrink-0">${g.name}</span>
+                `).join('');
+
+                // Cast
+                const castGrid = document.getElementById('cast-grid');
+                castGrid.innerHTML = (data.credits?.cast || []).slice(0, 4).map(c => `
+                    <div class="bg-brand-card border border-brand-border p-2.5 rounded-2xl flex items-center gap-3">
+                        <img src="${c.profile_path ? IMG_URL + c.profile_path : 'https://via.placeholder.com/100'}" class="w-10 h-10 rounded-full object-cover">
+                        <div class="overflow-hidden">
+                            <h4 class="text-xs font-bold text-white truncate">${c.name}</h4>
+                            <p class="text-[10px] text-gray-400 truncate">${c.character || 'Actor'}</p>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Trailers
+                const mediaContainer = document.getElementById('media-container');
+                const trailers = (data.videos?.results || []).filter(v => v.site === 'YouTube' && v.type === 'Trailer');
+                if (trailers.length) {
+                    mediaContainer.innerHTML = trailers.slice(0, 2).map(t => `
+                        <div class="aspect-video rounded-2xl overflow-hidden border border-brand-border">
+                            <iframe class="w-full h-full" src="https://www.youtube.com/embed/${t.key}" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                    `).join('');
+                } else {
+                    mediaContainer.innerHTML = `<p class="text-xs text-gray-500">No trailers available.</p>`;
+                }
+
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function closeDetails() {
+            document.getElementById('details-view').classList.add('hidden');
+            document.getElementById('app-view').classList.remove('hidden');
+        }
+
         function switchTab(tab) {
             ['overview', 'cast', 'media'].forEach(t => {
                 const btn = document.getElementById(`tab-${t}-btn`);
@@ -292,22 +366,54 @@
                 }
             });
 
-            // Move indicator line
             const activeBtn = document.getElementById(`tab-${tab}-btn`);
             const indicator = document.getElementById('tab-indicator');
             activeBtn.appendChild(indicator);
         }
 
-        // BOTTOM NAV ACTIVE STATE SWITCH
-        function setActiveNav(selected) {
-            ['home', 'movies', 'tv', 'search'].forEach(nav => {
-                const btn = document.getElementById(`nav-${nav}`);
-                if (nav === selected) {
+        function navClick(tab) {
+            currentTab = tab;
+            closeDetails();
+
+            ['home', 'movie', 'tv'].forEach(t => {
+                const btn = document.getElementById(`nav-${t}`);
+                if (t === tab) {
                     btn.className = "flex-1 py-2 rounded-full flex flex-col items-center justify-center text-white bg-white/10 transition";
                 } else {
                     btn.className = "flex-1 py-2 rounded-full flex flex-col items-center justify-center text-gray-400 hover:text-white transition";
                 }
             });
+
+            const title = document.getElementById('grid-title');
+            if (tab === 'movie') {
+                title.textContent = "Popular Movies";
+                fetchGridContent('movie/popular');
+            } else if (tab === 'tv') {
+                title.textContent = "Popular TV Shows";
+                fetchGridContent('tv/popular');
+            } else {
+                title.textContent = "Trending Now";
+                fetchGridContent('trending/all/day');
+            }
+        }
+
+        function toggleSearchInput() {
+            closeDetails();
+            const box = document.getElementById('search-box');
+            box.classList.toggle('hidden');
+            if (!box.classList.contains('hidden')) {
+                document.getElementById('search-input').focus();
+            }
+        }
+
+        async function handleSearch(e) {
+            const query = e.target.value.trim();
+            if (query.length > 2) {
+                document.getElementById('grid-title').textContent = `Search Results for "${query}"`;
+                const res = await fetch(`${BASE_URL}/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}`);
+                const data = await res.json();
+                renderGrid(data.results || []);
+            }
         }
 
         function shareDetails() {
