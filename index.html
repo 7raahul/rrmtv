@@ -74,7 +74,6 @@
             <div class="absolute bottom-4 left-4 right-4 z-20 flex items-end justify-between">
                 <div class="space-y-1.5 max-w-[75%]">
                     <span id="hero-type" class="text-[9px] font-black uppercase tracking-widest text-amber-400 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded inline-block">FEATURED</span>
-                    <!-- ENLARGED HERO TITLE / LOGO CONTAINER -->
                     <div id="hero-title-container" class="min-h-[48px] flex items-center">
                         <h2 id="hero-title" class="text-xl font-black text-white truncate drop-shadow-lg">Loading...</h2>
                     </div>
@@ -237,12 +236,12 @@
                 <div id="episodes-list-container" class="space-y-3.5"></div>
             </div>
 
-            <!-- CAST TAB -->
+            <!-- CAST TAB (16:9 LANDSCAPE LAYOUT) -->
             <div id="tab-cast" class="hidden space-y-4">
                 <div id="cast-loader" class="py-4 text-center hidden">
                     <div class="w-5 h-5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin inline-block"></div>
                 </div>
-                <div id="cast-grid" class="grid grid-cols-2 gap-3.5"></div>
+                <div id="cast-grid" class="grid grid-cols-1 gap-3"></div>
             </div>
 
             <!-- MEDIA TAB -->
@@ -271,7 +270,6 @@
 
     <!-- 4. DEDICATED EPISODE DETAILS VIEW -->
     <div id="episode-details-view" class="hidden max-w-md w-full mx-auto relative min-h-screen px-4 pt-5 pb-8 space-y-5">
-        <!-- Top Navigation Bar -->
         <div class="flex items-center justify-between">
             <button onclick="closeEpisodeDetailsView()" class="bg-brand-card border border-brand-border px-3 py-1.5 rounded-xl text-xs font-bold text-amber-400 flex items-center gap-2 hover:bg-white/10 transition">
                 <i class="fa-solid fa-arrow-left text-xs"></i>
@@ -280,7 +278,6 @@
             <span id="ep-view-season-ep-badge" class="text-[10px] font-black uppercase text-amber-400 bg-brand-goldBg border border-brand-goldBorder/60 px-2.5 py-1 rounded-lg"></span>
         </div>
 
-        <!-- Episode Banner Image -->
         <div class="relative aspect-video w-full rounded-2xl overflow-hidden bg-brand-card border border-brand-border">
             <img id="ep-view-still" src="" class="w-full h-full object-cover">
             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
@@ -295,14 +292,12 @@
             </div>
         </div>
 
-        <!-- Episode Title & Info Card -->
         <div class="bg-brand-card/90 border border-brand-border p-4 rounded-3xl space-y-2">
             <h2 id="ep-view-title" class="text-lg font-black text-white leading-tight"></h2>
             <p id="ep-view-air-date" class="text-[10px] font-bold text-gray-400"></p>
             <p id="ep-view-overview" class="text-xs text-gray-300 leading-relaxed pt-1"></p>
         </div>
 
-        <!-- TOGGLE SUB-TABS (Episode Images vs Episode Cast) -->
         <div class="flex items-center gap-2 bg-brand-card p-1 rounded-2xl border border-brand-border">
             <button onclick="switchEpSubTab('stills')" id="ep-subtab-stills-btn" class="flex-1 py-2 rounded-xl text-xs font-extrabold bg-white/10 text-white transition flex items-center justify-center gap-1.5">
                 <i class="fa-solid fa-images text-xs text-amber-400"></i>
@@ -314,7 +309,6 @@
             </button>
         </div>
 
-        <!-- EPISODE STILLS CONTENT AREA -->
         <div id="ep-stills-container" class="space-y-3">
             <div id="ep-stills-loader" class="py-6 text-center hidden">
                 <div class="w-5 h-5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin inline-block"></div>
@@ -322,18 +316,16 @@
             <div id="ep-stills-grid" class="grid grid-cols-1 gap-3"></div>
         </div>
 
-        <!-- EPISODE CAST CONTENT AREA -->
         <div id="ep-cast-container" class="hidden space-y-3">
             <div id="ep-cast-loader" class="py-6 text-center hidden">
                 <div class="w-5 h-5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin inline-block"></div>
             </div>
-            <div id="ep-big-cast-grid" class="grid grid-cols-2 gap-3.5"></div>
+            <div id="ep-big-cast-grid" class="grid grid-cols-1 gap-3"></div>
         </div>
     </div>
 
-    <!-- 5. DEDICATED ACTOR / CAST PROFILE VIEW -->
+    <!-- 5. DEDICATED ACTOR / CAST PROFILE VIEW (UPDATED CLEAN LAYOUT) -->
     <div id="person-view" class="hidden max-w-md w-full mx-auto relative min-h-screen px-4 pt-5 pb-8 space-y-5">
-        <!-- Back Navigation Button -->
         <button onclick="closePersonView()" class="bg-brand-card border border-brand-border px-3 py-1.5 rounded-xl text-xs font-bold text-amber-400 flex items-center gap-2 hover:bg-white/10 transition">
             <i class="fa-solid fa-arrow-left text-xs"></i>
             <span>Back</span>
@@ -356,7 +348,7 @@
                 </div>
             </div>
 
-            <!-- Actor Personal Info Metadata -->
+            <!-- Clean Metadata Cards: ONLY AGE & BIRTH DATE -->
             <div class="grid grid-cols-2 gap-2.5">
                 <div class="bg-brand-card border border-brand-border p-3 rounded-2xl space-y-0.5">
                     <span class="text-[9px] font-bold text-gray-500 uppercase block">AGE</span>
@@ -366,28 +358,36 @@
                     <span class="text-[9px] font-bold text-gray-500 uppercase block">BIRTH DATE</span>
                     <span id="person-dob" class="text-xs font-extrabold text-white block">-</span>
                 </div>
-                <div class="bg-brand-card border border-brand-border p-3 rounded-2xl space-y-0.5">
-                    <span class="text-[9px] font-bold text-gray-500 uppercase block">SPOUSE / MARRIED</span>
-                    <span id="person-spouse" class="text-xs font-extrabold text-amber-400 block truncate">-</span>
-                </div>
-                <div class="bg-brand-card border border-brand-border p-3 rounded-2xl space-y-0.5">
-                    <span class="text-[9px] font-bold text-gray-500 uppercase block">FIRST KNOWN WORK</span>
-                    <span id="person-first-work" class="text-xs font-extrabold text-green-400 block truncate">-</span>
-                </div>
             </div>
 
-            <!-- Biography Section -->
+            <!-- Biography Section with Read More Toggle -->
             <div class="bg-brand-card border border-brand-border p-4 rounded-3xl space-y-2">
                 <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider">BIOGRAPHY</h3>
-                <p id="person-bio" class="text-xs text-gray-300 leading-relaxed"></p>
+                <p id="person-bio" class="text-xs text-gray-300 leading-relaxed line-clamp-3 transition-all duration-300"></p>
+                <button id="person-bio-toggle-btn" onclick="toggleBioExpand()" class="text-[11px] font-extrabold text-amber-400 hover:underline pt-1 focus:outline-none">
+                    Read More...
+                </button>
             </div>
 
-            <!-- Known For / Latest Works Grid -->
+            <!-- Filmography Tabs (ALL MOVIES & ALL TV SHOWS) -->
             <div class="space-y-3">
-                <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-clapperboard text-amber-400 text-xs"></i>
-                    <span>Known For & Latest Movies / TV Shows</span>
-                </h3>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-clapperboard text-amber-400 text-xs"></i>
+                        <span>Filmography</span>
+                    </h3>
+                </div>
+
+                <!-- Media Filter Sub-Tabs -->
+                <div class="flex items-center gap-2 bg-brand-card p-1 rounded-2xl border border-brand-border">
+                    <button onclick="switchPersonMediaTab('movie')" id="person-tab-movie-btn" class="flex-1 py-1.5 rounded-xl text-xs font-extrabold bg-white/10 text-white transition">
+                        Movies (<span id="person-movie-count">0</span>)
+                    </button>
+                    <button onclick="switchPersonMediaTab('tv')" id="person-tab-tv-btn" class="flex-1 py-1.5 rounded-xl text-xs font-extrabold text-gray-400 hover:text-white transition">
+                        TV Shows (<span id="person-tv-count">0</span>)
+                    </button>
+                </div>
+
                 <div id="person-works-grid" class="grid grid-cols-2 gap-3"></div>
             </div>
         </div>
@@ -434,6 +434,10 @@
         let currentShowData = null;
         let personPreviousHash = 'home';
 
+        let personMoviesList = [];
+        let personTvList = [];
+        let isBioExpanded = false;
+
         const loadedMediaIds = new Set();
 
         let heroSliderInterval = null;
@@ -447,7 +451,6 @@
 
         window.addEventListener('hashchange', handleHashChange);
 
-        // SCROLL TO TOP LISTENERS (5)
         function setupScrollToTopListener() {
             window.addEventListener('scroll', () => {
                 const btn = document.getElementById('scroll-to-top-btn');
@@ -642,7 +645,7 @@
             }
         }
 
-        // HERO BANNER MODIFICATIONS (1 & 2: Big Title Logo & Dynamic Images per Slide + Pure White Dots)
+        // HERO BANNER ENGINE
         async function fetchHeroContent() {
             try {
                 let endpoint = 'trending/all/day';
@@ -658,7 +661,6 @@
                 let currentIndex = 0;
 
                 const dotsContainer = document.getElementById('hero-dots');
-                // PURE WHITE DOTS
                 dotsContainer.innerHTML = heroItems.map((_, i) => `
                     <div id="hero-dot-${i}" class="w-1.5 h-1.5 rounded-full transition-all duration-300 ${i === 0 ? 'bg-white w-4' : 'bg-white/40'}"></div>
                 `).join('');
@@ -667,7 +669,6 @@
                     const item = heroItems[index];
                     const type = item.media_type || (currentTab === 'tv' ? 'tv' : 'movie');
 
-                    // DYNAMIC IMAGE FOR EACH SLIDE (2)
                     document.getElementById('hero-bg').style.backgroundImage = `url('${ORIGINAL_IMG}${item.backdrop_path}')`;
                     document.getElementById('hero-type').textContent = type.toUpperCase();
                     
@@ -675,7 +676,6 @@
                         window.location.hash = `details?id=${item.id}&type=${type}`;
                     };
 
-                    // WHITE INDICATOR DOTS SWITCHING
                     heroItems.forEach((_, i) => {
                         const dot = document.getElementById(`hero-dot-${i}`);
                         if (dot) {
@@ -683,7 +683,6 @@
                         }
                     });
 
-                    // BIGGER TITLE LOGO (1)
                     const container = document.getElementById('hero-title-container');
                     try {
                         const imgRes = await fetch(`${BASE_URL}/${type}/${item.id}/images?api_key=${TMDB_API_KEY}&include_image_language=en,null`);
@@ -984,7 +983,7 @@
             }
         }
 
-        // DEDICATED EPISODE PAGE RENDER & SUB-TABS (3: Episode Images vs Episode Cast Sub-Tabs)
+        // DEDICATED EPISODE PAGE
         async function renderDedicatedEpisodePage(showId, seasonNum, epNum) {
             document.getElementById('app-view').classList.add('hidden');
             document.getElementById('search-view').classList.add('hidden');
@@ -1027,31 +1026,30 @@
                 const stillImg = document.getElementById('ep-view-still');
                 stillImg.src = epData.still_path ? `${ORIGINAL_IMG}${epData.still_path}` : (currentShowData.backdrop_path ? `${ORIGINAL_IMG}${currentShowData.backdrop_path}` : 'https://via.placeholder.com/500x281?text=No+Image');
 
-                // Render Big Cast Grid with Click Event to Actor Profile (4)
+                // Render 16:9 Landscape Cast Cards
                 const castList = [...(epData.credits?.cast || []), ...(epData.credits?.guest_stars || [])];
                 castLoader.classList.add('hidden');
 
                 if (castList.length > 0) {
                     castGrid.innerHTML = castList.map(c => `
-                        <div onclick="openPersonProfile(${c.id})" class="bg-brand-card border border-brand-border rounded-2xl overflow-hidden shadow-lg flex flex-col cursor-pointer transition hover:border-amber-500/50">
-                            <div class="relative aspect-[3/4] bg-brand-bg w-full">
-                                <img src="${c.profile_path ? IMG_URL + c.profile_path : 'https://via.placeholder.com/300x400?text=No+Photo'}" 
+                        <div onclick="openPersonProfile(${c.id})" class="bg-brand-card border border-brand-border rounded-2xl overflow-hidden shadow-lg flex items-center p-2.5 gap-3 cursor-pointer transition hover:border-amber-500/50">
+                            <div class="relative aspect-video w-28 bg-brand-bg rounded-xl overflow-hidden flex-shrink-0">
+                                <img src="${c.profile_path ? IMG_URL + c.profile_path : 'https://via.placeholder.com/300x169?text=No+Photo'}" 
                                      class="w-full h-full object-cover object-top" loading="lazy">
                             </div>
-                            <div class="p-3 flex-1 flex flex-col justify-between space-y-1">
-                                <div>
-                                    <h4 class="text-xs font-extrabold text-white leading-tight">${c.name}</h4>
-                                    <p class="text-[10px] text-amber-400 font-medium mt-0.5">${c.character || 'Actor'}</p>
-                                </div>
+                            <div class="flex-1 space-y-0.5 min-w-0">
+                                <h4 class="text-xs font-extrabold text-white leading-tight truncate">${c.name}</h4>
+                                <p class="text-[10px] text-amber-400 font-medium truncate">${c.character || 'Actor'}</p>
                                 ${c.original_name && c.original_name !== c.name ? `<p class="text-[9px] text-gray-500 truncate">Real: ${c.original_name}</p>` : ''}
                             </div>
+                            <i class="fa-solid fa-chevron-right text-gray-500 text-xs pr-1"></i>
                         </div>
                     `).join('');
                 } else {
-                    castGrid.innerHTML = `<p class="text-xs text-gray-500 col-span-2">No episode cast listed.</p>`;
+                    castGrid.innerHTML = `<p class="text-xs text-gray-500">No episode cast listed.</p>`;
                 }
 
-                // Fetch Episode Images / Stills
+                // Fetch Episode Images
                 const imagesRes = await fetch(`${BASE_URL}/tv/${showId}/season/${seasonNum}/episode/${epNum}/images?api_key=${TMDB_API_KEY}`);
                 const imagesData = await imagesRes.json();
                 stillsLoader.classList.add('hidden');
@@ -1080,7 +1078,6 @@
             }
         }
 
-        // SUB-TAB TOGGLE FOR EPISODE PAGE (3)
         function switchEpSubTab(tab) {
             const stillsBtn = document.getElementById('ep-subtab-stills-btn');
             const castBtn = document.getElementById('ep-subtab-cast-btn');
@@ -1108,7 +1105,7 @@
             }
         }
 
-        // 4. ACTOR / PERSON DETAILS ENGINE (Real Name, Age, DOB, Married Status, First Work, Latest Movie/Show)
+        // ACTOR / PERSON PROFILE ENGINE (UPDATED MODIFICATIONS)
         function openPersonProfile(personId) {
             personPreviousHash = window.location.hash;
             window.location.hash = `person?id=${personId}`;
@@ -1129,6 +1126,13 @@
             loader.classList.remove('hidden');
             content.classList.add('hidden');
 
+            // Reset Biography State
+            isBioExpanded = false;
+            const bioText = document.getElementById('person-bio');
+            const bioToggleBtn = document.getElementById('person-bio-toggle-btn');
+            bioText.classList.add('line-clamp-3');
+            bioToggleBtn.textContent = 'Read More...';
+
             try {
                 const res = await fetch(`${BASE_URL}/person/${personId}?api_key=${TMDB_API_KEY}&append_to_response=combined_credits`);
                 const person = await res.json();
@@ -1137,7 +1141,15 @@
                 document.getElementById('person-name').textContent = person.name || 'Unknown Actor';
                 document.getElementById('person-dept').textContent = person.known_for_department || 'Acting';
                 document.getElementById('person-place').textContent = person.place_of_birth ? `Born in ${person.place_of_birth}` : '';
-                document.getElementById('person-bio').textContent = person.biography || 'No biography details available.';
+                
+                const bio = person.biography || 'No biography details available.';
+                bioText.textContent = bio;
+
+                if (bio.length < 180) {
+                    bioToggleBtn.classList.add('hidden');
+                } else {
+                    bioToggleBtn.classList.remove('hidden');
+                }
 
                 // Calculate Age
                 if (person.birthday) {
@@ -1155,51 +1167,25 @@
                     document.getElementById('person-dob').textContent = 'N/A';
                 }
 
-                // Married / Spouse Details (Extract from biography text if available)
-                let spouseText = 'Private / N/A';
-                if (person.biography) {
-                    const spouseMatch = person.biography.match(/(married to|spouse|married|husband|wife)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)/i);
-                    if (spouseMatch && spouseMatch[2]) {
-                        spouseText = spouseMatch[2];
-                    }
-                }
-                document.getElementById('person-spouse').textContent = spouseText;
-
-                // First Known Work & Latest Movies/Shows
+                // Filmography separation: Movies & TV Shows
                 const credits = person.combined_credits?.cast || [];
-                // Sort chronologically
-                const sortedCredits = credits.filter(c => c.release_date || c.first_air_date).sort((a, b) => {
-                    const dateA = new Date(a.release_date || a.first_air_date);
-                    const dateB = new Date(b.release_date || b.first_air_date);
-                    return dateA - dateB;
+
+                personMoviesList = credits.filter(c => c.media_type === 'movie').sort((a, b) => {
+                    const dateA = new Date(a.release_date || 0);
+                    const dateB = new Date(b.release_date || 0);
+                    return dateB - dateA;
                 });
 
-                if (sortedCredits.length > 0) {
-                    const firstWork = sortedCredits[0];
-                    document.getElementById('person-first-work').textContent = `${firstWork.title || firstWork.name} (${(firstWork.release_date || firstWork.first_air_date).split('-')[0]})`;
-                } else {
-                    document.getElementById('person-first-work').textContent = 'N/A';
-                }
-
-                // Latest / Known For Works Grid
-                const latestWorks = [...credits].sort((a, b) => {
-                    const dateA = new Date(a.release_date || a.first_air_date || 0);
-                    const dateB = new Date(b.release_date || b.first_air_date || 0);
+                personTvList = credits.filter(c => c.media_type === 'tv').sort((a, b) => {
+                    const dateA = new Date(a.first_air_date || 0);
+                    const dateB = new Date(b.first_air_date || 0);
                     return dateB - dateA;
-                }).slice(0, 6);
+                });
 
-                const worksGrid = document.getElementById('person-works-grid');
-                worksGrid.innerHTML = latestWorks.map(w => `
-                    <div onclick="window.location.hash='details?id=${w.id}&type=${w.media_type || 'movie'}'" class="bg-brand-card border border-brand-border rounded-2xl overflow-hidden cursor-pointer group">
-                        <div class="relative aspect-[2/3] bg-brand-bg">
-                            <img src="${w.poster_path ? IMG_URL + w.poster_path : 'https://via.placeholder.com/300x450?text=No+Poster'}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" loading="lazy">
-                        </div>
-                        <div class="p-2.5">
-                            <h4 class="text-xs font-bold text-white truncate">${w.title || w.name}</h4>
-                            <p class="text-[10px] text-amber-400 mt-0.5 truncate">${w.character ? 'as ' + w.character : (w.media_type || 'Movie').toUpperCase()}</p>
-                        </div>
-                    </div>
-                `).join('');
+                document.getElementById('person-movie-count').textContent = personMoviesList.length;
+                document.getElementById('person-tv-count').textContent = personTvList.length;
+
+                switchPersonMediaTab('movie');
 
                 loader.classList.add('hidden');
                 content.classList.remove('hidden');
@@ -1210,6 +1196,62 @@
             }
         }
 
+        // BIOGRAPHY TOGGLE (READ MORE / READ LESS)
+        function toggleBioExpand() {
+            const bioText = document.getElementById('person-bio');
+            const bioToggleBtn = document.getElementById('person-bio-toggle-btn');
+
+            if (isBioExpanded) {
+                bioText.classList.add('line-clamp-3');
+                bioToggleBtn.textContent = 'Read More...';
+                isBioExpanded = false;
+            } else {
+                bioText.classList.remove('line-clamp-3');
+                bioToggleBtn.textContent = 'Read Less';
+                isBioExpanded = true;
+            }
+        }
+
+        // SWITCH BETWEEN ALL MOVIES & ALL TV SHOWS
+        function switchPersonMediaTab(mediaType) {
+            const movieBtn = document.getElementById('person-tab-movie-btn');
+            const tvBtn = document.getElementById('person-tab-tv-btn');
+            const grid = document.getElementById('person-works-grid');
+
+            if (mediaType === 'movie') {
+                movieBtn.className = "flex-1 py-1.5 rounded-xl text-xs font-extrabold bg-white/10 text-white transition";
+                tvBtn.className = "flex-1 py-1.5 rounded-xl text-xs font-extrabold text-gray-400 hover:text-white transition";
+                renderPersonWorks(personMoviesList, 'movie');
+            } else {
+                tvBtn.className = "flex-1 py-1.5 rounded-xl text-xs font-extrabold bg-white/10 text-white transition";
+                movieBtn.className = "flex-1 py-1.5 rounded-xl text-xs font-extrabold text-gray-400 hover:text-white transition";
+                renderPersonWorks(personTvList, 'tv');
+            }
+        }
+
+        function renderPersonWorks(items, type) {
+            const grid = document.getElementById('person-works-grid');
+            if (!items || items.length === 0) {
+                grid.innerHTML = `<p class="text-xs text-gray-500 col-span-2 text-center py-6">No ${type === 'movie' ? 'movies' : 'TV shows'} available.</p>`;
+                return;
+            }
+
+            grid.innerHTML = items.map(w => `
+                <div onclick="window.location.hash='details?id=${w.id}&type=${type}'" class="bg-brand-card border border-brand-border rounded-2xl overflow-hidden cursor-pointer group">
+                    <div class="relative aspect-[2/3] bg-brand-bg">
+                        <img src="${w.poster_path ? IMG_URL + w.poster_path : 'https://via.placeholder.com/300x450?text=No+Poster'}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" loading="lazy">
+                        <div class="absolute top-2 right-2 bg-black/60 backdrop-blur-md px-1.5 py-0.5 rounded text-[10px] font-bold text-amber-400 border border-amber-500/20">
+                            ★ ${w.vote_average ? w.vote_average.toFixed(1) : 'N/A'}
+                        </div>
+                    </div>
+                    <div class="p-2.5">
+                        <h4 class="text-xs font-bold text-white truncate">${w.title || w.name}</h4>
+                        <p class="text-[10px] text-amber-400 mt-0.5 truncate">${w.character ? 'as ' + w.character : type.toUpperCase()}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
         function closePersonView() {
             if (personPreviousHash) {
                 window.location.hash = personPreviousHash;
@@ -1218,31 +1260,31 @@
             }
         }
 
-        // CAST & MEDIA TABS IN DETAILS VIEW
+        // CAST CARDS IN 16:9 LANDSCAPE LAYOUT
         function renderCastCards(castList) {
             const castGrid = document.getElementById('cast-grid');
             if (!castList || castList.length === 0) {
-                castGrid.innerHTML = `<p class="text-xs text-gray-500 col-span-2">No cast information available.</p>`;
+                castGrid.innerHTML = `<p class="text-xs text-gray-500">No cast information available.</p>`;
                 return;
             }
 
             castGrid.innerHTML = castList.map(c => `
-                <div onclick="openPersonProfile(${c.id})" class="bg-brand-card border border-brand-border rounded-2xl overflow-hidden shadow-lg flex flex-col cursor-pointer transition hover:border-amber-500/50">
-                    <div class="relative aspect-[3/4] bg-brand-bg w-full">
-                        <img src="${c.profile_path ? IMG_URL + c.profile_path : 'https://via.placeholder.com/300x400?text=No+Photo'}" 
+                <div onclick="openPersonProfile(${c.id})" class="bg-brand-card border border-brand-border rounded-2xl overflow-hidden shadow-lg flex items-center p-2.5 gap-3 cursor-pointer transition hover:border-amber-500/50">
+                    <div class="relative aspect-video w-28 bg-brand-bg rounded-xl overflow-hidden flex-shrink-0">
+                        <img src="${c.profile_path ? IMG_URL + c.profile_path : 'https://via.placeholder.com/300x169?text=No+Photo'}" 
                              class="w-full h-full object-cover object-top" loading="lazy">
                     </div>
-                    <div class="p-3 flex-1 flex flex-col justify-between space-y-1">
-                        <div>
-                            <h4 class="text-xs font-extrabold text-white leading-tight">${c.name}</h4>
-                            <p class="text-[10px] text-amber-400 font-medium mt-0.5">${c.character || 'Actor'}</p>
-                        </div>
+                    <div class="flex-1 space-y-0.5 min-w-0">
+                        <h4 class="text-xs font-extrabold text-white leading-tight truncate">${c.name}</h4>
+                        <p class="text-[10px] text-amber-400 font-medium truncate">${c.character || 'Actor'}</p>
                         ${c.original_name && c.original_name !== c.name ? `<p class="text-[9px] text-gray-500 truncate">Real: ${c.original_name}</p>` : ''}
                     </div>
+                    <i class="fa-solid fa-chevron-right text-gray-500 text-xs pr-1"></i>
                 </div>
             `).join('');
         }
 
+        // MEDIA TAB
         function setupMediaTab(imagesObj) {
             const backdrops = imagesObj?.backdrops || [];
             const posters = imagesObj?.posters || [];
