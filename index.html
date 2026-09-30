@@ -1431,11 +1431,9 @@
 
             content.innerHTML = `<div class="p-16 text-center text-slate-400"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-white mb-3"></i><p class="text-xs">Loading details...</p></div>`;
 
-            const [data, logoUrl, similarData, recData] = await Promise.all([
+            const [data, logoUrl] = await Promise.all([
                 fetchTMDB(`/${type}/${id}`, `&append_to_response=credits,watch/providers,images,videos,${type === 'movie' ? 'release_dates' : 'content_ratings'}&include_image_language=en,hi,null&include_video_language=en,hi,null`),
-                fetchTitleLogo(type, id),
-                fetchTMDB(`/${type}/${id}/similar`),
-                fetchTMDB(`/${type}/${id}/recommendations`)
+                fetchTitleLogo(type, id)
             ]);
 
             if (!data) {
@@ -1468,7 +1466,6 @@
                     .map(p => [p.provider_id || p.provider_name, p])
             ).values());
             const validSeasons = (data.seasons || []).filter(s => s.season_number > 0);
-            const similarResults = (similarData?.results || []).slice(0, 10).map(r => ({ ...r, media_type: type }));
             const hasEpisodesTab = type === 'tv' && validSeasons.length > 0;
 
             // Desktop extras: full cast, media galleries, chips, overview length
@@ -1577,8 +1574,6 @@
             const revenueText = type === 'movie' ? fmtMoney(data.revenue) : null;
             const collection = type === 'movie' ? data.belongs_to_collection : null;
 
-            const similarIds = new Set(similarResults.map(r => r.id));
-            const recommendedResults = (recData?.results || []).filter(r => !similarIds.has(r.id)).slice(0, 10).map(r => ({ ...r, media_type: type }));
             const hdrMeta = [type === 'movie' ? 'Movie' : 'TV Show', releaseYear !== 'N/A' ? releaseYear : '', chipRuntime ? chipRuntime + ' min' : ''].filter(Boolean).join('  •  ');
 
             // Upcoming release info — future movie release, or a TV show's next episode to air
@@ -1768,15 +1763,28 @@
                         <div id="dpanel-more" class="hidden space-y-6">
                             ${cast.length > 0 ? `
                                 <div class="lg:hidden">
-                                    <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-3">Top Cast (Click to View)</h3>
-                                    <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2">
-                                        ${cast.map(c => {
-                                            const photo = c.profile_path ? `${IMG_URL}${c.profile_path}` : 'https://via.placeholder.com/150?text=No+Photo';
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h3 class="text-sm font-bold text-amber-400 uppercase tracking-wider">Cast</h3>
+                                        <span class="text-[10px] text-slate-500">${allCast.length} members</span>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        ${allCast.map(c => {
+                                            const photo = c.profile_path ? `${IMG_URL}${c.profile_path}` : '';
+                                            const initials = (c.name || '?').split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+                                            const originalName = c.original_name || c.name || '';
                                             return `
-                                                <div onclick="openActorModal(${c.id})" class="flex-none w-24 card-solid p-2 rounded-2xl text-center flex flex-col items-center cursor-pointer hover:border-white/30 transition">
-                                                    <img src="${photo}" class="w-14 h-14 rounded-full object-cover border border-white/20 mb-2 shadow-md" loading="lazy">
-                                                    <p class="text-[11px] font-semibold text-slate-100 truncate w-full">${c.name}</p>
-                                                    <p class="text-[9px] text-slate-400 truncate w-full mt-0.5">${c.character || ''}</p>
+                                                <div onclick="openActorModal(${c.id})" class="card-solid rounded-2xl overflow-hidden cursor-pointer group border border-white/10 hover:border-white/25 transition">
+                                                    <div class="relative aspect-[2/3] bg-[#0D0D10] overflow-hidden">
+                                                        ${photo
+                                                            ? `<img src="${photo}" alt="${c.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">`
+                                                            : `<div class="w-full h-full flex items-center justify-center text-4xl font-black text-slate-600">${initials}</div>`}
+                                                        <div class="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/90 to-transparent pointer-events-none"></div>
+                                                    </div>
+                                                    <div class="p-3">
+                                                        <p class="text-sm font-bold text-slate-100 truncate" title="${c.name || ''}">${c.name || 'Unknown'}</p>
+                                                        ${originalName ? `<p class="text-[10px] text-slate-400 truncate mt-1" title="${originalName}">Original: ${originalName}</p>` : ''}
+                                                        <p class="text-[11px] text-amber-400/90 truncate mt-1.5" title="${c.character || ''}">${c.character || '—'}</p>
+                                                    </div>
                                                 </div>
                                             `;
                                         }).join('')}
@@ -1832,20 +1840,6 @@
                                     </div>
                                 </div>
                             ` : ''}
-
-                            ${similarResults.length > 0 ? `
-                                <div>
-                                    <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-3">You May Also Like</h3>
-                                    <div id="similar-grid" class="grid grid-cols-3 lg:grid-cols-5 gap-3"></div>
-                                </div>
-                            ` : ''}
-
-                            ${recommendedResults.length > 0 ? `
-                                <div>
-                                    <h3 class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-3">Recommended</h3>
-                                    <div id="recommended-grid" class="grid grid-cols-3 lg:grid-cols-5 gap-3"></div>
-                                </div>
-                            ` : ''}
                         </div>
                     </div>
                 </div>
@@ -1854,11 +1848,7 @@
             if (hasEpisodesTab) {
                 loadSeasonEpisodes(id, validSeasons[0].season_number, document.querySelector('.season-btn'));
             }
-            if (similarResults.length > 0) {
-                renderGrid(similarResults, 'similar-grid');
-            }
             if (hasMedia) setMediaKind(mediaKinds[0]);
-            if (recommendedResults.length > 0) renderGrid(recommendedResults, 'recommended-grid');
             if (collection) {
                 fetchTMDB(`/collection/${collection.id}`).then(col => {
                     const wrap = document.getElementById('collection-wrap');
