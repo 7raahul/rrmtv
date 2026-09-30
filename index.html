@@ -74,21 +74,20 @@
                    class="w-full bg-brand-card border border-brand-border text-xs px-4 py-3 rounded-2xl outline-none focus:border-amber-500 text-white">
         </div>
 
-        <!-- HERO BANNER SECTION WITH AUTO SLIDER & DOTS -->
+        <!-- HERO BANNER SECTION (Clean View, Dots on Right) -->
         <div id="hero-section" class="relative aspect-video w-full rounded-2xl overflow-hidden border border-brand-border shadow-2xl cursor-pointer">
             <div id="hero-bg" class="absolute inset-0 bg-cover bg-center transition-all duration-1000"></div>
-            <div class="absolute inset-0 bg-gradient-to-t from-brand-bg via-transparent to-black/40"></div>
             
-            <div class="absolute bottom-3 left-3 right-3 z-10 space-y-1.5">
-                <span id="hero-type" class="text-[9px] font-black uppercase tracking-widest text-amber-400 bg-black/60 px-2 py-0.5 rounded inline-block">FEATURED</span>
-                
-                <!-- Title Container (Logo or Text) -->
-                <div id="hero-title-container" class="h-8 flex items-center">
-                    <h2 id="hero-title" class="text-lg font-extrabold text-white truncate drop-shadow-md">Loading...</h2>
+            <div class="absolute bottom-3 left-3 right-3 z-10 flex items-end justify-between">
+                <div class="space-y-1 max-w-[70%]">
+                    <span id="hero-type" class="text-[9px] font-black uppercase tracking-widest text-amber-400 bg-black/40 backdrop-blur-md px-2 py-0.5 rounded inline-block">FEATURED</span>
+                    <div id="hero-title-container" class="h-8 flex items-center">
+                        <h2 id="hero-title" class="text-lg font-extrabold text-white truncate drop-shadow-md">Loading...</h2>
+                    </div>
                 </div>
 
-                <!-- Slider Indicator Dots -->
-                <div id="hero-dots" class="flex items-center gap-1.5 pt-1"></div>
+                <!-- Slider Indicator Dots (Positioned Right Side) -->
+                <div id="hero-dots" class="flex items-center gap-1.5 pb-1"></div>
             </div>
         </div>
 
@@ -110,9 +109,7 @@
         <!-- TOP 16:9 BACKDROP SECTION -->
         <section class="relative aspect-video w-full overflow-hidden">
             <div id="details-backdrop" class="absolute inset-0 bg-cover bg-center transition-all duration-1000"></div>
-            
-            <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-brand-bg"></div>
-            <div class="absolute inset-0 bg-gradient-to-t from-brand-bg via-brand-bg/40 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-brand-bg via-transparent to-transparent"></div>
 
             <!-- Rating Badge -->
             <div class="absolute top-4 right-4 z-10">
@@ -122,9 +119,12 @@
                 </div>
             </div>
 
-            <!-- Title Overlay (Logo OR Text Fallback) -->
+            <!-- Title Overlay (Logo OR Text) & Original Name -->
             <div class="absolute bottom-3 left-4 right-4 z-10 space-y-1">
-                <span id="media-type" class="text-[10px] font-black uppercase tracking-widest text-amber-400">MOVIE</span>
+                <div class="flex items-center gap-2">
+                    <span id="media-type" class="text-[10px] font-black uppercase tracking-widest text-amber-400">MOVIE</span>
+                    <span id="original-title-badge" class="text-[10px] font-medium text-gray-300 bg-black/50 backdrop-blur-md px-2 py-0.5 rounded truncate max-w-[200px]"></span>
+                </div>
                 <div id="details-title-container" class="min-h-[40px] flex items-center">
                     <h1 id="media-title" class="text-2xl font-black text-white leading-tight drop-shadow-md">Loading...</h1>
                 </div>
@@ -143,18 +143,16 @@
                 <span id="meta-release" class="text-xs font-extrabold text-white block">-</span>
             </div>
 
-            <!-- Dynamic Label & Value: Movie -> RUNTIME, TV -> SEASONS & EPISODES -->
             <div class="bg-brand-card/90 border border-brand-border/80 p-3 rounded-2xl space-y-0.5">
                 <span id="meta-runtime-label" class="text-[9px] font-bold text-gray-500 uppercase tracking-wider block">RUNTIME</span>
                 <span id="meta-runtime" class="text-xs font-extrabold text-white block">-</span>
             </div>
 
             <div class="bg-brand-card/90 border border-brand-border/80 p-3 rounded-2xl space-y-0.5">
-                <span class="text-[9px] font-bold text-gray-500 uppercase tracking-wider block">LANGUAGE</span>
-                <span id="meta-lang" class="text-xs font-extrabold text-white block">-</span>
+                <span class="text-[9px] font-bold text-gray-500 uppercase tracking-wider block">DIRECTOR / CREATOR</span>
+                <span id="meta-director" class="text-xs font-extrabold text-white block truncate">-</span>
             </div>
 
-            <!-- Dynamic Label & Value: OTT PROVIDERS -->
             <div class="bg-brand-card/90 border border-brand-border/80 p-3 rounded-2xl space-y-0.5">
                 <span class="text-[9px] font-bold text-gray-500 uppercase tracking-wider block">AVAILABLE ON</span>
                 <div id="meta-ott" class="flex items-center gap-1.5 pt-0.5 min-h-[20px]">
@@ -171,7 +169,7 @@
                     <span id="tab-indicator" class="absolute bottom-0 left-0 right-0 h-0.5 bg-amber-500 rounded-full"></span>
                 </button>
                 <button onclick="switchTab('cast')" id="tab-cast-btn" class="text-gray-400 hover:text-white transition pb-2">
-                    Cast & More
+                    Cast
                 </button>
                 <button onclick="switchTab('media')" id="tab-media-btn" class="text-gray-400 hover:text-white transition pb-2">
                     Media
@@ -188,11 +186,39 @@
                     <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider">OVERVIEW</h3>
                     <p id="overview-text" class="text-xs text-gray-300 leading-relaxed font-normal"></p>
                 </div>
+
+                <!-- BUDGET & REVENUE SECTION -->
+                <div class="bg-brand-card/90 border border-brand-border/80 p-4 rounded-3xl space-y-3">
+                    <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider">FINANCIALS</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-brand-bg/60 p-3 rounded-2xl border border-brand-border">
+                            <span class="text-[9px] font-bold text-gray-500 uppercase block">BUDGET</span>
+                            <span id="financial-budget" class="text-xs font-extrabold text-amber-400 block mt-0.5">N/A</span>
+                        </div>
+                        <div class="bg-brand-bg/60 p-3 rounded-2xl border border-brand-border">
+                            <span class="text-[9px] font-bold text-gray-500 uppercase block">BOX OFFICE / REVENUE</span>
+                            <span id="financial-revenue" class="text-xs font-extrabold text-green-400 block mt-0.5">N/A</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- CAST TAB -->
-            <div id="tab-cast" class="hidden space-y-3">
-                <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider">TOP CAST</h3>
+            <!-- CAST TAB (With TV Show Season Selector) -->
+            <div id="tab-cast" class="hidden space-y-4">
+                
+                <!-- TV Season Selector Dropdown Container -->
+                <div id="tv-season-selector-container" class="hidden space-y-2">
+                    <label class="text-[10px] font-extrabold text-amber-400 uppercase tracking-wider">Select Season Cast:</label>
+                    <select id="season-select" onchange="handleSeasonCastChange(this.value)" 
+                            class="w-full bg-brand-card border border-brand-border text-xs px-3 py-2.5 rounded-xl text-white outline-none focus:border-amber-500">
+                    </select>
+                </div>
+
+                <div id="cast-loader" class="py-4 text-center hidden">
+                    <div class="w-5 h-5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin inline-block"></div>
+                </div>
+
+                <!-- Big Modern Cast Cards Grid -->
                 <div id="cast-grid" class="grid grid-cols-2 gap-3"></div>
             </div>
 
@@ -253,6 +279,8 @@
         let currentPage = 1;
         let isLoading = false;
         let hasMorePages = true;
+        let currentDetailsId = null;
+        let currentDetailsType = 'movie';
 
         const loadedMediaIds = new Set();
 
@@ -262,7 +290,6 @@
         window.addEventListener('DOMContentLoaded', () => {
             handleHashChange();
             setupInfiniteScroll();
-            fetchHeroContent();
         });
 
         window.addEventListener('hashchange', handleHashChange);
@@ -313,13 +340,18 @@
             else if (tab === 'tv') title.textContent = "Popular TV Shows";
             else title.textContent = "Trending Now";
 
+            fetchHeroContent();
             fetchGridContent();
         }
 
-        // HERO BANNER WITH DOTS & OFFICIAL LOGO
+        // HERO BANNER WITH FILTERING & DOTS ON RIGHT
         async function fetchHeroContent() {
             try {
-                const res = await fetch(`${BASE_URL}/trending/all/day?api_key=${TMDB_API_KEY}`);
+                let endpoint = 'trending/all/day';
+                if (currentTab === 'movie') endpoint = 'trending/movie/day';
+                else if (currentTab === 'tv') endpoint = 'trending/tv/day';
+
+                const res = await fetch(`${BASE_URL}/${endpoint}?api_key=${TMDB_API_KEY}`);
                 const data = await res.json();
                 const heroItems = (data.results || []).filter(item => item.backdrop_path).slice(0, 5);
 
@@ -327,7 +359,7 @@
 
                 let currentIndex = 0;
 
-                // Render Dots
+                // Render Dots Right Side
                 const dotsContainer = document.getElementById('hero-dots');
                 dotsContainer.innerHTML = heroItems.map((_, i) => `
                     <div id="hero-dot-${i}" class="w-1.5 h-1.5 rounded-full transition-all duration-300 ${i === 0 ? 'bg-amber-400 w-4' : 'bg-white/40'}"></div>
@@ -335,7 +367,7 @@
 
                 const updateHero = async (index) => {
                     const item = heroItems[index];
-                    const type = item.media_type || 'movie';
+                    const type = item.media_type || (currentTab === 'tv' ? 'tv' : 'movie');
 
                     document.getElementById('hero-bg').style.backgroundImage = `url('${ORIGINAL_IMG}${item.backdrop_path}')`;
                     document.getElementById('hero-type').textContent = type.toUpperCase();
@@ -344,7 +376,7 @@
                         window.location.hash = `details?id=${item.id}&type=${type}`;
                     };
 
-                    // Update Dots Style
+                    // Update Dots
                     heroItems.forEach((_, i) => {
                         const dot = document.getElementById(`hero-dot-${i}`);
                         if (dot) {
@@ -352,7 +384,7 @@
                         }
                     });
 
-                    // Fetch Official Logo
+                    // Official Logo Fetch
                     const container = document.getElementById('hero-title-container');
                     try {
                         const imgRes = await fetch(`${BASE_URL}/${type}/${item.id}/images?api_key=${TMDB_API_KEY}&include_image_language=en,null`);
@@ -360,7 +392,7 @@
                         const logo = imgData.logos?.[0]?.file_path;
 
                         if (logo) {
-                            container.innerHTML = `<img src="${IMG_URL}${logo}" class="max-h-8 max-w-[70%] object-contain drop-shadow-lg">`;
+                            container.innerHTML = `<img src="${IMG_URL}${logo}" class="max-h-8 max-w-[80%] object-contain drop-shadow-lg">`;
                         } else {
                             container.innerHTML = `<h2 class="text-lg font-extrabold text-white truncate drop-shadow-md">${item.title || item.name}</h2>`;
                         }
@@ -382,7 +414,7 @@
             }
         }
 
-        // INFINITE SCROLL & DUPLICATE PREVENT
+        // GRID CONTENT
         async function fetchGridContent() {
             if (isLoading || !hasMorePages) return;
             isLoading = true;
@@ -446,15 +478,17 @@
         function setupInfiniteScroll() {
             window.addEventListener('scroll', () => {
                 if (document.getElementById('app-view').classList.contains('hidden')) return;
-                
                 if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
                     fetchGridContent();
                 }
             });
         }
 
-        // DETAILS PAGE WITH OTT ICONS, SEASONS/EPISODES, AND LOGOS
+        // DETAILS PAGE
         async function renderDetailsPage(id, type = 'movie') {
+            currentDetailsId = id;
+            currentDetailsType = type;
+
             document.getElementById('app-view').classList.add('hidden');
             document.getElementById('details-view').classList.remove('hidden');
             window.scrollTo(0, 0);
@@ -467,7 +501,17 @@
                 document.getElementById('rating-val').textContent = data.vote_average ? data.vote_average.toFixed(1) : 'N/A';
                 document.getElementById('overview-text').textContent = data.overview || 'No overview available.';
 
-                // OFFICIAL LOGO OR TEXT FALLBACK
+                // ORIGINAL TITLE
+                const origTitle = data.original_title || data.original_name;
+                const origBadge = document.getElementById('original-title-badge');
+                if (origTitle && origTitle !== (data.title || data.name)) {
+                    origBadge.textContent = `Original: ${origTitle}`;
+                    origBadge.classList.remove('hidden');
+                } else {
+                    origBadge.classList.add('hidden');
+                }
+
+                // LOGO OR TITLE
                 const titleContainer = document.getElementById('details-title-container');
                 const logo = data.images?.logos?.[0]?.file_path;
                 if (logo) {
@@ -495,10 +539,9 @@
                     bgElement.style.backgroundImage = `url('${ORIGINAL_IMG}${data.backdrop_path}')`;
                 }
 
-                // METADATA: RELEASE
+                // METADATA
                 document.getElementById('meta-release').textContent = data.release_date || data.first_air_date || 'N/A';
 
-                // METADATA: TV SHOWS -> SEASONS/EPISODES, MOVIES -> RUNTIME
                 const runtimeLabel = document.getElementById('meta-runtime-label');
                 const runtimeVal = document.getElementById('meta-runtime');
 
@@ -512,10 +555,17 @@
                     runtimeVal.textContent = data.runtime ? `${data.runtime} min` : 'N/A';
                 }
 
-                // METADATA: LANGUAGE
-                document.getElementById('meta-lang').textContent = data.spoken_languages?.[0]?.english_name || 'English';
+                // DIRECTOR / CREATOR
+                const directorElement = document.getElementById('meta-director');
+                if (type === 'movie') {
+                    const director = data.credits?.crew?.find(c => c.job === 'Director');
+                    directorElement.textContent = director ? director.name : 'N/A';
+                } else {
+                    const creators = data.created_by?.map(c => c.name).join(', ');
+                    directorElement.textContent = creators || 'N/A';
+                }
 
-                // METADATA: OTT WATCH PROVIDERS (IN / US Region Fallback)
+                // OTT WATCH PROVIDERS
                 const ottContainer = document.getElementById('meta-ott');
                 const providersData = data['watch/providers']?.results;
                 const regionData = providersData?.IN || providersData?.US;
@@ -529,23 +579,19 @@
                     ottContainer.innerHTML = `<span class="text-xs font-bold text-gray-400">N/A</span>`;
                 }
 
+                // BUDGET & REVENUE
+                const formatUSD = (val) => val && val > 0 ? `$${val.toLocaleString()}` : 'N/A';
+                document.getElementById('financial-budget').textContent = formatUSD(data.budget);
+                document.getElementById('financial-revenue').textContent = formatUSD(data.revenue);
+
                 // GENRES
                 const genreContainer = document.getElementById('genre-container');
                 genreContainer.innerHTML = (data.genres || []).map(g => `
                     <span class="bg-brand-goldBg border border-brand-goldBorder/60 text-amber-400 text-xs font-semibold px-3.5 py-1.5 rounded-xl flex-shrink-0">${g.name}</span>
                 `).join('');
 
-                // CAST
-                const castGrid = document.getElementById('cast-grid');
-                castGrid.innerHTML = (data.credits?.cast || []).slice(0, 6).map(c => `
-                    <div class="bg-brand-card border border-brand-border p-2.5 rounded-2xl flex items-center gap-3">
-                        <img src="${c.profile_path ? IMG_URL + c.profile_path : 'https://via.placeholder.com/100'}" class="w-10 h-10 rounded-full object-cover">
-                        <div class="overflow-hidden">
-                            <h4 class="text-xs font-bold text-white truncate">${c.name}</h4>
-                            <p class="text-[10px] text-gray-400 truncate">${c.character || 'Actor'}</p>
-                        </div>
-                    </div>
-                `).join('');
+                // SETUP CAST TAB
+                setupCastTab(data);
 
                 // MEDIA TAB
                 document.getElementById('media-backdrops').innerHTML = (data.images?.backdrops || []).slice(0, 6).map(img => `
@@ -565,6 +611,72 @@
             } catch (e) {
                 console.error(e);
             }
+        }
+
+        // CAST ENGINE (MOVIE = ALL CAST, TV = SEASON SELECTOR)
+        function setupCastTab(data) {
+            const seasonContainer = document.getElementById('tv-season-selector-container');
+            const castGrid = document.getElementById('cast-grid');
+
+            if (currentDetailsType === 'tv' && data.seasons?.length > 0) {
+                seasonContainer.classList.remove('hidden');
+                const select = document.getElementById('season-select');
+                
+                select.innerHTML = data.seasons
+                    .filter(s => s.season_number > 0)
+                    .map(s => `<option value="${s.season_number}">${s.name} (${s.episode_count} Episodes)</option>`).join('');
+
+                if (data.seasons.find(s => s.season_number === 1)) {
+                    select.value = 1;
+                    fetchSeasonCast(1);
+                } else if (data.seasons[0]) {
+                    select.value = data.seasons[0].season_number;
+                    fetchSeasonCast(data.seasons[0].season_number);
+                }
+            } else {
+                seasonContainer.classList.add('hidden');
+                renderCastCards(data.credits?.cast || []);
+            }
+        }
+
+        async function handleSeasonCastChange(seasonNum) {
+            fetchSeasonCast(seasonNum);
+        }
+
+        async function fetchSeasonCast(seasonNum) {
+            const loader = document.getElementById('cast-loader');
+            const castGrid = document.getElementById('cast-grid');
+            castGrid.innerHTML = '';
+            loader.classList.remove('hidden');
+
+            try {
+                const res = await fetch(`${BASE_URL}/tv/${currentDetailsId}/season/${seasonNum}?api_key=${TMDB_API_KEY}&append_to_response=credits`);
+                const data = await res.json();
+                renderCastCards(data.credits?.cast || []);
+            } catch (e) {
+                console.error(e);
+            } finally {
+                loader.classList.add('hidden');
+            }
+        }
+
+        function renderCastCards(castList) {
+            const castGrid = document.getElementById('cast-grid');
+            if (!castList || castList.length === 0) {
+                castGrid.innerHTML = `<p class="text-xs text-gray-500 col-span-2">No cast information available.</p>`;
+                return;
+            }
+
+            castGrid.innerHTML = castList.map(c => `
+                <div class="bg-brand-card border border-brand-border p-3 rounded-2xl flex items-center gap-3 space-y-1">
+                    <img src="${c.profile_path ? IMG_URL + c.profile_path : 'https://via.placeholder.com/150'}" class="w-12 h-12 rounded-2xl object-cover flex-shrink-0 border border-brand-border">
+                    <div class="overflow-hidden space-y-0.5">
+                        <h4 class="text-xs font-extrabold text-white truncate">${c.name}</h4>
+                        <p class="text-[10px] text-gray-400 truncate">${c.character || 'Actor'}</p>
+                        ${c.original_name && c.original_name !== c.name ? `<p class="text-[9px] text-gray-500 truncate">Real: ${c.original_name}</p>` : ''}
+                    </div>
+                </div>
+            `).join('');
         }
 
         function switchTab(tab) {
