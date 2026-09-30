@@ -58,29 +58,25 @@
 </head>
 <body class="min-h-screen flex flex-col pb-24">
 
-    <!-- 1. MAIN APP VIEW -->
-    <div id="app-view" class="max-w-md w-full mx-auto px-4 pt-4 space-y-5 min-h-screen">
+    <!-- 1. MAIN APP VIEW (HOME, MOVIES, TV SHOWS) -->
+    <div id="app-view" class="max-w-md w-full mx-auto min-h-screen">
         
-        <!-- Header -->
-        <div class="flex items-center justify-between">
-            <h1 class="text-xl font-extrabold text-white flex items-center gap-2">
-                <i class="fa-solid fa-play-circle text-amber-500"></i> StreamPulse
-            </h1>
-        </div>
-
-        <!-- Search Field -->
-        <div id="search-box" class="hidden">
-            <input type="text" id="search-input" onkeyup="handleSearch(event)" placeholder="Search movies, tv shows..." 
-                   class="w-full bg-brand-card border border-brand-border text-xs px-4 py-3 rounded-2xl outline-none focus:border-amber-500 text-white">
-        </div>
-
-        <!-- HERO BANNER SECTION (Clean View, Dots on Right) -->
-        <div id="hero-section" class="relative aspect-video w-full rounded-2xl overflow-hidden border border-brand-border shadow-2xl cursor-pointer">
+        <!-- FULL-WIDTH HERO BANNER SECTION (No Gap, Bottom Fade, Dots Right) -->
+        <div id="hero-section" class="relative w-full aspect-video overflow-hidden cursor-pointer">
             <div id="hero-bg" class="absolute inset-0 bg-cover bg-center transition-all duration-1000"></div>
             
-            <div class="absolute bottom-3 left-3 right-3 z-10 flex items-end justify-between">
+            <!-- Bottom Dark Gradient Overlay Fade -->
+            <div class="absolute inset-0 bg-gradient-to-t from-brand-bg via-black/30 to-transparent"></div>
+
+            <!-- Top Header Logo Branding -->
+            <div class="absolute top-4 left-4 z-20 flex items-center gap-2">
+                <i class="fa-solid fa-play-circle text-amber-500 text-xl"></i>
+                <span class="text-base font-extrabold text-white tracking-wide">StreamPulse</span>
+            </div>
+            
+            <div class="absolute bottom-4 left-4 right-4 z-20 flex items-end justify-between">
                 <div class="space-y-1 max-w-[70%]">
-                    <span id="hero-type" class="text-[9px] font-black uppercase tracking-widest text-amber-400 bg-black/40 backdrop-blur-md px-2 py-0.5 rounded inline-block">FEATURED</span>
+                    <span id="hero-type" class="text-[9px] font-black uppercase tracking-widest text-amber-400 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded inline-block">FEATURED</span>
                     <div id="hero-title-container" class="h-8 flex items-center">
                         <h2 id="hero-title" class="text-lg font-extrabold text-white truncate drop-shadow-md">Loading...</h2>
                     </div>
@@ -91,19 +87,55 @@
             </div>
         </div>
 
-        <!-- Category Title -->
-        <h2 id="grid-title" class="text-xs font-black text-gray-400 uppercase tracking-wider">Trending Now</h2>
+        <!-- Main Content Area with Padding -->
+        <div class="px-4 pt-5 space-y-4">
+            <!-- Category Title -->
+            <h2 id="grid-title" class="text-xs font-black text-gray-400 uppercase tracking-wider">Trending Now</h2>
 
-        <!-- Movie/TV Cards Grid -->
-        <div id="content-grid" class="grid grid-cols-2 gap-3"></div>
+            <!-- Movie/TV Cards Grid -->
+            <div id="content-grid" class="grid grid-cols-2 gap-3"></div>
 
-        <!-- Infinite Scroll Loader -->
-        <div id="infinite-loader" class="py-6 flex justify-center hidden">
+            <!-- Infinite Scroll Loader -->
+            <div id="infinite-loader" class="py-6 flex justify-center hidden">
+                <div class="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. SEPARATE DEDICATED SEARCH VIEW -->
+    <div id="search-view" class="hidden max-w-md w-full mx-auto px-4 pt-5 min-h-screen space-y-5">
+        <!-- Search Header -->
+        <div class="flex items-center gap-3">
+            <div class="relative flex-1">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                <input type="text" id="dedicated-search-input" onkeyup="handleDedicatedSearch(event)" placeholder="Search movies, TV shows, actors..." 
+                       class="w-full bg-brand-card border border-brand-border text-xs pl-9 pr-8 py-3 rounded-2xl outline-none focus:border-amber-500 text-white">
+                <button onclick="clearSearchInput()" id="search-clear-btn" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-circle-xmark text-xs"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Default Trending Tags (Shown before search) -->
+        <div id="search-suggestions" class="space-y-2">
+            <span class="text-[10px] font-black uppercase text-gray-500 tracking-wider">Popular Searches</span>
+            <div class="flex flex-wrap gap-2">
+                <button onclick="triggerSearchTag('Marvel')" class="bg-brand-card border border-brand-border px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-300 hover:text-amber-400">Marvel</button>
+                <button onclick="triggerSearchTag('Anime')" class="bg-brand-card border border-brand-border px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-300 hover:text-amber-400">Anime</button>
+                <button onclick="triggerSearchTag('Batman')" class="bg-brand-card border border-brand-border px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-300 hover:text-amber-400">Batman</button>
+                <button onclick="triggerSearchTag('Avengers')" class="bg-brand-card border border-brand-border px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-300 hover:text-amber-400">Avengers</button>
+            </div>
+        </div>
+
+        <!-- Search Results Grid -->
+        <div id="search-results-grid" class="grid grid-cols-2 gap-3"></div>
+        
+        <div id="search-loader" class="py-6 flex justify-center hidden">
             <div class="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
         </div>
     </div>
 
-    <!-- 2. DETAILS VIEW -->
+    <!-- 3. DETAILS VIEW -->
     <div id="details-view" class="hidden max-w-md w-full mx-auto relative min-h-screen">
         
         <!-- TOP 16:9 BACKDROP SECTION -->
@@ -203,9 +235,8 @@
                 </div>
             </div>
 
-            <!-- CAST TAB (With TV Show Season Selector) -->
+            <!-- CAST TAB (Modern Big Cards UI + Season Selector) -->
             <div id="tab-cast" class="hidden space-y-4">
-                
                 <!-- TV Season Selector Dropdown Container -->
                 <div id="tv-season-selector-container" class="hidden space-y-2">
                     <label class="text-[10px] font-extrabold text-amber-400 uppercase tracking-wider">Select Season Cast:</label>
@@ -218,25 +249,30 @@
                     <div class="w-5 h-5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin inline-block"></div>
                 </div>
 
-                <!-- Big Modern Cast Cards Grid -->
-                <div id="cast-grid" class="grid grid-cols-2 gap-3"></div>
+                <!-- Big Modern Cast Grid -->
+                <div id="cast-grid" class="grid grid-cols-2 gap-3.5"></div>
             </div>
 
-            <!-- MEDIA TAB -->
-            <div id="tab-media" class="hidden space-y-5">
-                <div class="space-y-2">
-                    <h3 class="text-xs font-black text-amber-400 uppercase tracking-wider">Backdrops</h3>
-                    <div id="media-backdrops" class="flex gap-3 overflow-x-auto hide-scrollbar pb-1"></div>
+            <!-- MEDIA TAB (With 3 Sub-Tabs: Backdrops, Posters, Logos) -->
+            <div id="tab-media" class="hidden space-y-4">
+                <!-- Sub Navigation Buttons -->
+                <div class="flex items-center gap-2 bg-brand-card p-1 rounded-2xl border border-brand-border">
+                    <button onclick="switchMediaSubTab('backdrops')" id="subtab-backdrops-btn" class="flex-1 py-1.5 rounded-xl text-xs font-extrabold bg-white/10 text-white transition">Backdrops</button>
+                    <button onclick="switchMediaSubTab('posters')" id="subtab-posters-btn" class="flex-1 py-1.5 rounded-xl text-xs font-extrabold text-gray-400 hover:text-white transition">Posters</button>
+                    <button onclick="switchMediaSubTab('logos')" id="subtab-logos-btn" class="flex-1 py-1.5 rounded-xl text-xs font-extrabold text-gray-400 hover:text-white transition">Logos</button>
                 </div>
 
-                <div class="space-y-2">
-                    <h3 class="text-xs font-black text-amber-400 uppercase tracking-wider">Posters</h3>
-                    <div id="media-posters" class="flex gap-3 overflow-x-auto hide-scrollbar pb-1"></div>
+                <!-- Sub Tab Display Containers -->
+                <div id="media-backdrops-container" class="space-y-3">
+                    <div id="media-backdrops-grid" class="grid grid-cols-1 gap-3"></div>
                 </div>
 
-                <div class="space-y-2">
-                    <h3 class="text-xs font-black text-amber-400 uppercase tracking-wider">Logos</h3>
-                    <div id="media-logos" class="flex gap-3 overflow-x-auto hide-scrollbar pb-1 bg-brand-card/60 p-3 rounded-2xl border border-brand-border"></div>
+                <div id="media-posters-container" class="hidden space-y-3">
+                    <div id="media-posters-grid" class="grid grid-cols-2 gap-3"></div>
+                </div>
+
+                <div id="media-logos-container" class="hidden space-y-3">
+                    <div id="media-logos-grid" class="grid grid-cols-2 gap-3"></div>
                 </div>
             </div>
 
@@ -261,7 +297,7 @@
                 <span class="text-[10px] font-semibold mt-0.5">TV Shows</span>
             </button>
 
-            <button onclick="toggleSearchInput()" id="nav-search" class="flex-1 py-2 rounded-full flex flex-col items-center justify-center text-gray-400 hover:text-white transition">
+            <button onclick="navigateToTab('search')" id="nav-search" class="flex-1 py-2 rounded-full flex flex-col items-center justify-center text-gray-400 hover:text-white transition">
                 <i class="fa-solid fa-magnifying-glass text-sm"></i>
                 <span class="text-[10px] font-semibold mt-0.5">Search</span>
             </button>
@@ -304,6 +340,8 @@
                 const id = params.get('id');
                 const type = params.get('type') || 'movie';
                 if (id) renderDetailsPage(id, type);
+            } else if (hash === 'search') {
+                openSearchView();
             } else {
                 const targetTab = ['home', 'movie', 'tv'].includes(hash) ? hash : 'home';
                 switchMainTab(targetTab);
@@ -314,24 +352,28 @@
             window.location.hash = tab;
         }
 
+        function updateNavState(activeNav) {
+            ['home', 'movie', 'tv', 'search'].forEach(t => {
+                const btn = document.getElementById(`nav-${t}`);
+                if (t === activeNav) {
+                    btn.className = "flex-1 py-2 rounded-full flex flex-col items-center justify-center text-white bg-white/10 transition";
+                } else {
+                    btn.className = "flex-1 py-2 rounded-full flex flex-col items-center justify-center text-gray-400 hover:text-white transition";
+                }
+            });
+        }
+
         function switchMainTab(tab) {
             currentTab = tab;
             currentPage = 1;
             hasMorePages = true;
             loadedMediaIds.clear();
 
-            document.getElementById('search-box').classList.add('hidden');
+            document.getElementById('search-view').classList.add('hidden');
             document.getElementById('details-view').classList.add('hidden');
             document.getElementById('app-view').classList.remove('hidden');
 
-            ['home', 'movie', 'tv'].forEach(t => {
-                const btn = document.getElementById(`nav-${t}`);
-                if (t === tab) {
-                    btn.className = "flex-1 py-2 rounded-full flex flex-col items-center justify-center text-white bg-white/10 transition";
-                } else {
-                    btn.className = "flex-1 py-2 rounded-full flex flex-col items-center justify-center text-gray-400 hover:text-white transition";
-                }
-            });
+            updateNavState(tab);
 
             const title = document.getElementById('grid-title');
             document.getElementById('content-grid').innerHTML = '';
@@ -342,6 +384,95 @@
 
             fetchHeroContent();
             fetchGridContent();
+        }
+
+        // DEDICATED SEARCH PAGE VIEW
+        function openSearchView() {
+            document.getElementById('app-view').classList.add('hidden');
+            document.getElementById('details-view').classList.add('hidden');
+            document.getElementById('search-view').classList.remove('hidden');
+
+            updateNavState('search');
+            window.scrollTo(0, 0);
+
+            const input = document.getElementById('dedicated-search-input');
+            input.focus();
+        }
+
+        function clearSearchInput() {
+            const input = document.getElementById('dedicated-search-input');
+            input.value = '';
+            document.getElementById('search-clear-btn').classList.add('hidden');
+            document.getElementById('search-results-grid').innerHTML = '';
+            document.getElementById('search-suggestions').classList.remove('hidden');
+        }
+
+        function triggerSearchTag(tag) {
+            const input = document.getElementById('dedicated-search-input');
+            input.value = tag;
+            handleDedicatedSearch({ target: input });
+        }
+
+        async function handleDedicatedSearch(e) {
+            const query = e.target.value.trim();
+            const clearBtn = document.getElementById('search-clear-btn');
+            const suggestions = document.getElementById('search-suggestions');
+            const grid = document.getElementById('search-results-grid');
+            const loader = document.getElementById('search-loader');
+
+            if (query.length > 0) clearBtn.classList.remove('hidden');
+            else clearBtn.classList.add('hidden');
+
+            if (query.length < 2) {
+                suggestions.classList.remove('hidden');
+                grid.innerHTML = '';
+                return;
+            }
+
+            suggestions.classList.add('hidden');
+            loader.classList.remove('hidden');
+
+            try {
+                const res = await fetch(`${BASE_URL}/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}`);
+                const data = await res.json();
+                grid.innerHTML = '';
+
+                const items = (data.results || []).filter(item => item.poster_path || item.backdrop_path);
+                
+                if (items.length === 0) {
+                    grid.innerHTML = `<p class="text-xs text-gray-500 col-span-2 text-center py-8">No results found for "${query}"</p>`;
+                    return;
+                }
+
+                items.forEach(item => {
+                    const type = item.media_type || 'movie';
+                    if (type !== 'movie' && type !== 'tv') return;
+
+                    const card = document.createElement('div');
+                    card.className = "bg-brand-card border border-brand-border rounded-2xl overflow-hidden cursor-pointer group";
+                    card.onclick = () => {
+                        window.location.hash = `details?id=${item.id}&type=${type}`;
+                    };
+
+                    card.innerHTML = `
+                        <div class="relative aspect-[2/3] bg-brand-bg">
+                            <img src="${IMG_URL}${item.poster_path || item.backdrop_path}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" loading="lazy">
+                            <div class="absolute top-2 right-2 bg-black/60 backdrop-blur-md px-1.5 py-0.5 rounded text-[10px] font-bold text-amber-400 border border-amber-500/20">
+                                ★ ${item.vote_average?.toFixed(1) || 'N/A'}
+                            </div>
+                        </div>
+                        <div class="p-2.5">
+                            <h4 class="text-xs font-bold text-white truncate">${item.title || item.name}</h4>
+                            <p class="text-[10px] text-gray-500 mt-0.5 uppercase">${type}</p>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            } catch (err) {
+                console.error(err);
+            } finally {
+                loader.classList.add('hidden');
+            }
         }
 
         // HERO BANNER WITH FILTERING & DOTS ON RIGHT
@@ -407,7 +538,7 @@
                 heroSliderInterval = setInterval(() => {
                     currentIndex = (currentIndex + 1) % heroItems.length;
                     updateHero(currentIndex);
-                }, 3000);
+                }, 3500);
 
             } catch (e) {
                 console.error("Hero fetch error:", e);
@@ -490,7 +621,11 @@
             currentDetailsType = type;
 
             document.getElementById('app-view').classList.add('hidden');
+            document.getElementById('search-view').classList.add('hidden');
             document.getElementById('details-view').classList.remove('hidden');
+
+            // CRITICAL RESET FIX: Reset tab back to 'Overview' every time a new item is loaded
+            switchTab('overview');
             window.scrollTo(0, 0);
 
             try {
@@ -593,20 +728,8 @@
                 // SETUP CAST TAB
                 setupCastTab(data);
 
-                // MEDIA TAB
-                document.getElementById('media-backdrops').innerHTML = (data.images?.backdrops || []).slice(0, 6).map(img => `
-                    <img src="${IMG_URL}${img.file_path}" class="w-48 aspect-video object-cover rounded-xl border border-brand-border flex-shrink-0">
-                `).join('') || `<p class="text-xs text-gray-500">No backdrops found.</p>`;
-
-                document.getElementById('media-posters').innerHTML = (data.images?.posters || []).slice(0, 6).map(img => `
-                    <img src="${IMG_URL}${img.file_path}" class="w-24 aspect-[2/3] object-cover rounded-xl border border-brand-border flex-shrink-0">
-                `).join('') || `<p class="text-xs text-gray-500">No posters found.</p>`;
-
-                document.getElementById('media-logos').innerHTML = (data.images?.logos || []).slice(0, 6).map(img => `
-                    <div class="w-24 h-12 flex items-center justify-center p-1 flex-shrink-0">
-                        <img src="${IMG_URL}${img.file_path}" class="max-h-full max-w-full object-contain">
-                    </div>
-                `).join('') || `<p class="text-xs text-gray-500">No logos found.</p>`;
+                // SETUP MEDIA TAB SUB-GALLERIES (ALL AVAILABLE IMAGES)
+                setupMediaTab(data.images);
 
             } catch (e) {
                 console.error(e);
@@ -616,7 +739,6 @@
         // CAST ENGINE (MOVIE = ALL CAST, TV = SEASON SELECTOR)
         function setupCastTab(data) {
             const seasonContainer = document.getElementById('tv-season-selector-container');
-            const castGrid = document.getElementById('cast-grid');
 
             if (currentDetailsType === 'tv' && data.seasons?.length > 0) {
                 seasonContainer.classList.remove('hidden');
@@ -660,6 +782,7 @@
             }
         }
 
+        // MODERN BIG CAST CARD UI
         function renderCastCards(castList) {
             const castGrid = document.getElementById('cast-grid');
             if (!castList || castList.length === 0) {
@@ -668,15 +791,65 @@
             }
 
             castGrid.innerHTML = castList.map(c => `
-                <div class="bg-brand-card border border-brand-border p-3 rounded-2xl flex items-center gap-3 space-y-1">
-                    <img src="${c.profile_path ? IMG_URL + c.profile_path : 'https://via.placeholder.com/150'}" class="w-12 h-12 rounded-2xl object-cover flex-shrink-0 border border-brand-border">
-                    <div class="overflow-hidden space-y-0.5">
-                        <h4 class="text-xs font-extrabold text-white truncate">${c.name}</h4>
-                        <p class="text-[10px] text-gray-400 truncate">${c.character || 'Actor'}</p>
+                <div class="bg-brand-card border border-brand-border rounded-2xl overflow-hidden shadow-lg flex flex-col">
+                    <div class="relative aspect-[3/4] bg-brand-bg w-full">
+                        <img src="${c.profile_path ? IMG_URL + c.profile_path : 'https://via.placeholder.com/300x400?text=No+Photo'}" 
+                             class="w-full h-full object-cover object-top" loading="lazy">
+                    </div>
+                    <div class="p-3 flex-1 flex flex-col justify-between space-y-1">
+                        <div>
+                            <h4 class="text-xs font-extrabold text-white leading-tight">${c.name}</h4>
+                            <p class="text-[10px] text-amber-400 font-medium mt-0.5">${c.character || 'Actor'}</p>
+                        </div>
                         ${c.original_name && c.original_name !== c.name ? `<p class="text-[9px] text-gray-500 truncate">Real: ${c.original_name}</p>` : ''}
                     </div>
                 </div>
             `).join('');
+        }
+
+        // MEDIA SUB-TAB ENGINE
+        function setupMediaTab(imagesObj) {
+            const backdrops = imagesObj?.backdrops || [];
+            const posters = imagesObj?.posters || [];
+            const logos = imagesObj?.logos || [];
+
+            // Backdrops
+            document.getElementById('media-backdrops-grid').innerHTML = backdrops.length > 0 ? backdrops.map(img => `
+                <div class="aspect-video bg-brand-card border border-brand-border rounded-2xl overflow-hidden">
+                    <img src="${ORIGINAL_IMG}${img.file_path}" class="w-full h-full object-cover" loading="lazy">
+                </div>
+            `).join('') : `<p class="text-xs text-gray-500 text-center py-4">No backdrops available.</p>`;
+
+            // Posters
+            document.getElementById('media-posters-grid').innerHTML = posters.length > 0 ? posters.map(img => `
+                <div class="aspect-[2/3] bg-brand-card border border-brand-border rounded-2xl overflow-hidden">
+                    <img src="${IMG_URL}${img.file_path}" class="w-full h-full object-cover" loading="lazy">
+                </div>
+            `).join('') : `<p class="text-xs text-gray-500 text-center py-4 col-span-2">No posters available.</p>`;
+
+            // Logos
+            document.getElementById('media-logos-grid').innerHTML = logos.length > 0 ? logos.map(img => `
+                <div class="aspect-video bg-brand-card border border-brand-border rounded-2xl p-4 flex items-center justify-center">
+                    <img src="${IMG_URL}${img.file_path}" class="max-h-full max-w-full object-contain" loading="lazy">
+                </div>
+            `).join('') : `<p class="text-xs text-gray-500 text-center py-4 col-span-2">No logos available.</p>`;
+
+            // Default to Backdrops subtab
+            switchMediaSubTab('backdrops');
+        }
+
+        function switchMediaSubTab(subTab) {
+            ['backdrops', 'posters', 'logos'].forEach(st => {
+                const btn = document.getElementById(`subtab-${st}-btn`);
+                const container = document.getElementById(`media-${st}-container`);
+                if (st === subTab) {
+                    btn.className = "flex-1 py-1.5 rounded-xl text-xs font-extrabold bg-white/10 text-white transition";
+                    container.classList.remove('hidden');
+                } else {
+                    btn.className = "flex-1 py-1.5 rounded-xl text-xs font-extrabold text-gray-400 hover:text-white transition";
+                    container.classList.add('hidden');
+                }
+            });
         }
 
         function switchTab(tab) {
@@ -694,29 +867,8 @@
 
             const activeBtn = document.getElementById(`tab-${tab}-btn`);
             const indicator = document.getElementById('tab-indicator');
-            activeBtn.appendChild(indicator);
-        }
-
-        function toggleSearchInput() {
-            if (!document.getElementById('details-view').classList.contains('hidden')) {
-                window.location.hash = 'home';
-            }
-            const box = document.getElementById('search-box');
-            box.classList.toggle('hidden');
-            if (!box.classList.contains('hidden')) {
-                document.getElementById('search-input').focus();
-            }
-        }
-
-        async function handleSearch(e) {
-            const query = e.target.value.trim();
-            if (query.length > 2) {
-                loadedMediaIds.clear();
-                document.getElementById('grid-title').textContent = `Results for "${query}"`;
-                document.getElementById('content-grid').innerHTML = '';
-                const res = await fetch(`${BASE_URL}/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}`);
-                const data = await res.json();
-                renderGridItems(data.results || []);
+            if (activeBtn && indicator) {
+                activeBtn.appendChild(indicator);
             }
         }
     </script>
