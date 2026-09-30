@@ -54,15 +54,6 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        .skeleton {
-            background: linear-gradient(90deg, #0f1015 25%, #1d212e 50%, #0f1015 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-        }
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col pb-24">
@@ -70,32 +61,34 @@
     <!-- 1. MAIN APP VIEW -->
     <div id="app-view" class="max-w-md w-full mx-auto px-4 pt-4 space-y-5 min-h-screen">
         
-        <!-- Clean Header (Top Search Icon Removed) -->
+        <!-- Header -->
         <div class="flex items-center justify-between">
             <h1 class="text-xl font-extrabold text-white flex items-center gap-2">
                 <i class="fa-solid fa-play-circle text-amber-500"></i> StreamPulse
             </h1>
         </div>
 
-        <!-- Inline Search Field (Triggered via Bottom Nav) -->
+        <!-- Search Field -->
         <div id="search-box" class="hidden">
             <input type="text" id="search-input" onkeyup="handleSearch(event)" placeholder="Search movies, tv shows..." 
                    class="w-full bg-brand-card border border-brand-border text-xs px-4 py-3 rounded-2xl outline-none focus:border-amber-500 text-white">
         </div>
 
-        <!-- 16:9 HERO BANNER SECTION WITH AUTO SLIDER -->
-        <div id="hero-section" class="relative aspect-video w-full rounded-2xl overflow-hidden border border-brand-border shadow-2xl">
+        <!-- HERO BANNER SECTION WITH AUTO SLIDER & DOTS -->
+        <div id="hero-section" class="relative aspect-video w-full rounded-2xl overflow-hidden border border-brand-border shadow-2xl cursor-pointer">
             <div id="hero-bg" class="absolute inset-0 bg-cover bg-center transition-all duration-1000"></div>
             <div class="absolute inset-0 bg-gradient-to-t from-brand-bg via-transparent to-black/40"></div>
             
-            <div class="absolute bottom-3 left-3 right-3 flex items-end justify-between z-10">
-                <div class="space-y-0.5 max-w-[80%]">
-                    <span id="hero-type" class="text-[9px] font-black uppercase tracking-widest text-amber-400 bg-black/60 px-2 py-0.5 rounded">FEATURED</span>
-                    <h2 id="hero-title" class="text-base font-extrabold text-white truncate drop-shadow-md">Loading...</h2>
+            <div class="absolute bottom-3 left-3 right-3 z-10 space-y-1.5">
+                <span id="hero-type" class="text-[9px] font-black uppercase tracking-widest text-amber-400 bg-black/60 px-2 py-0.5 rounded inline-block">FEATURED</span>
+                
+                <!-- Title Container (Logo or Text) -->
+                <div id="hero-title-container" class="h-8 flex items-center">
+                    <h2 id="hero-title" class="text-lg font-extrabold text-white truncate drop-shadow-md">Loading...</h2>
                 </div>
-                <button id="hero-btn" class="bg-amber-500 hover:bg-amber-600 text-black px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1">
-                    Details <i class="fa-solid fa-chevron-right text-[10px]"></i>
-                </button>
+
+                <!-- Slider Indicator Dots -->
+                <div id="hero-dots" class="flex items-center gap-1.5 pt-1"></div>
             </div>
         </div>
 
@@ -103,9 +96,7 @@
         <h2 id="grid-title" class="text-xs font-black text-gray-400 uppercase tracking-wider">Trending Now</h2>
 
         <!-- Movie/TV Cards Grid -->
-        <div id="content-grid" class="grid grid-cols-2 gap-3">
-            <!-- Dynamic Content Cards -->
-        </div>
+        <div id="content-grid" class="grid grid-cols-2 gap-3"></div>
 
         <!-- Infinite Scroll Loader -->
         <div id="infinite-loader" class="py-6 flex justify-center hidden">
@@ -116,14 +107,14 @@
     <!-- 2. DETAILS VIEW -->
     <div id="details-view" class="hidden max-w-md w-full mx-auto relative min-h-screen">
         
-        <!-- TOP 16:9 BACKDROP SECTION WITH AUTO SLIDER -->
+        <!-- TOP 16:9 BACKDROP SECTION -->
         <section class="relative aspect-video w-full overflow-hidden">
             <div id="details-backdrop" class="absolute inset-0 bg-cover bg-center transition-all duration-1000"></div>
             
             <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-brand-bg"></div>
             <div class="absolute inset-0 bg-gradient-to-t from-brand-bg via-brand-bg/40 to-transparent"></div>
 
-            <!-- Top Rating Badge -->
+            <!-- Rating Badge -->
             <div class="absolute top-4 right-4 z-10">
                 <div class="bg-black/60 backdrop-blur-md border border-amber-500/30 text-amber-400 font-extrabold text-xs px-2.5 py-1 rounded-lg flex items-center gap-1.5 shadow-lg">
                     <i class="fa-solid fa-star text-[11px] text-amber-400"></i>
@@ -131,29 +122,30 @@
                 </div>
             </div>
 
-            <!-- Title & Type Overlay -->
-            <div class="absolute bottom-3 left-4 right-4 z-10 space-y-0.5">
+            <!-- Title Overlay (Logo OR Text Fallback) -->
+            <div class="absolute bottom-3 left-4 right-4 z-10 space-y-1">
                 <span id="media-type" class="text-[10px] font-black uppercase tracking-widest text-amber-400">MOVIE</span>
-                <h1 id="media-title" class="text-2xl font-black text-white leading-tight drop-shadow-md">Loading...</h1>
+                <div id="details-title-container" class="min-h-[40px] flex items-center">
+                    <h1 id="media-title" class="text-2xl font-black text-white leading-tight drop-shadow-md">Loading...</h1>
+                </div>
             </div>
         </section>
 
-        <!-- GOLDEN GENRE CHIPS -->
+        <!-- GENRE CHIPS -->
         <section class="px-4 py-2">
-            <div id="genre-container" class="flex items-center gap-2 overflow-x-auto hide-scrollbar">
-                <!-- Dynamic Chips -->
-            </div>
+            <div id="genre-container" class="flex items-center gap-2 overflow-x-auto hide-scrollbar"></div>
         </section>
 
-        <!-- 2x2 METADATA CARDS GRID -->
+        <!-- METADATA CARDS GRID -->
         <section class="px-4 py-3 grid grid-cols-2 gap-2.5">
             <div class="bg-brand-card/90 border border-brand-border/80 p-3 rounded-2xl space-y-0.5">
                 <span class="text-[9px] font-bold text-gray-500 uppercase tracking-wider block">RELEASE</span>
                 <span id="meta-release" class="text-xs font-extrabold text-white block">-</span>
             </div>
 
+            <!-- Dynamic Label & Value: Movie -> RUNTIME, TV -> SEASONS & EPISODES -->
             <div class="bg-brand-card/90 border border-brand-border/80 p-3 rounded-2xl space-y-0.5">
-                <span class="text-[9px] font-bold text-gray-500 uppercase tracking-wider block">RUNTIME</span>
+                <span id="meta-runtime-label" class="text-[9px] font-bold text-gray-500 uppercase tracking-wider block">RUNTIME</span>
                 <span id="meta-runtime" class="text-xs font-extrabold text-white block">-</span>
             </div>
 
@@ -162,9 +154,12 @@
                 <span id="meta-lang" class="text-xs font-extrabold text-white block">-</span>
             </div>
 
+            <!-- Dynamic Label & Value: OTT PROVIDERS -->
             <div class="bg-brand-card/90 border border-brand-border/80 p-3 rounded-2xl space-y-0.5">
-                <span class="text-[9px] font-bold text-gray-500 uppercase tracking-wider block">AGE RATING</span>
-                <span id="meta-age" class="text-xs font-extrabold text-white block">U/A 13+</span>
+                <span class="text-[9px] font-bold text-gray-500 uppercase tracking-wider block">AVAILABLE ON</span>
+                <div id="meta-ott" class="flex items-center gap-1.5 pt-0.5 min-h-[20px]">
+                    <span class="text-xs font-extrabold text-gray-400">Loading...</span>
+                </div>
             </div>
         </section>
 
@@ -201,27 +196,22 @@
                 <div id="cast-grid" class="grid grid-cols-2 gap-3"></div>
             </div>
 
-            <!-- MEDIA TAB (Backdrops, Posters, Logos) -->
+            <!-- MEDIA TAB -->
             <div id="tab-media" class="hidden space-y-5">
-                
-                <!-- Backdrops -->
                 <div class="space-y-2">
                     <h3 class="text-xs font-black text-amber-400 uppercase tracking-wider">Backdrops</h3>
                     <div id="media-backdrops" class="flex gap-3 overflow-x-auto hide-scrollbar pb-1"></div>
                 </div>
 
-                <!-- Posters -->
                 <div class="space-y-2">
                     <h3 class="text-xs font-black text-amber-400 uppercase tracking-wider">Posters</h3>
                     <div id="media-posters" class="flex gap-3 overflow-x-auto hide-scrollbar pb-1"></div>
                 </div>
 
-                <!-- Logos -->
                 <div class="space-y-2">
                     <h3 class="text-xs font-black text-amber-400 uppercase tracking-wider">Logos</h3>
                     <div id="media-logos" class="flex gap-3 overflow-x-auto hide-scrollbar pb-1 bg-brand-card/60 p-3 rounded-2xl border border-brand-border"></div>
                 </div>
-
             </div>
 
         </section>
@@ -230,25 +220,21 @@
     <!-- FLOATING PILL BOTTOM NAVIGATION -->
     <div class="fixed bottom-4 left-0 right-0 z-50 flex justify-center px-4">
         <div class="glass-pill rounded-full p-1.5 flex items-center justify-between w-full max-w-xs transition-all duration-300">
-            <!-- Home -->
             <button onclick="navigateToTab('home')" id="nav-home" class="flex-1 py-2 rounded-full flex flex-col items-center justify-center text-white bg-white/10 transition">
                 <i class="fa-solid fa-house text-sm"></i>
                 <span class="text-[10px] font-semibold mt-0.5">Home</span>
             </button>
 
-            <!-- Movies -->
             <button onclick="navigateToTab('movie')" id="nav-movie" class="flex-1 py-2 rounded-full flex flex-col items-center justify-center text-gray-400 hover:text-white transition">
                 <i class="fa-solid fa-clapperboard text-sm"></i>
                 <span class="text-[10px] font-semibold mt-0.5">Movies</span>
             </button>
 
-            <!-- TV Shows -->
             <button onclick="navigateToTab('tv')" id="nav-tv" class="flex-1 py-2 rounded-full flex flex-col items-center justify-center text-gray-400 hover:text-white transition">
                 <i class="fa-solid fa-tv text-sm"></i>
                 <span class="text-[10px] font-semibold mt-0.5">TV Shows</span>
             </button>
 
-            <!-- Search -->
             <button onclick="toggleSearchInput()" id="nav-search" class="flex-1 py-2 rounded-full flex flex-col items-center justify-center text-gray-400 hover:text-white transition">
                 <i class="fa-solid fa-magnifying-glass text-sm"></i>
                 <span class="text-[10px] font-semibold mt-0.5">Search</span>
@@ -268,10 +254,8 @@
         let isLoading = false;
         let hasMorePages = true;
 
-        // Unique IDs tracker to fix duplicate titles
         const loadedMediaIds = new Set();
 
-        // Auto Slider Timers
         let heroSliderInterval = null;
         let detailsSliderInterval = null;
 
@@ -284,7 +268,6 @@
         window.addEventListener('hashchange', handleHashChange);
 
         function handleHashChange() {
-            // Clear existing timers on route change
             clearInterval(detailsSliderInterval);
 
             const hash = window.location.hash.replace('#', '');
@@ -308,7 +291,7 @@
             currentTab = tab;
             currentPage = 1;
             hasMorePages = true;
-            loadedMediaIds.clear(); // Reset duplicate tracking
+            loadedMediaIds.clear();
 
             document.getElementById('search-box').classList.add('hidden');
             document.getElementById('details-view').classList.add('hidden');
@@ -326,18 +309,14 @@
             const title = document.getElementById('grid-title');
             document.getElementById('content-grid').innerHTML = '';
 
-            if (tab === 'movie') {
-                title.textContent = "Popular Movies";
-            } else if (tab === 'tv') {
-                title.textContent = "Popular TV Shows";
-            } else {
-                title.textContent = "Trending Now";
-            }
+            if (tab === 'movie') title.textContent = "Popular Movies";
+            else if (tab === 'tv') title.textContent = "Popular TV Shows";
+            else title.textContent = "Trending Now";
 
             fetchGridContent();
         }
 
-        // 1. HOME HERO BANNER SLIDER (Every 3 Seconds)
+        // HERO BANNER WITH DOTS & OFFICIAL LOGO
         async function fetchHeroContent() {
             try {
                 const res = await fetch(`${BASE_URL}/trending/all/day?api_key=${TMDB_API_KEY}`);
@@ -347,15 +326,47 @@
                 if (heroItems.length === 0) return;
 
                 let currentIndex = 0;
-                
-                const updateHero = (index) => {
+
+                // Render Dots
+                const dotsContainer = document.getElementById('hero-dots');
+                dotsContainer.innerHTML = heroItems.map((_, i) => `
+                    <div id="hero-dot-${i}" class="w-1.5 h-1.5 rounded-full transition-all duration-300 ${i === 0 ? 'bg-amber-400 w-4' : 'bg-white/40'}"></div>
+                `).join('');
+
+                const updateHero = async (index) => {
                     const item = heroItems[index];
+                    const type = item.media_type || 'movie';
+
                     document.getElementById('hero-bg').style.backgroundImage = `url('${ORIGINAL_IMG}${item.backdrop_path}')`;
-                    document.getElementById('hero-title').textContent = item.title || item.name;
-                    document.getElementById('hero-type').textContent = (item.media_type || 'movie').toUpperCase();
-                    document.getElementById('hero-btn').onclick = () => {
-                        window.location.hash = `details?id=${item.id}&type=${item.media_type || 'movie'}`;
+                    document.getElementById('hero-type').textContent = type.toUpperCase();
+                    
+                    document.getElementById('hero-section').onclick = () => {
+                        window.location.hash = `details?id=${item.id}&type=${type}`;
                     };
+
+                    // Update Dots Style
+                    heroItems.forEach((_, i) => {
+                        const dot = document.getElementById(`hero-dot-${i}`);
+                        if (dot) {
+                            dot.className = `w-1.5 h-1.5 rounded-full transition-all duration-300 ${i === index ? 'bg-amber-400 w-4' : 'bg-white/40'}`;
+                        }
+                    });
+
+                    // Fetch Official Logo
+                    const container = document.getElementById('hero-title-container');
+                    try {
+                        const imgRes = await fetch(`${BASE_URL}/${type}/${item.id}/images?api_key=${TMDB_API_KEY}&include_image_language=en,null`);
+                        const imgData = await imgRes.json();
+                        const logo = imgData.logos?.[0]?.file_path;
+
+                        if (logo) {
+                            container.innerHTML = `<img src="${IMG_URL}${logo}" class="max-h-8 max-w-[70%] object-contain drop-shadow-lg">`;
+                        } else {
+                            container.innerHTML = `<h2 class="text-lg font-extrabold text-white truncate drop-shadow-md">${item.title || item.name}</h2>`;
+                        }
+                    } catch {
+                        container.innerHTML = `<h2 class="text-lg font-extrabold text-white truncate drop-shadow-md">${item.title || item.name}</h2>`;
+                    }
                 };
 
                 updateHero(0);
@@ -371,7 +382,7 @@
             }
         }
 
-        // 2. INFINITE SCROLL & DUPLICATE FIX
+        // INFINITE SCROLL & DUPLICATE PREVENT
         async function fetchGridContent() {
             if (isLoading || !hasMorePages) return;
             isLoading = true;
@@ -406,7 +417,6 @@
             items.forEach(item => {
                 if (!item.backdrop_path && !item.poster_path) return;
                 
-                // Duplicate Title Prevention
                 if (loadedMediaIds.has(item.id)) return;
                 loadedMediaIds.add(item.id);
 
@@ -443,22 +453,30 @@
             });
         }
 
-        // 3. DETAILS PAGE RENDER & BACKDROP AUTO SLIDER (Every 3 Seconds)
+        // DETAILS PAGE WITH OTT ICONS, SEASONS/EPISODES, AND LOGOS
         async function renderDetailsPage(id, type = 'movie') {
             document.getElementById('app-view').classList.add('hidden');
             document.getElementById('details-view').classList.remove('hidden');
             window.scrollTo(0, 0);
 
             try {
-                const res = await fetch(`${BASE_URL}/${type}/${id}?api_key=${TMDB_API_KEY}&append_to_response=credits,images&include_image_language=en,null`);
+                const res = await fetch(`${BASE_URL}/${type}/${id}?api_key=${TMDB_API_KEY}&append_to_response=credits,images,watch/providers&include_image_language=en,null`);
                 const data = await res.json();
 
-                document.getElementById('media-title').textContent = data.title || data.name;
                 document.getElementById('media-type').textContent = type.toUpperCase();
                 document.getElementById('rating-val').textContent = data.vote_average ? data.vote_average.toFixed(1) : 'N/A';
                 document.getElementById('overview-text').textContent = data.overview || 'No overview available.';
 
-                // Backdrop Auto-Slider Implementation
+                // OFFICIAL LOGO OR TEXT FALLBACK
+                const titleContainer = document.getElementById('details-title-container');
+                const logo = data.images?.logos?.[0]?.file_path;
+                if (logo) {
+                    titleContainer.innerHTML = `<img src="${IMG_URL}${logo}" class="max-h-12 max-w-[80%] object-contain drop-shadow-xl">`;
+                } else {
+                    titleContainer.innerHTML = `<h1 id="media-title" class="text-2xl font-black text-white leading-tight drop-shadow-md">${data.title || data.name}</h1>`;
+                }
+
+                // BACKDROP SLIDER
                 const backdrops = data.images?.backdrops || [];
                 const bgElement = document.getElementById('details-backdrop');
 
@@ -477,18 +495,47 @@
                     bgElement.style.backgroundImage = `url('${ORIGINAL_IMG}${data.backdrop_path}')`;
                 }
 
-                // Metadata
+                // METADATA: RELEASE
                 document.getElementById('meta-release').textContent = data.release_date || data.first_air_date || 'N/A';
-                document.getElementById('meta-runtime').textContent = data.runtime ? `${data.runtime} min` : (data.episode_run_time?.[0] ? `${data.episode_run_time[0]} min` : 'N/A');
+
+                // METADATA: TV SHOWS -> SEASONS/EPISODES, MOVIES -> RUNTIME
+                const runtimeLabel = document.getElementById('meta-runtime-label');
+                const runtimeVal = document.getElementById('meta-runtime');
+
+                if (type === 'tv') {
+                    runtimeLabel.textContent = "SEASONS & EPISODES";
+                    const seasons = data.number_of_seasons || 0;
+                    const episodes = data.number_of_episodes || 0;
+                    runtimeVal.textContent = seasons > 0 ? `${seasons} Season${seasons > 1 ? 's' : ''} • ${episodes} Ep` : 'N/A';
+                } else {
+                    runtimeLabel.textContent = "RUNTIME";
+                    runtimeVal.textContent = data.runtime ? `${data.runtime} min` : 'N/A';
+                }
+
+                // METADATA: LANGUAGE
                 document.getElementById('meta-lang').textContent = data.spoken_languages?.[0]?.english_name || 'English';
 
-                // Golden Genres
+                // METADATA: OTT WATCH PROVIDERS (IN / US Region Fallback)
+                const ottContainer = document.getElementById('meta-ott');
+                const providersData = data['watch/providers']?.results;
+                const regionData = providersData?.IN || providersData?.US;
+                const flatrate = regionData?.flatrate || regionData?.buy || [];
+
+                if (flatrate.length > 0) {
+                    ottContainer.innerHTML = flatrate.slice(0, 3).map(p => `
+                        <img src="${IMG_URL}${p.logo_path}" title="${p.provider_name}" class="w-5 h-5 rounded-md object-cover border border-white/10 shadow">
+                    `).join('');
+                } else {
+                    ottContainer.innerHTML = `<span class="text-xs font-bold text-gray-400">N/A</span>`;
+                }
+
+                // GENRES
                 const genreContainer = document.getElementById('genre-container');
                 genreContainer.innerHTML = (data.genres || []).map(g => `
                     <span class="bg-brand-goldBg border border-brand-goldBorder/60 text-amber-400 text-xs font-semibold px-3.5 py-1.5 rounded-xl flex-shrink-0">${g.name}</span>
                 `).join('');
 
-                // Cast
+                // CAST
                 const castGrid = document.getElementById('cast-grid');
                 castGrid.innerHTML = (data.credits?.cast || []).slice(0, 6).map(c => `
                     <div class="bg-brand-card border border-brand-border p-2.5 rounded-2xl flex items-center gap-3">
@@ -500,7 +547,7 @@
                     </div>
                 `).join('');
 
-                // MEDIA TAB: Backdrops, Posters, Logos
+                // MEDIA TAB
                 document.getElementById('media-backdrops').innerHTML = (data.images?.backdrops || []).slice(0, 6).map(img => `
                     <img src="${IMG_URL}${img.file_path}" class="w-48 aspect-video object-cover rounded-xl border border-brand-border flex-shrink-0">
                 `).join('') || `<p class="text-xs text-gray-500">No backdrops found.</p>`;
@@ -538,7 +585,6 @@
             activeBtn.appendChild(indicator);
         }
 
-        // SEARCH TRIGGER VIA BOTTOM NAV
         function toggleSearchInput() {
             if (!document.getElementById('details-view').classList.contains('hidden')) {
                 window.location.hash = 'home';
@@ -553,7 +599,7 @@
         async function handleSearch(e) {
             const query = e.target.value.trim();
             if (query.length > 2) {
-                loadedMediaIds.clear(); // Reset duplicates for search
+                loadedMediaIds.clear();
                 document.getElementById('grid-title').textContent = `Results for "${query}"`;
                 document.getElementById('content-grid').innerHTML = '';
                 const res = await fetch(`${BASE_URL}/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}`);
