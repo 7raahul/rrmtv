@@ -1559,6 +1559,9 @@
             sessionStorage.setItem('mtdv_active_tab', currentTab);
             sessionStorage.setItem('mtdv_active_category', currentCategory);
 
+            const requestToken = (window.__mtdvDetailsRequestToken || 0) + 1;
+            window.__mtdvDetailsRequestToken = requestToken;
+
             const newUrl = `${window.location.pathname}?type=${type}&id=${id}`;
             window.history.pushState({ modalOpen: true, tab: currentTab, type, id }, '', newUrl);
 
@@ -1570,18 +1573,22 @@
 
             content.innerHTML = `<div class="p-16 text-center text-slate-400"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-white mb-3"></i><p class="text-xs">Loading details...</p></div>`;
 
-            // Keep the first details request small and reliable. Heavy optional data
-            // (images/videos/providers) must never prevent the basic details screen from opening.
-            // This also avoids a long append_to_response chain becoming the single point of failure.
-            let data = await fetchTMDB(`/${type}/${id}`);
+            // Only the small basic-details request is allowed to control the first render.
+            // A hard 6s watchdog prevents the spinner from hanging forever.
+            const basicData = await Promise.race([
+                fetchTMDB(`/${type}/${id}`),
+                new Promise(resolve => setTimeout(() => resolve(null), 6000))
+            ]);
 
-            if (!data) {
+            if (!basicData) {
                 const apiError = window.__mtdvLastApiError;
                 const reason = apiError?.status === 401
                     ? 'TMDB API key is invalid or not authorized.'
                     : apiError?.status === 403
                         ? 'TMDB denied access to this API key.'
-                        : 'TMDB did not respond in time.';
+                        : apiError?.status === 429
+                            ? 'TMDB rate limit reached. Please try again in a moment.'
+                            : 'TMDB details request timed out or failed.';
                 content.innerHTML = `<div class="p-12 text-center text-slate-400 text-xs">
                     <i class="fa-solid fa-triangle-exclamation text-amber-400 text-2xl mb-3"></i>
                     <p class="text-white font-semibold mb-1">Details could not be loaded.</p>
@@ -1591,8 +1598,11 @@
                 return;
             }
 
-            // Optional requests start together. They are intentionally not allowed to
-            // block the basic details page longer than the short API timeout.
+            // IMPORTANT: render the page NOW using only basic details.
+            // Credits, OTT, images, videos and ratings are background enrichment.
+            renderDetailsPage(type, id, basicData);
+
+            // Start all enrichment requests in parallel. None of these can block the first render.
             const optionalPromise = Promise.allSettled([
                 fetchTMDB(`/${type}/${id}/credits`),
                 fetchTMDB(`/${type}/${id}/watch/providers`),
@@ -1603,30 +1613,39 @@
                     : fetchTMDB(`/${type}/${id}/content_ratings`)
             ]);
 
-            // TV aggregate credits are also optional and must never block the first render.
             const aggregatePromise = type === 'tv'
                 ? fetchTMDB(`/tv/${id}/aggregate_credits`)
                 : Promise.resolve(null);
 
-            const optionalResults = await optionalPromise;
-            const [creditsResult, providersResult, imagesResult, videosResult, ratingResult] = optionalResults;
+            // Enrich the already-visible page when optional data arrives.
+            optionalPromise.then(async results => {
+                if (window.__mtdvDetailsRequestToken !== requestToken) return;
 
-            if (creditsResult.status === 'fulfilled' && creditsResult.value) data.credits = creditsResult.value;
-            if (providersResult.status === 'fulfilled' && providersResult.value) data['watch/providers'] = providersResult.value;
-            if (imagesResult.status === 'fulfilled' && imagesResult.value) data.images = imagesResult.value;
-            if (videosResult.status === 'fulfilled' && videosResult.value) data.videos = videosResult.value;
-            if (ratingResult.status === 'fulfilled' && ratingResult.value) {
-                if (type === 'movie') data.release_dates = ratingResult.value;
-                else data.content_ratings = ratingResult.value;
-            }
+                const [creditsResult, providersResult, imagesResult, videosResult, ratingResult] = results;
+                const data = { ...basicData };
+                if (creditsResult.status === 'fulfilled' && creditsResult.value) data.credits = creditsResult.value;
+                if (providersResult.status === 'fulfilled' && providersResult.value) data['watch/providers'] = providersResult.value;
+                if (imagesResult.status === 'fulfilled' && imagesResult.value) data.images = imagesResult.value;
+                if (videosResult.status === 'fulfilled' && videosResult.value) data.videos = videosResult.value;
+                if (ratingResult.status === 'fulfilled' && ratingResult.value) {
+                    if (type === 'movie') data.release_dates = ratingResult.value;
+                    else data.content_ratings = ratingResult.value;
+                }
 
-            const aggregateCredits = await Promise.race([
-                aggregatePromise,
-                new Promise(resolve => setTimeout(() => resolve(null), 1200))
-            ]);
-            if (aggregateCredits) data.credits = aggregateCredits;
+                const aggregateCredits = await Promise.race([
+                    aggregatePromise,
+                    new Promise(resolve => setTimeout(() => resolve(null), 1200))
+                ]);
+                if (aggregateCredits) data.credits = aggregateCredits;
 
-            // Title logo is optional. Start rendering without it, then fill it in when available.
+                if (window.__mtdvDetailsRequestToken !== requestToken) return;
+                // Re-render only after enrichment is ready; the user has already seen the page.
+                renderDetailsPage(type, id, data);
+            }).catch(() => {});
+        }
+
+        function renderDetailsPage(type, id, data) {
+            const content = document.getElementById('modal-content');
             let logoUrl = null;
 
             const title = data.title || data.name;
