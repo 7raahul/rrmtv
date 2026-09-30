@@ -236,7 +236,7 @@
                 <div id="episodes-list-container" class="space-y-3.5"></div>
             </div>
 
-            <!-- CAST TAB (16:9 LANDSCAPE LAYOUT) -->
+            <!-- CAST TAB (PORTRAIT CARDS LAYOUT) -->
             <div id="tab-cast" class="hidden space-y-4">
                 <div id="cast-loader" class="py-4 text-center hidden">
                     <div class="w-5 h-5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin inline-block"></div>
@@ -324,7 +324,7 @@
         </div>
     </div>
 
-    <!-- 5. DEDICATED ACTOR / CAST PROFILE VIEW (UPDATED CLEAN LAYOUT) -->
+    <!-- 5. DEDICATED ACTOR / CAST PROFILE VIEW -->
     <div id="person-view" class="hidden max-w-md w-full mx-auto relative min-h-screen px-4 pt-5 pb-8 space-y-5">
         <button onclick="closePersonView()" class="bg-brand-card border border-brand-border px-3 py-1.5 rounded-xl text-xs font-bold text-amber-400 flex items-center gap-2 hover:bg-white/10 transition">
             <i class="fa-solid fa-arrow-left text-xs"></i>
@@ -338,8 +338,8 @@
         <div id="person-content" class="hidden space-y-5">
             <!-- Actor Header Card -->
             <div class="flex gap-4 items-center bg-brand-card border border-brand-border p-4 rounded-3xl">
-                <div class="w-24 aspect-[3/4] bg-brand-bg rounded-2xl overflow-hidden flex-shrink-0 border border-brand-border">
-                    <img id="person-img" class="w-full h-full object-cover">
+                <div class="w-20 aspect-[3/4] bg-brand-bg rounded-2xl overflow-hidden flex-shrink-0 border border-brand-border">
+                    <img id="person-img" class="w-full h-full object-cover object-top">
                 </div>
                 <div class="space-y-1 flex-1 min-w-0">
                     <h2 id="person-name" class="text-lg font-black text-white leading-tight truncate"></h2>
@@ -369,7 +369,7 @@
                 </button>
             </div>
 
-            <!-- Filmography Tabs (ALL MOVIES & ALL TV SHOWS) -->
+            <!-- Filmography Tabs -->
             <div class="space-y-3">
                 <div class="flex items-center justify-between">
                     <h3 class="text-xs font-black text-gray-400 uppercase tracking-wider flex items-center gap-2">
@@ -605,7 +605,7 @@
 
                         card.innerHTML = `
                             <div class="relative aspect-[2/3] bg-brand-bg">
-                                <img src="${item.profile_path ? IMG_URL + item.profile_path : 'https://via.placeholder.com/300x450?text=No+Photo'}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" loading="lazy">
+                                <img src="${item.profile_path ? IMG_URL + item.profile_path : 'https://via.placeholder.com/300x450?text=No+Photo'}" class="w-full h-full object-cover object-top group-hover:scale-105 transition duration-300" loading="lazy">
                             </div>
                             <div class="p-2.5">
                                 <h4 class="text-xs font-bold text-white truncate">${item.name}</h4>
@@ -1026,15 +1026,15 @@
                 const stillImg = document.getElementById('ep-view-still');
                 stillImg.src = epData.still_path ? `${ORIGINAL_IMG}${epData.still_path}` : (currentShowData.backdrop_path ? `${ORIGINAL_IMG}${currentShowData.backdrop_path}` : 'https://via.placeholder.com/500x281?text=No+Image');
 
-                // Render 16:9 Landscape Cast Cards
+                // Render Portrait Cast Cards
                 const castList = [...(epData.credits?.cast || []), ...(epData.credits?.guest_stars || [])];
                 castLoader.classList.add('hidden');
 
                 if (castList.length > 0) {
                     castGrid.innerHTML = castList.map(c => `
-                        <div onclick="openPersonProfile(${c.id})" class="bg-brand-card border border-brand-border rounded-2xl overflow-hidden shadow-lg flex items-center p-2.5 gap-3 cursor-pointer transition hover:border-amber-500/50">
-                            <div class="relative aspect-video w-28 bg-brand-bg rounded-xl overflow-hidden flex-shrink-0">
-                                <img src="${c.profile_path ? IMG_URL + c.profile_path : 'https://via.placeholder.com/300x169?text=No+Photo'}" 
+                        <div onclick="openPersonProfile(${c.id})" class="bg-brand-card border border-brand-border rounded-2xl overflow-hidden shadow-lg flex items-center p-2.5 gap-3.5 cursor-pointer transition hover:border-amber-500/50">
+                            <div class="relative aspect-[3/4] w-16 bg-brand-bg rounded-xl overflow-hidden flex-shrink-0 border border-brand-border/60">
+                                <img src="${c.profile_path ? IMG_URL + c.profile_path : 'https://via.placeholder.com/300x400?text=No+Photo'}" 
                                      class="w-full h-full object-cover object-top" loading="lazy">
                             </div>
                             <div class="flex-1 space-y-0.5 min-w-0">
@@ -1105,7 +1105,7 @@
             }
         }
 
-        // ACTOR / PERSON PROFILE ENGINE (UPDATED MODIFICATIONS)
+        // ACTOR / PERSON PROFILE ENGINE
         function openPersonProfile(personId) {
             personPreviousHash = window.location.hash;
             window.location.hash = `person?id=${personId}`;
@@ -1126,7 +1126,6 @@
             loader.classList.remove('hidden');
             content.classList.add('hidden');
 
-            // Reset Biography State
             isBioExpanded = false;
             const bioText = document.getElementById('person-bio');
             const bioToggleBtn = document.getElementById('person-bio-toggle-btn');
@@ -1151,7 +1150,6 @@
                     bioToggleBtn.classList.remove('hidden');
                 }
 
-                // Calculate Age
                 if (person.birthday) {
                     const dob = new Date(person.birthday);
                     const endDate = person.deathday ? new Date(person.deathday) : new Date();
@@ -1167,7 +1165,6 @@
                     document.getElementById('person-dob').textContent = 'N/A';
                 }
 
-                // Filmography separation: Movies & TV Shows
                 const credits = person.combined_credits?.cast || [];
 
                 personMoviesList = credits.filter(c => c.media_type === 'movie').sort((a, b) => {
@@ -1196,7 +1193,6 @@
             }
         }
 
-        // BIOGRAPHY TOGGLE (READ MORE / READ LESS)
         function toggleBioExpand() {
             const bioText = document.getElementById('person-bio');
             const bioToggleBtn = document.getElementById('person-bio-toggle-btn');
@@ -1212,11 +1208,9 @@
             }
         }
 
-        // SWITCH BETWEEN ALL MOVIES & ALL TV SHOWS
         function switchPersonMediaTab(mediaType) {
             const movieBtn = document.getElementById('person-tab-movie-btn');
             const tvBtn = document.getElementById('person-tab-tv-btn');
-            const grid = document.getElementById('person-works-grid');
 
             if (mediaType === 'movie') {
                 movieBtn.className = "flex-1 py-1.5 rounded-xl text-xs font-extrabold bg-white/10 text-white transition";
@@ -1260,7 +1254,7 @@
             }
         }
 
-        // CAST CARDS IN 16:9 LANDSCAPE LAYOUT
+        // CAST CARDS IN PORTRAIT (3:4) LAYOUT
         function renderCastCards(castList) {
             const castGrid = document.getElementById('cast-grid');
             if (!castList || castList.length === 0) {
@@ -1269,9 +1263,9 @@
             }
 
             castGrid.innerHTML = castList.map(c => `
-                <div onclick="openPersonProfile(${c.id})" class="bg-brand-card border border-brand-border rounded-2xl overflow-hidden shadow-lg flex items-center p-2.5 gap-3 cursor-pointer transition hover:border-amber-500/50">
-                    <div class="relative aspect-video w-28 bg-brand-bg rounded-xl overflow-hidden flex-shrink-0">
-                        <img src="${c.profile_path ? IMG_URL + c.profile_path : 'https://via.placeholder.com/300x169?text=No+Photo'}" 
+                <div onclick="openPersonProfile(${c.id})" class="bg-brand-card border border-brand-border rounded-2xl overflow-hidden shadow-lg flex items-center p-2.5 gap-3.5 cursor-pointer transition hover:border-amber-500/50">
+                    <div class="relative aspect-[3/4] w-16 bg-brand-bg rounded-xl overflow-hidden flex-shrink-0 border border-brand-border/60">
+                        <img src="${c.profile_path ? IMG_URL + c.profile_path : 'https://via.placeholder.com/300x400?text=No+Photo'}" 
                              class="w-full h-full object-cover object-top" loading="lazy">
                     </div>
                     <div class="flex-1 space-y-0.5 min-w-0">
