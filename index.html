@@ -70,25 +70,22 @@
     <!-- 1. MAIN APP VIEW -->
     <div id="app-view" class="max-w-md w-full mx-auto px-4 pt-4 space-y-5 min-h-screen">
         
-        <!-- Header -->
+        <!-- Clean Header (Top Search Icon Removed) -->
         <div class="flex items-center justify-between">
             <h1 class="text-xl font-extrabold text-white flex items-center gap-2">
                 <i class="fa-solid fa-play-circle text-amber-500"></i> StreamPulse
             </h1>
-            <button onclick="toggleSearchInput()" class="w-9 h-9 rounded-full bg-brand-card border border-brand-border text-gray-300 flex items-center justify-center">
-                <i class="fa-solid fa-magnifying-glass text-xs"></i>
-            </button>
         </div>
 
-        <!-- Inline Search Field -->
+        <!-- Inline Search Field (Triggered via Bottom Nav) -->
         <div id="search-box" class="hidden">
             <input type="text" id="search-input" onkeyup="handleSearch(event)" placeholder="Search movies, tv shows..." 
                    class="w-full bg-brand-card border border-brand-border text-xs px-4 py-3 rounded-2xl outline-none focus:border-amber-500 text-white">
         </div>
 
-        <!-- 16:9 HERO BANNER SECTION -->
+        <!-- 16:9 HERO BANNER SECTION WITH AUTO SLIDER -->
         <div id="hero-section" class="relative aspect-video w-full rounded-2xl overflow-hidden border border-brand-border shadow-2xl">
-            <div id="hero-bg" class="absolute inset-0 bg-cover bg-center transition-all duration-700"></div>
+            <div id="hero-bg" class="absolute inset-0 bg-cover bg-center transition-all duration-1000"></div>
             <div class="absolute inset-0 bg-gradient-to-t from-brand-bg via-transparent to-black/40"></div>
             
             <div class="absolute bottom-3 left-3 right-3 flex items-end justify-between z-10">
@@ -119,14 +116,14 @@
     <!-- 2. DETAILS VIEW -->
     <div id="details-view" class="hidden max-w-md w-full mx-auto relative min-h-screen">
         
-        <!-- TOP 16:9 BACKDROP SECTION -->
+        <!-- TOP 16:9 BACKDROP SECTION WITH AUTO SLIDER -->
         <section class="relative aspect-video w-full overflow-hidden">
-            <div id="details-backdrop" class="absolute inset-0 bg-cover bg-center"></div>
+            <div id="details-backdrop" class="absolute inset-0 bg-cover bg-center transition-all duration-1000"></div>
             
             <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-brand-bg"></div>
             <div class="absolute inset-0 bg-gradient-to-t from-brand-bg via-brand-bg/40 to-transparent"></div>
 
-            <!-- Top Rating Badge (No Share Icon) -->
+            <!-- Top Rating Badge -->
             <div class="absolute top-4 right-4 z-10">
                 <div class="bg-black/60 backdrop-blur-md border border-amber-500/30 text-amber-400 font-extrabold text-xs px-2.5 py-1 rounded-lg flex items-center gap-1.5 shadow-lg">
                     <i class="fa-solid fa-star text-[11px] text-amber-400"></i>
@@ -134,7 +131,7 @@
                 </div>
             </div>
 
-            <!-- Poster Title & Type Overlay -->
+            <!-- Title & Type Overlay -->
             <div class="absolute bottom-3 left-4 right-4 z-10 space-y-0.5">
                 <span id="media-type" class="text-[10px] font-black uppercase tracking-widest text-amber-400">MOVIE</span>
                 <h1 id="media-title" class="text-2xl font-black text-white leading-tight drop-shadow-md">Loading...</h1>
@@ -259,7 +256,7 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT APP ENGINE -->
+    <!-- JAVASCRIPT ENGINE -->
     <script>
         const TMDB_API_KEY = '0d516ae53b334d92b86cfc7c958d192f';
         const BASE_URL = 'https://api.themoviedb.org/3';
@@ -271,7 +268,13 @@
         let isLoading = false;
         let hasMorePages = true;
 
-        // ROUTING & INITIALIZATION
+        // Unique IDs tracker to fix duplicate titles
+        const loadedMediaIds = new Set();
+
+        // Auto Slider Timers
+        let heroSliderInterval = null;
+        let detailsSliderInterval = null;
+
         window.addEventListener('DOMContentLoaded', () => {
             handleHashChange();
             setupInfiniteScroll();
@@ -281,6 +284,9 @@
         window.addEventListener('hashchange', handleHashChange);
 
         function handleHashChange() {
+            // Clear existing timers on route change
+            clearInterval(detailsSliderInterval);
+
             const hash = window.location.hash.replace('#', '');
             
             if (hash.startsWith('details?')) {
@@ -294,7 +300,6 @@
             }
         }
 
-        // TAB SWITCHING
         function navigateToTab(tab) {
             window.location.hash = tab;
         }
@@ -303,7 +308,9 @@
             currentTab = tab;
             currentPage = 1;
             hasMorePages = true;
+            loadedMediaIds.clear(); // Reset duplicate tracking
 
+            document.getElementById('search-box').classList.add('hidden');
             document.getElementById('details-view').classList.add('hidden');
             document.getElementById('app-view').classList.remove('hidden');
 
@@ -330,27 +337,41 @@
             fetchGridContent();
         }
 
-        // HERO BANNER FETCH
+        // 1. HOME HERO BANNER SLIDER (Every 3 Seconds)
         async function fetchHeroContent() {
             try {
                 const res = await fetch(`${BASE_URL}/trending/all/day?api_key=${TMDB_API_KEY}`);
                 const data = await res.json();
-                const heroItem = data.results?.find(item => item.backdrop_path);
+                const heroItems = (data.results || []).filter(item => item.backdrop_path).slice(0, 5);
 
-                if (heroItem) {
-                    document.getElementById('hero-bg').style.backgroundImage = `url('${ORIGINAL_IMG}${heroItem.backdrop_path}')`;
-                    document.getElementById('hero-title').textContent = heroItem.title || heroItem.name;
-                    document.getElementById('hero-type').textContent = (heroItem.media_type || 'movie').toUpperCase();
+                if (heroItems.length === 0) return;
+
+                let currentIndex = 0;
+                
+                const updateHero = (index) => {
+                    const item = heroItems[index];
+                    document.getElementById('hero-bg').style.backgroundImage = `url('${ORIGINAL_IMG}${item.backdrop_path}')`;
+                    document.getElementById('hero-title').textContent = item.title || item.name;
+                    document.getElementById('hero-type').textContent = (item.media_type || 'movie').toUpperCase();
                     document.getElementById('hero-btn').onclick = () => {
-                        window.location.hash = `details?id=${heroItem.id}&type=${heroItem.media_type || 'movie'}`;
+                        window.location.hash = `details?id=${item.id}&type=${item.media_type || 'movie'}`;
                     };
-                }
+                };
+
+                updateHero(0);
+
+                clearInterval(heroSliderInterval);
+                heroSliderInterval = setInterval(() => {
+                    currentIndex = (currentIndex + 1) % heroItems.length;
+                    updateHero(currentIndex);
+                }, 3000);
+
             } catch (e) {
                 console.error("Hero fetch error:", e);
             }
         }
 
-        // INFINITE SCROLL API CALLS
+        // 2. INFINITE SCROLL & DUPLICATE FIX
         async function fetchGridContent() {
             if (isLoading || !hasMorePages) return;
             isLoading = true;
@@ -384,6 +405,10 @@
 
             items.forEach(item => {
                 if (!item.backdrop_path && !item.poster_path) return;
+                
+                // Duplicate Title Prevention
+                if (loadedMediaIds.has(item.id)) return;
+                loadedMediaIds.add(item.id);
 
                 const type = item.media_type || (currentTab === 'tv' ? 'tv' : 'movie');
                 const card = document.createElement('div');
@@ -418,7 +443,7 @@
             });
         }
 
-        // DETAILS PAGE RENDER (Strict 16:9 Backdrop & Updated Media)
+        // 3. DETAILS PAGE RENDER & BACKDROP AUTO SLIDER (Every 3 Seconds)
         async function renderDetailsPage(id, type = 'movie') {
             document.getElementById('app-view').classList.add('hidden');
             document.getElementById('details-view').classList.remove('hidden');
@@ -430,16 +455,27 @@
 
                 document.getElementById('media-title').textContent = data.title || data.name;
                 document.getElementById('media-type').textContent = type.toUpperCase();
-                
-                // Strictly 16:9 Backdrop Image
-                if (data.backdrop_path) {
-                    document.getElementById('details-backdrop').style.backgroundImage = `url('${ORIGINAL_IMG}${data.backdrop_path}')`;
-                } else {
-                    document.getElementById('details-backdrop').style.backgroundImage = `url('${ORIGINAL_IMG}${data.poster_path}')`;
-                }
-
                 document.getElementById('rating-val').textContent = data.vote_average ? data.vote_average.toFixed(1) : 'N/A';
                 document.getElementById('overview-text').textContent = data.overview || 'No overview available.';
+
+                // Backdrop Auto-Slider Implementation
+                const backdrops = data.images?.backdrops || [];
+                const bgElement = document.getElementById('details-backdrop');
+
+                if (backdrops.length > 0) {
+                    let backdropIdx = 0;
+                    bgElement.style.backgroundImage = `url('${ORIGINAL_IMG}${backdrops[0].file_path}')`;
+
+                    clearInterval(detailsSliderInterval);
+                    if (backdrops.length > 1) {
+                        detailsSliderInterval = setInterval(() => {
+                            backdropIdx = (backdropIdx + 1) % Math.min(backdrops.length, 5);
+                            bgElement.style.backgroundImage = `url('${ORIGINAL_IMG}${backdrops[backdropIdx].file_path}')`;
+                        }, 3000);
+                    }
+                } else if (data.backdrop_path) {
+                    bgElement.style.backgroundImage = `url('${ORIGINAL_IMG}${data.backdrop_path}')`;
+                }
 
                 // Metadata
                 document.getElementById('meta-release').textContent = data.release_date || data.first_air_date || 'N/A';
@@ -465,22 +501,15 @@
                 `).join('');
 
                 // MEDIA TAB: Backdrops, Posters, Logos
-                const backdropsBox = document.getElementById('media-backdrops');
-                const postersBox = document.getElementById('media-posters');
-                const logosBox = document.getElementById('media-logos');
-
-                // Render Backdrops
-                backdropsBox.innerHTML = (data.images?.backdrops || []).slice(0, 6).map(img => `
+                document.getElementById('media-backdrops').innerHTML = (data.images?.backdrops || []).slice(0, 6).map(img => `
                     <img src="${IMG_URL}${img.file_path}" class="w-48 aspect-video object-cover rounded-xl border border-brand-border flex-shrink-0">
                 `).join('') || `<p class="text-xs text-gray-500">No backdrops found.</p>`;
 
-                // Render Posters
-                postersBox.innerHTML = (data.images?.posters || []).slice(0, 6).map(img => `
+                document.getElementById('media-posters').innerHTML = (data.images?.posters || []).slice(0, 6).map(img => `
                     <img src="${IMG_URL}${img.file_path}" class="w-24 aspect-[2/3] object-cover rounded-xl border border-brand-border flex-shrink-0">
                 `).join('') || `<p class="text-xs text-gray-500">No posters found.</p>`;
 
-                // Render Logos
-                logosBox.innerHTML = (data.images?.logos || []).slice(0, 6).map(img => `
+                document.getElementById('media-logos').innerHTML = (data.images?.logos || []).slice(0, 6).map(img => `
                     <div class="w-24 h-12 flex items-center justify-center p-1 flex-shrink-0">
                         <img src="${IMG_URL}${img.file_path}" class="max-h-full max-w-full object-contain">
                     </div>
@@ -509,8 +538,11 @@
             activeBtn.appendChild(indicator);
         }
 
-        // SEARCH
+        // SEARCH TRIGGER VIA BOTTOM NAV
         function toggleSearchInput() {
+            if (!document.getElementById('details-view').classList.contains('hidden')) {
+                window.location.hash = 'home';
+            }
             const box = document.getElementById('search-box');
             box.classList.toggle('hidden');
             if (!box.classList.contains('hidden')) {
@@ -521,6 +553,7 @@
         async function handleSearch(e) {
             const query = e.target.value.trim();
             if (query.length > 2) {
+                loadedMediaIds.clear(); // Reset duplicates for search
                 document.getElementById('grid-title').textContent = `Results for "${query}"`;
                 document.getElementById('content-grid').innerHTML = '';
                 const res = await fetch(`${BASE_URL}/search/multi?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}`);
