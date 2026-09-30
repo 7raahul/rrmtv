@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StreamPulse - Ultimate Streaming Hub</title>
+    <title>Streaming Hub</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -61,19 +61,13 @@
     <!-- 1. MAIN APP VIEW (HOME, MOVIES, TV SHOWS) -->
     <div id="app-view" class="max-w-md w-full mx-auto min-h-screen">
         
-        <!-- FULL-WIDTH HERO BANNER SECTION (No Gap, Bottom Fade, Dots Right) -->
+        <!-- FULL-WIDTH HERO BANNER SECTION (No Logo, Full Bleed, Bottom Gradient Fade) -->
         <div id="hero-section" class="relative w-full aspect-video overflow-hidden cursor-pointer">
             <div id="hero-bg" class="absolute inset-0 bg-cover bg-center transition-all duration-1000"></div>
             
             <!-- Bottom Dark Gradient Overlay Fade -->
             <div class="absolute inset-0 bg-gradient-to-t from-brand-bg via-black/30 to-transparent"></div>
 
-            <!-- Top Header Logo Branding -->
-            <div class="absolute top-4 left-4 z-20 flex items-center gap-2">
-                <i class="fa-solid fa-play-circle text-amber-500 text-xl"></i>
-                <span class="text-base font-extrabold text-white tracking-wide">StreamPulse</span>
-            </div>
-            
             <div class="absolute bottom-4 left-4 right-4 z-20 flex items-end justify-between">
                 <div class="space-y-1 max-w-[70%]">
                     <span id="hero-type" class="text-[9px] font-black uppercase tracking-widest text-amber-400 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded inline-block">FEATURED</span>
@@ -82,7 +76,7 @@
                     </div>
                 </div>
 
-                <!-- Slider Indicator Dots (Positioned Right Side) -->
+                <!-- Slider Indicator Dots (Right Side) -->
                 <div id="hero-dots" class="flex items-center gap-1.5 pb-1"></div>
             </div>
         </div>
@@ -116,7 +110,7 @@
             </div>
         </div>
 
-        <!-- Default Trending Tags (Shown before search) -->
+        <!-- Default Trending Tags -->
         <div id="search-suggestions" class="space-y-2">
             <span class="text-[10px] font-black uppercase text-gray-500 tracking-wider">Popular Searches</span>
             <div class="flex flex-wrap gap-2">
@@ -195,15 +189,18 @@
 
         <!-- NAVIGATION TABS -->
         <section class="px-4 pt-2">
-            <div class="flex items-center gap-6 border-b border-brand-border/60 text-xs font-bold pb-2">
-                <button onclick="switchTab('overview')" id="tab-overview-btn" class="text-white relative pb-2 transition">
+            <div class="flex items-center gap-5 border-b border-brand-border/60 text-xs font-bold pb-2 overflow-x-auto hide-scrollbar">
+                <button onclick="switchTab('overview')" id="tab-overview-btn" class="text-white relative pb-2 transition whitespace-nowrap">
                     Overview
                     <span id="tab-indicator" class="absolute bottom-0 left-0 right-0 h-0.5 bg-amber-500 rounded-full"></span>
                 </button>
-                <button onclick="switchTab('cast')" id="tab-cast-btn" class="text-gray-400 hover:text-white transition pb-2">
+                <button onclick="switchTab('seasons')" id="tab-seasons-btn" class="hidden text-gray-400 hover:text-white transition pb-2 whitespace-nowrap">
+                    Seasons
+                </button>
+                <button onclick="switchTab('cast')" id="tab-cast-btn" class="text-gray-400 hover:text-white transition pb-2 whitespace-nowrap">
                     Cast
                 </button>
-                <button onclick="switchTab('media')" id="tab-media-btn" class="text-gray-400 hover:text-white transition pb-2">
+                <button onclick="switchTab('media')" id="tab-media-btn" class="text-gray-400 hover:text-white transition pb-2 whitespace-nowrap">
                     Media
                 </button>
             </div>
@@ -235,16 +232,25 @@
                 </div>
             </div>
 
-            <!-- CAST TAB (Modern Big Cards UI + Season Selector) -->
-            <div id="tab-cast" class="hidden space-y-4">
-                <!-- TV Season Selector Dropdown Container -->
-                <div id="tv-season-selector-container" class="hidden space-y-2">
-                    <label class="text-[10px] font-extrabold text-amber-400 uppercase tracking-wider">Select Season Cast:</label>
-                    <select id="season-select" onchange="handleSeasonCastChange(this.value)" 
-                            class="w-full bg-brand-card border border-brand-border text-xs px-3 py-2.5 rounded-xl text-white outline-none focus:border-amber-500">
+            <!-- SEASONS & EPISODES TAB (TV SHOWS ONLY) -->
+            <div id="tab-seasons" class="hidden space-y-4">
+                <div class="flex items-center justify-between gap-3 bg-brand-card p-3 rounded-2xl border border-brand-border">
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Select Season:</span>
+                    <select id="season-tab-select" onchange="loadSeasonEpisodes(this.value)" 
+                            class="bg-brand-bg border border-brand-border text-xs px-3 py-1.5 rounded-xl text-amber-400 font-extrabold outline-none focus:border-amber-500">
                     </select>
                 </div>
 
+                <div id="episodes-loader" class="py-8 text-center hidden">
+                    <div class="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin inline-block"></div>
+                </div>
+
+                <!-- Episodes Vertical List -->
+                <div id="episodes-list-container" class="space-y-3.5"></div>
+            </div>
+
+            <!-- CAST TAB -->
+            <div id="tab-cast" class="hidden space-y-4">
                 <div id="cast-loader" class="py-4 text-center hidden">
                     <div class="w-5 h-5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin inline-block"></div>
                 </div>
@@ -253,7 +259,7 @@
                 <div id="cast-grid" class="grid grid-cols-2 gap-3.5"></div>
             </div>
 
-            <!-- MEDIA TAB (With 3 Sub-Tabs: Backdrops, Posters, Logos) -->
+            <!-- MEDIA TAB -->
             <div id="tab-media" class="hidden space-y-4">
                 <!-- Sub Navigation Buttons -->
                 <div class="flex items-center gap-2 bg-brand-card p-1 rounded-2xl border border-brand-border">
@@ -386,7 +392,7 @@
             fetchGridContent();
         }
 
-        // DEDICATED SEARCH PAGE VIEW
+        // DEDICATED SEARCH VIEW
         function openSearchView() {
             document.getElementById('app-view').classList.add('hidden');
             document.getElementById('details-view').classList.add('hidden');
@@ -475,7 +481,7 @@
             }
         }
 
-        // HERO BANNER WITH FILTERING & DOTS ON RIGHT
+        // HERO BANNER
         async function fetchHeroContent() {
             try {
                 let endpoint = 'trending/all/day';
@@ -490,7 +496,6 @@
 
                 let currentIndex = 0;
 
-                // Render Dots Right Side
                 const dotsContainer = document.getElementById('hero-dots');
                 dotsContainer.innerHTML = heroItems.map((_, i) => `
                     <div id="hero-dot-${i}" class="w-1.5 h-1.5 rounded-full transition-all duration-300 ${i === 0 ? 'bg-amber-400 w-4' : 'bg-white/40'}"></div>
@@ -507,7 +512,6 @@
                         window.location.hash = `details?id=${item.id}&type=${type}`;
                     };
 
-                    // Update Dots
                     heroItems.forEach((_, i) => {
                         const dot = document.getElementById(`hero-dot-${i}`);
                         if (dot) {
@@ -515,7 +519,6 @@
                         }
                     });
 
-                    // Official Logo Fetch
                     const container = document.getElementById('hero-title-container');
                     try {
                         const imgRes = await fetch(`${BASE_URL}/${type}/${item.id}/images?api_key=${TMDB_API_KEY}&include_image_language=en,null`);
@@ -624,7 +627,6 @@
             document.getElementById('search-view').classList.add('hidden');
             document.getElementById('details-view').classList.remove('hidden');
 
-            // CRITICAL RESET FIX: Reset tab back to 'Overview' every time a new item is loaded
             switchTab('overview');
             window.scrollTo(0, 0);
 
@@ -636,7 +638,6 @@
                 document.getElementById('rating-val').textContent = data.vote_average ? data.vote_average.toFixed(1) : 'N/A';
                 document.getElementById('overview-text').textContent = data.overview || 'No overview available.';
 
-                // ORIGINAL TITLE
                 const origTitle = data.original_title || data.original_name;
                 const origBadge = document.getElementById('original-title-badge');
                 if (origTitle && origTitle !== (data.title || data.name)) {
@@ -646,7 +647,6 @@
                     origBadge.classList.add('hidden');
                 }
 
-                // LOGO OR TITLE
                 const titleContainer = document.getElementById('details-title-container');
                 const logo = data.images?.logos?.[0]?.file_path;
                 if (logo) {
@@ -655,7 +655,6 @@
                     titleContainer.innerHTML = `<h1 id="media-title" class="text-2xl font-black text-white leading-tight drop-shadow-md">${data.title || data.name}</h1>`;
                 }
 
-                // BACKDROP SLIDER
                 const backdrops = data.images?.backdrops || [];
                 const bgElement = document.getElementById('details-backdrop');
 
@@ -674,7 +673,6 @@
                     bgElement.style.backgroundImage = `url('${ORIGINAL_IMG}${data.backdrop_path}')`;
                 }
 
-                // METADATA
                 document.getElementById('meta-release').textContent = data.release_date || data.first_air_date || 'N/A';
 
                 const runtimeLabel = document.getElementById('meta-runtime-label');
@@ -682,15 +680,15 @@
 
                 if (type === 'tv') {
                     runtimeLabel.textContent = "SEASONS & EPISODES";
-                    const seasons = data.number_of_seasons || 0;
-                    const episodes = data.number_of_episodes || 0;
-                    runtimeVal.textContent = seasons > 0 ? `${seasons} Season${seasons > 1 ? 's' : ''} • ${episodes} Ep` : 'N/A';
+                    const validSeasons = (data.seasons || []).filter(s => s.season_number > 0);
+                    const seasonsCount = validSeasons.length;
+                    const episodesCount = data.number_of_episodes || 0;
+                    runtimeVal.textContent = seasonsCount > 0 ? `${seasonsCount} Season${seasonsCount > 1 ? 's' : ''} • ${episodesCount} Ep` : 'N/A';
                 } else {
                     runtimeLabel.textContent = "RUNTIME";
                     runtimeVal.textContent = data.runtime ? `${data.runtime} min` : 'N/A';
                 }
 
-                // DIRECTOR / CREATOR
                 const directorElement = document.getElementById('meta-director');
                 if (type === 'movie') {
                     const director = data.credits?.crew?.find(c => c.job === 'Director');
@@ -700,7 +698,6 @@
                     directorElement.textContent = creators || 'N/A';
                 }
 
-                // OTT WATCH PROVIDERS
                 const ottContainer = document.getElementById('meta-ott');
                 const providersData = data['watch/providers']?.results;
                 const regionData = providersData?.IN || providersData?.US;
@@ -714,21 +711,22 @@
                     ottContainer.innerHTML = `<span class="text-xs font-bold text-gray-400">N/A</span>`;
                 }
 
-                // BUDGET & REVENUE
                 const formatUSD = (val) => val && val > 0 ? `$${val.toLocaleString()}` : 'N/A';
                 document.getElementById('financial-budget').textContent = formatUSD(data.budget);
                 document.getElementById('financial-revenue').textContent = formatUSD(data.revenue);
 
-                // GENRES
                 const genreContainer = document.getElementById('genre-container');
                 genreContainer.innerHTML = (data.genres || []).map(g => `
                     <span class="bg-brand-goldBg border border-brand-goldBorder/60 text-amber-400 text-xs font-semibold px-3.5 py-1.5 rounded-xl flex-shrink-0">${g.name}</span>
                 `).join('');
 
-                // SETUP CAST TAB
-                setupCastTab(data);
+                // SETUP SEASONS TAB IF TV SHOW
+                setupSeasonsTab(data);
 
-                // SETUP MEDIA TAB SUB-GALLERIES (ALL AVAILABLE IMAGES)
+                // MAIN CAST
+                renderCastCards(data.credits?.cast || []);
+
+                // MEDIA GALLERY
                 setupMediaTab(data.images);
 
             } catch (e) {
@@ -736,53 +734,139 @@
             }
         }
 
-        // CAST ENGINE (MOVIE = ALL CAST, TV = SEASON SELECTOR)
-        function setupCastTab(data) {
-            const seasonContainer = document.getElementById('tv-season-selector-container');
-
+        // SEASONS & EPISODES ENGINE (No Specials / Season 0)
+        function setupSeasonsTab(data) {
+            const seasonsBtn = document.getElementById('tab-seasons-btn');
+            
             if (currentDetailsType === 'tv' && data.seasons?.length > 0) {
-                seasonContainer.classList.remove('hidden');
-                const select = document.getElementById('season-select');
-                
-                select.innerHTML = data.seasons
-                    .filter(s => s.season_number > 0)
-                    .map(s => `<option value="${s.season_number}">${s.name} (${s.episode_count} Episodes)</option>`).join('');
+                // Filter out Specials (Season 0)
+                const validSeasons = data.seasons.filter(s => s.season_number > 0);
 
-                if (data.seasons.find(s => s.season_number === 1)) {
-                    select.value = 1;
-                    fetchSeasonCast(1);
-                } else if (data.seasons[0]) {
-                    select.value = data.seasons[0].season_number;
-                    fetchSeasonCast(data.seasons[0].season_number);
+                if (validSeasons.length > 0) {
+                    seasonsBtn.classList.remove('hidden');
+                    const select = document.getElementById('season-tab-select');
+                    
+                    select.innerHTML = validSeasons.map(s => 
+                        `<option value="${s.season_number}">${s.name} (${s.episode_count} Episodes)</option>`
+                    ).join('');
+
+                    select.value = validSeasons[0].season_number;
+                    loadSeasonEpisodes(validSeasons[0].season_number);
+                } else {
+                    seasonsBtn.classList.add('hidden');
                 }
             } else {
-                seasonContainer.classList.add('hidden');
-                renderCastCards(data.credits?.cast || []);
+                seasonsBtn.classList.add('hidden');
             }
         }
 
-        async function handleSeasonCastChange(seasonNum) {
-            fetchSeasonCast(seasonNum);
-        }
+        async function loadSeasonEpisodes(seasonNumber) {
+            const container = document.getElementById('episodes-list-container');
+            const loader = document.getElementById('episodes-loader');
 
-        async function fetchSeasonCast(seasonNum) {
-            const loader = document.getElementById('cast-loader');
-            const castGrid = document.getElementById('cast-grid');
-            castGrid.innerHTML = '';
+            container.innerHTML = '';
             loader.classList.remove('hidden');
 
             try {
-                const res = await fetch(`${BASE_URL}/tv/${currentDetailsId}/season/${seasonNum}?api_key=${TMDB_API_KEY}&append_to_response=credits`);
+                const res = await fetch(`${BASE_URL}/tv/${currentDetailsId}/season/${seasonNumber}?api_key=${TMDB_API_KEY}`);
                 const data = await res.json();
-                renderCastCards(data.credits?.cast || []);
-            } catch (e) {
-                console.error(e);
+
+                if (!data.episodes || data.episodes.length === 0) {
+                    container.innerHTML = `<p class="text-xs text-gray-500 text-center py-6">No episodes found for this season.</p>`;
+                    return;
+                }
+
+                data.episodes.forEach(ep => {
+                    const epCard = document.createElement('div');
+                    epCard.className = "bg-brand-card/90 border border-brand-border/80 rounded-2xl overflow-hidden space-y-3 p-3";
+
+                    epCard.innerHTML = `
+                        <div class="flex gap-3">
+                            <div class="relative w-32 aspect-video bg-brand-bg rounded-xl overflow-hidden flex-shrink-0">
+                                <img src="${ep.still_path ? IMG_URL + ep.still_path : 'https://via.placeholder.com/300x169?text=No+Image'}" class="w-full h-full object-cover">
+                                <div class="absolute top-1 left-1 bg-black/70 backdrop-blur-md px-1.5 py-0.5 rounded text-[9px] font-black text-white">
+                                    E${ep.episode_number}
+                                </div>
+                            </div>
+                            <div class="flex-1 space-y-1 min-w-0">
+                                <div class="flex items-start justify-between gap-1">
+                                    <h4 class="text-xs font-black text-white truncate">${ep.name}</h4>
+                                    <span class="text-[10px] font-extrabold text-amber-400 bg-black/50 px-1.5 py-0.5 rounded flex items-center gap-0.5 flex-shrink-0">
+                                        ★ ${ep.vote_average ? ep.vote_average.toFixed(1) : 'N/A'}
+                                    </span>
+                                </div>
+                                <p class="text-[10px] font-semibold text-gray-400">${ep.air_date || 'Unknown Date'}</p>
+                                <p class="text-[10px] text-gray-300 line-clamp-2 leading-relaxed">${ep.overview || 'No description available for this episode.'}</p>
+                            </div>
+                        </div>
+
+                        <!-- Episode Cast Toggle Accordion -->
+                        <div class="border-t border-brand-border/60 pt-2">
+                            <button onclick="toggleEpisodeCast(${seasonNumber}, ${ep.episode_number})" 
+                                    class="text-[10px] font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1.5">
+                                <i class="fa-solid fa-users text-[10px]"></i>
+                                <span>View Episode Cast</span>
+                                <i id="ep-cast-icon-${ep.episode_number}" class="fa-solid fa-chevron-down text-[9px] transition-transform"></i>
+                            </button>
+                            <div id="ep-cast-container-${ep.episode_number}" class="hidden mt-2 pt-2 border-t border-brand-border/40">
+                                <div id="ep-cast-grid-${ep.episode_number}" class="flex gap-2 overflow-x-auto hide-scrollbar py-1"></div>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(epCard);
+                });
+
+            } catch (err) {
+                console.error(err);
             } finally {
                 loader.classList.add('hidden');
             }
         }
 
-        // MODERN BIG CAST CARD UI
+        async function toggleEpisodeCast(seasonNum, epNum) {
+            const container = document.getElementById(`ep-cast-container-${epNum}`);
+            const grid = document.getElementById(`ep-cast-grid-${epNum}`);
+            const icon = document.getElementById(`ep-cast-icon-${epNum}`);
+
+            if (!container.classList.contains('hidden')) {
+                container.classList.add('hidden');
+                icon.classList.remove('rotate-180');
+                return;
+            }
+
+            container.classList.remove('hidden');
+            icon.classList.add('rotate-180');
+
+            if (grid.children.length > 0) return; // Already fetched
+
+            grid.innerHTML = `<p class="text-[10px] text-gray-500">Loading cast...</p>`;
+
+            try {
+                const res = await fetch(`${BASE_URL}/tv/${currentDetailsId}/season/${seasonNum}/episode/${epNum}/credits?api_key=${TMDB_API_KEY}`);
+                const data = await res.json();
+                
+                const castList = [...(data.cast || []), ...(data.guest_stars || [])];
+
+                if (castList.length === 0) {
+                    grid.innerHTML = `<p class="text-[10px] text-gray-500">No episode cast listed.</p>`;
+                    return;
+                }
+
+                grid.innerHTML = castList.map(c => `
+                    <div class="w-16 flex-shrink-0 text-center space-y-1">
+                        <img src="${c.profile_path ? IMG_URL + c.profile_path : 'https://via.placeholder.com/100x100?text=No+Photo'}" 
+                             class="w-12 h-12 rounded-full object-cover mx-auto border border-brand-border">
+                        <p class="text-[9px] font-bold text-white truncate">${c.name}</p>
+                        <p class="text-[8px] text-amber-400 truncate">${c.character || 'Actor'}</p>
+                    </div>
+                `).join('');
+
+            } catch (e) {
+                grid.innerHTML = `<p class="text-[10px] text-red-400">Failed to load cast.</p>`;
+            }
+        }
+
+        // MODERN CAST CARD UI
         function renderCastCards(castList) {
             const castGrid = document.getElementById('cast-grid');
             if (!castList || castList.length === 0) {
@@ -813,28 +897,24 @@
             const posters = imagesObj?.posters || [];
             const logos = imagesObj?.logos || [];
 
-            // Backdrops
             document.getElementById('media-backdrops-grid').innerHTML = backdrops.length > 0 ? backdrops.map(img => `
                 <div class="aspect-video bg-brand-card border border-brand-border rounded-2xl overflow-hidden">
                     <img src="${ORIGINAL_IMG}${img.file_path}" class="w-full h-full object-cover" loading="lazy">
                 </div>
             `).join('') : `<p class="text-xs text-gray-500 text-center py-4">No backdrops available.</p>`;
 
-            // Posters
             document.getElementById('media-posters-grid').innerHTML = posters.length > 0 ? posters.map(img => `
                 <div class="aspect-[2/3] bg-brand-card border border-brand-border rounded-2xl overflow-hidden">
                     <img src="${IMG_URL}${img.file_path}" class="w-full h-full object-cover" loading="lazy">
                 </div>
             `).join('') : `<p class="text-xs text-gray-500 text-center py-4 col-span-2">No posters available.</p>`;
 
-            // Logos
             document.getElementById('media-logos-grid').innerHTML = logos.length > 0 ? logos.map(img => `
                 <div class="aspect-video bg-brand-card border border-brand-border rounded-2xl p-4 flex items-center justify-center">
                     <img src="${IMG_URL}${img.file_path}" class="max-h-full max-w-full object-contain" loading="lazy">
                 </div>
             `).join('') : `<p class="text-xs text-gray-500 text-center py-4 col-span-2">No logos available.</p>`;
 
-            // Default to Backdrops subtab
             switchMediaSubTab('backdrops');
         }
 
@@ -853,15 +933,17 @@
         }
 
         function switchTab(tab) {
-            ['overview', 'cast', 'media'].forEach(t => {
+            ['overview', 'seasons', 'cast', 'media'].forEach(t => {
                 const btn = document.getElementById(`tab-${t}-btn`);
                 const content = document.getElementById(`tab-${t}`);
-                if (t === tab) {
-                    btn.className = "text-white relative pb-2 transition font-bold";
-                    content.classList.remove('hidden');
-                } else {
-                    btn.className = "text-gray-400 hover:text-white transition pb-2";
-                    content.classList.add('hidden');
+                if (btn && content) {
+                    if (t === tab) {
+                        btn.className = "text-white relative pb-2 transition font-bold whitespace-nowrap";
+                        content.classList.remove('hidden');
+                    } else {
+                        btn.className = "text-gray-400 hover:text-white transition pb-2 whitespace-nowrap";
+                        content.classList.add('hidden');
+                    }
                 }
             });
 
