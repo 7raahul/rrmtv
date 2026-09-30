@@ -229,6 +229,77 @@
                 display: none !important;
             }
 
+            /* Mobile details page: stronger hierarchy and contrast on dark UI. */
+            #details-modal .detail-stat-grid {
+                gap: 10px !important;
+            }
+            #details-modal .detail-stat-card {
+                min-height: 78px;
+                padding: 14px 14px !important;
+                background: linear-gradient(145deg, rgba(24,24,29,.98), rgba(13,13,16,.98)) !important;
+                border: 1px solid rgba(255,255,255,.12) !important;
+                box-shadow: 0 8px 22px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.035);
+            }
+            #details-modal .detail-stat-card p:first-child {
+                color: #a1a1aa !important;
+                font-size: 10px !important;
+                letter-spacing: .12em;
+            }
+            #details-modal .detail-stat-card p:nth-child(2) {
+                color: #f8fafc !important;
+                font-size: 15px !important;
+                margin-top: 5px;
+                line-height: 1.25;
+            }
+            #details-modal .detail-tabs {
+                border-bottom-color: rgba(255,255,255,.12) !important;
+                margin-bottom: 2px;
+            }
+            #details-modal .detail-tab-btn {
+                padding: 11px 2px 12px !important;
+                color: #a1a1aa !important;
+                font-size: 12px !important;
+                letter-spacing: .01em;
+            }
+            #details-modal .detail-tab-btn.text-white {
+                color: #ffffff !important;
+            }
+            #details-modal .detail-tab-btn.border-amber-400 {
+                border-bottom-width: 3px !important;
+                border-color: #fbbf24 !important;
+            }
+            #details-modal #dpanel-overview .card-solid {
+                background: linear-gradient(145deg, rgba(24,24,29,.98), rgba(13,13,16,.98)) !important;
+                border: 1px solid rgba(255,255,255,.11) !important;
+                box-shadow: 0 10px 26px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.035);
+            }
+            #details-modal #dpanel-overview .card-solid h3 {
+                color: #f4f4f5 !important;
+                font-size: 12px !important;
+                letter-spacing: .09em;
+            }
+            #details-modal #dpanel-overview .card-solid > p,
+            #details-modal #dpanel-overview .card-solid .text-slate-200,
+            #details-modal #dpanel-overview .card-solid .text-slate-300 {
+                color: #d4d4d8 !important;
+            }
+            #details-modal #dpanel-overview .card-solid .text-slate-500 {
+                color: #a1a1aa !important;
+            }
+            #details-modal #dpanel-overview .card-solid .text-amber-400 {
+                color: #fbbf24 !important;
+            }
+            #details-modal #dpanel-overview > .grid.grid-cols-2 {
+                gap: 10px !important;
+            }
+            #details-modal #dpanel-overview > .grid.grid-cols-2 > .card-solid {
+                min-height: 82px;
+                padding: 14px !important;
+            }
+            #details-modal #dpanel-overview .ott-provider-logo {
+                filter: none;
+            }
+
             /* Mobile-only: details/actor overlays must be solid black.
                Do not show the page behind them through blur/transparency. */
             .glass-modal {
@@ -1530,7 +1601,7 @@
                 ['Age Rating', ageRating, null]
             ];
             const statBoxesHtml = statBoxes.map(([l, v, sub]) => `
-                <div class="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 min-w-0">
+                <div class="detail-stat-card rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 min-w-0">
                     <p class="text-[10px] text-slate-500 uppercase tracking-wider mb-1">${l}</p>
                     <p class="text-sm font-bold text-white truncate" title="${v}">${v}</p>
                     ${sub ? `<p class="text-[11px] font-semibold text-amber-400 truncate mt-0.5" title="${sub}">${sub}</p>` : ''}
@@ -1574,6 +1645,7 @@
             const revenueText = type === 'movie' ? fmtMoney(data.revenue) : null;
             const collection = type === 'movie' ? data.belongs_to_collection : null;
 
+            const similarIds = new Set(similarResults.map(r => r.id));
             const hdrMeta = [type === 'movie' ? 'Movie' : 'TV Show', releaseYear !== 'N/A' ? releaseYear : '', chipRuntime ? chipRuntime + ' min' : ''].filter(Boolean).join('  •  ');
 
             // Upcoming release info — future movie release, or a TV show's next episode to air
@@ -1613,9 +1685,6 @@
                         <div class="flex-1 min-w-0 flex flex-col justify-center gap-3 px-10 py-6 bg-black">
                             <div class="flex items-center justify-between gap-3">
                                 <p class="text-sm text-slate-400">${hdrMeta}</p>
-                                <button onclick="copyDetailLink()" class="flex items-center gap-1.5 text-xs font-semibold text-slate-300 hover:text-white border border-white/15 hover:border-white/40 rounded-lg px-3 py-1.5 transition">
-                                    <i class="fa-solid fa-link text-[10px]"></i> Copy link
-                                </button>
                             </div>
 
                             ${logoUrl ? `<img src="${logoUrl}" alt="${title}" class="max-h-20 max-w-[80%] object-contain object-left drop-shadow-2xl">`
@@ -1647,9 +1716,6 @@
                             <span class="absolute top-3 left-3 z-20 bg-black/70 text-amber-400 border border-white/15 text-[11px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 backdrop-blur-md">
                                 <i class="fa-solid fa-star text-[9px]"></i> ${rating}
                             </span>
-                            <button onclick="copyDetailLink()" class="absolute top-3 right-14 z-20 w-7 h-7 rounded-lg bg-black/70 border border-white/15 text-white flex items-center justify-center backdrop-blur-md">
-                                <i class="fa-solid fa-link text-[10px]"></i>
-                            </button>
 
                             <div class="absolute bottom-0 left-0 right-0 p-4 lg:p-6 z-10 space-y-2">
                                 <span class="text-[10px] font-bold text-slate-200 uppercase tracking-widest bg-white/10 border border-white/15 px-2 py-0.5 rounded-md inline-block backdrop-blur-sm">${type === 'movie' ? 'Movie' : 'TV Show'}</span>
@@ -1664,7 +1730,7 @@
 
                         <div class="px-5 lg:px-0 mt-5 relative z-10 space-y-5">
                             ${chipGenres.length ? `<div class="flex flex-wrap gap-2">${chipGenres.map(g => `<span class="text-[11px] font-semibold text-amber-300 bg-amber-400/10 border border-amber-400/20 px-2.5 py-1 rounded-full">${g}</span>`).join('')}</div>` : ''}
-                            <div class="grid grid-cols-2 gap-3">${statBoxesHtml}</div>
+                            <div class="detail-stat-grid grid grid-cols-2 gap-3">${statBoxesHtml}</div>
 
                             ${upcomingHtml}
                         </div>
@@ -1673,7 +1739,7 @@
                     <!-- Right column: tabs + content -->
                     <div class="px-5 lg:px-0 lg:flex-1 lg:min-w-0 lg:pt-6 mt-5 lg:mt-0 space-y-5">
                         <!-- Detail Tabs -->
-                        <div class="flex gap-5 border-b border-white/10 lg:sticky lg:top-0 lg:z-20 lg:bg-[#060608]/95 lg:backdrop-blur lg:pt-2">
+                        <div class="detail-tabs flex gap-5 border-b border-white/10 lg:sticky lg:top-0 lg:z-20 lg:bg-[#060608]/95 lg:backdrop-blur lg:pt-2">
                             <button onclick="switchDetailTab('overview')" id="dtab-overview" class="detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-white border-b-2 border-amber-400 transition">Overview</button>
                             ${hasEpisodesTab ? `<button onclick="switchDetailTab('episodes')" id="dtab-episodes" class="detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-slate-400 border-b-2 border-transparent transition">Season</button>` : ''}
                             <button onclick="switchDetailTab('more')" id="dtab-more" class="detail-tab-btn pb-2 text-xs lg:text-sm font-bold whitespace-nowrap text-slate-400 border-b-2 border-transparent transition">Cast & More</button>
@@ -1771,7 +1837,7 @@
                                         ${allCast.map(c => {
                                             const photo = c.profile_path ? `${IMG_URL}${c.profile_path}` : '';
                                             const initials = (c.name || '?').split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
-                                            const originalName = c.original_name || c.name || '';
+                                            const originalName = c.original_name && c.original_name !== c.name ? c.original_name : '';
                                             return `
                                                 <div onclick="openActorModal(${c.id})" class="card-solid rounded-2xl overflow-hidden cursor-pointer group border border-white/10 hover:border-white/25 transition">
                                                     <div class="relative aspect-[2/3] bg-[#0D0D10] overflow-hidden">
