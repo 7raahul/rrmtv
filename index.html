@@ -388,6 +388,436 @@
             #person-view { width: min(1480px, calc(100vw - 80px)) !important; }
             .desktop-nav-inner { width: min(1480px, calc(100vw - 80px)); }
         }
+
+
+        /* =========================================================
+           DESKTOP DETAILS / EPISODE REFINEMENT
+           Mobile remains completely untouched.
+           ========================================================= */
+        @media (min-width: 768px) {
+            /* ---------- MOVIE / TV DETAILS ---------- */
+            #details-view {
+                padding-top: 76px !important;
+                padding-bottom: 90px !important;
+            }
+
+            #details-view > section:first-child {
+                position: relative;
+                height: clamp(500px, 46vw, 680px) !important;
+                min-height: 500px;
+                border-radius: 0 0 34px 34px !important;
+                overflow: hidden;
+                box-shadow: 0 28px 80px rgba(0,0,0,.38);
+            }
+
+            #details-view > section:first-child::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                pointer-events: none;
+                background:
+                    linear-gradient(to top, rgba(5,5,5,.98) 0%, rgba(5,5,5,.78) 17%, rgba(5,5,5,.18) 55%, rgba(5,5,5,.05) 100%),
+                    linear-gradient(90deg, rgba(5,5,5,.25), transparent 48%, rgba(5,5,5,.15));
+            }
+
+            #details-view > section:first-child > .absolute.top-4 {
+                top: 30px !important;
+                right: 34px !important;
+                z-index: 5;
+            }
+
+            #details-view > section:first-child > .absolute.top-4 > div {
+                padding: 9px 13px !important;
+                border-radius: 12px !important;
+                font-size: 13px !important;
+            }
+
+            #details-view > section:first-child > .absolute.bottom-3 {
+                left: 56px !important;
+                right: 56px !important;
+                bottom: 52px !important;
+                z-index: 5;
+                max-width: 900px;
+            }
+
+            #media-type {
+                font-size: 11px !important;
+                letter-spacing: .16em !important;
+            }
+
+            #original-title-badge {
+                font-size: 11px !important;
+                padding: 5px 9px !important;
+                max-width: 420px !important;
+            }
+
+            #details-title-container {
+                min-height: 88px !important;
+                margin-top: 7px;
+            }
+
+            #details-title-container img {
+                max-width: 680px !important;
+                max-height: 92px !important;
+            }
+
+            #details-title-container h1 {
+                font-size: clamp(38px, 4vw, 62px) !important;
+                line-height: 1.02 !important;
+                letter-spacing: -.035em;
+            }
+
+            /* Genres */
+            #details-view > section:nth-of-type(2) {
+                padding: 28px 0 10px !important;
+            }
+
+            #genre-container {
+                gap: 10px !important;
+            }
+
+            #genre-container span {
+                font-size: 12px !important;
+                padding: 9px 15px !important;
+                border-radius: 999px !important;
+            }
+
+            /* Metadata */
+            #details-view > section:nth-of-type(3) {
+                padding: 14px 0 26px !important;
+                grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+                gap: 16px !important;
+            }
+
+            #details-view > section:nth-of-type(3) > div {
+                min-height: 100px !important;
+                padding: 19px 20px !important;
+                border-radius: 20px !important;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                box-shadow: 0 14px 34px rgba(0,0,0,.16);
+            }
+
+            #details-view > section:nth-of-type(3) > div span:last-child {
+                font-size: 14px !important;
+                margin-top: 5px;
+            }
+
+            /* Tabs */
+            #details-view > section:nth-of-type(4) {
+                padding: 0 !important;
+                position: sticky;
+                top: 76px;
+                z-index: 30;
+                background: rgba(5,5,5,.88);
+                backdrop-filter: blur(18px);
+                -webkit-backdrop-filter: blur(18px);
+            }
+
+            #details-view > section:nth-of-type(4) > div {
+                gap: 34px !important;
+                min-height: 58px;
+                align-items: end;
+                padding: 0 4px !important;
+            }
+
+            #details-view > section:nth-of-type(4) button {
+                font-size: 13px !important;
+                padding: 17px 2px 14px !important;
+            }
+
+            /* Tab content becomes a proper desktop workspace */
+            #details-view > section:nth-of-type(5) {
+                padding: 34px 0 90px !important;
+            }
+
+            #tab-overview {
+                display: grid;
+                grid-template-columns: minmax(0, 1.7fr) minmax(360px, 1fr);
+                gap: 20px;
+                align-items: start;
+            }
+
+            #tab-overview > div {
+                height: 100%;
+                border-radius: 24px !important;
+                padding: 28px !important;
+            }
+
+            #tab-overview > div:first-child p {
+                font-size: 14px !important;
+                line-height: 1.9 !important;
+            }
+
+            #tab-overview > div:nth-child(2) {
+                margin: 0 !important;
+            }
+
+            #tab-overview > div:nth-child(2) .grid {
+                grid-template-columns: 1fr !important;
+                gap: 12px !important;
+            }
+
+            #tab-overview > div:nth-child(2) .grid > div {
+                min-height: 82px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                padding: 17px !important;
+                border-radius: 18px !important;
+            }
+
+            /* Seasons */
+            #tab-seasons > .flex {
+                max-width: 520px;
+                margin-bottom: 22px;
+                padding: 13px 16px !important;
+                border-radius: 16px !important;
+            }
+
+            #episodes-list-container {
+                display: grid !important;
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 18px !important;
+            }
+
+            #episodes-list-container > div {
+                min-height: 185px;
+                padding: 15px !important;
+                border-radius: 20px !important;
+                transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+            }
+
+            #episodes-list-container > div:hover {
+                transform: translateY(-4px);
+                border-color: rgba(251,191,36,.35) !important;
+                box-shadow: 0 18px 36px rgba(0,0,0,.28);
+            }
+
+            #episodes-list-container > div .relative.w-32 {
+                width: 210px !important;
+                min-width: 210px !important;
+                border-radius: 14px !important;
+            }
+
+            #episodes-list-container > div h4 {
+                font-size: 13px !important;
+            }
+
+            #episodes-list-container > div p {
+                font-size: 11px !important;
+            }
+
+            /* Cast */
+            #tab-cast #cast-grid {
+                grid-template-columns: repeat(7, minmax(0,1fr)) !important;
+                gap: 18px !important;
+            }
+
+            #tab-cast #cast-grid > div {
+                border-radius: 20px !important;
+                overflow: hidden;
+                transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+            }
+
+            #tab-cast #cast-grid > div:hover {
+                transform: translateY(-4px);
+                border-color: rgba(251,191,36,.32) !important;
+                box-shadow: 0 18px 35px rgba(0,0,0,.28);
+            }
+
+            /* Media */
+            #tab-media > div:first-child {
+                max-width: 760px !important;
+                margin-bottom: 24px;
+            }
+
+            #media-backdrops-grid {
+                grid-template-columns: repeat(3, minmax(0,1fr)) !important;
+                gap: 18px !important;
+            }
+
+            #media-posters-grid {
+                grid-template-columns: repeat(5, minmax(0,1fr)) !important;
+                gap: 18px !important;
+            }
+
+            #media-logos-grid {
+                grid-template-columns: repeat(5, minmax(0,1fr)) !important;
+                gap: 18px !important;
+            }
+
+            /* ---------- EPISODE DETAILS ---------- */
+            #episode-details-view {
+                padding-top: 100px !important;
+                padding-bottom: 90px !important;
+                display: grid;
+                grid-template-columns: minmax(0, 1.65fr) minmax(340px, .85fr);
+                column-gap: 24px;
+                row-gap: 20px;
+                align-items: start;
+            }
+
+            /* Back button + season badge */
+            #episode-details-view > div:first-child {
+                grid-column: 1 / -1;
+                width: 100%;
+                padding-bottom: 4px;
+            }
+
+            /* Large episode still */
+            #episode-details-view > div:nth-child(2) {
+                grid-column: 1;
+                grid-row: 2;
+                width: 100% !important;
+                max-width: none !important;
+                min-height: 0 !important;
+                height: auto !important;
+                aspect-ratio: 16 / 8.5 !important;
+                margin: 0 !important;
+                border-radius: 24px !important;
+                box-shadow: 0 24px 60px rgba(0,0,0,.28);
+            }
+
+            #episode-details-view > div:nth-child(2) #ep-view-still {
+                object-position: center;
+            }
+
+            #episode-details-view > div:nth-child(2) .absolute.bottom-3 {
+                bottom: 22px !important;
+                left: 22px !important;
+                right: 22px !important;
+            }
+
+            #episode-details-view > div:nth-child(2) p:first-child {
+                font-size: 12px !important;
+            }
+
+            #episode-details-view > div:nth-child(2) p:nth-child(2) {
+                font-size: 11px !important;
+            }
+
+            #episode-details-view > div:nth-child(2) .bg-black\/70 {
+                font-size: 14px !important;
+                padding: 7px 11px !important;
+                border-radius: 10px !important;
+            }
+
+            /* Episode information */
+            #episode-details-view > div:nth-child(3) {
+                grid-column: 2;
+                grid-row: 2;
+                width: 100% !important;
+                max-width: none !important;
+                min-height: 100% !important;
+                margin: 0 !important;
+                padding: 30px !important;
+                border-radius: 24px !important;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                box-shadow: 0 20px 50px rgba(0,0,0,.2);
+            }
+
+            #episode-details-view > div:nth-child(3) h2 {
+                font-size: clamp(24px, 2.3vw, 36px) !important;
+                line-height: 1.12 !important;
+            }
+
+            #episode-details-view > div:nth-child(3) p {
+                font-size: 13px !important;
+                line-height: 1.8 !important;
+            }
+
+            /* Episode tabs */
+            #episode-details-view > div:nth-child(4) {
+                grid-column: 1 / -1;
+                grid-row: 3;
+                width: 100% !important;
+                max-width: none !important;
+                margin: 0 !important;
+                padding: 5px !important;
+                border-radius: 18px !important;
+            }
+
+            #episode-details-view > div:nth-child(4) button {
+                min-height: 48px;
+                font-size: 13px !important;
+            }
+
+            #ep-stills-container,
+            #ep-cast-container {
+                grid-column: 1 / -1;
+                width: 100% !important;
+                max-width: none !important;
+                margin: 0 !important;
+            }
+
+            #ep-stills-grid {
+                grid-template-columns: repeat(3, minmax(0,1fr)) !important;
+                gap: 18px !important;
+            }
+
+            #ep-stills-grid > div {
+                border-radius: 18px !important;
+                overflow: hidden;
+            }
+
+            #ep-big-cast-grid {
+                grid-template-columns: repeat(7, minmax(0,1fr)) !important;
+                gap: 18px !important;
+            }
+
+            /* ---------- ACTOR PROFILE ---------- */
+            #person-view {
+                padding-top: 100px !important;
+                padding-bottom: 90px !important;
+            }
+
+            #person-content {
+                max-width: none !important;
+                display: grid;
+                grid-template-columns: minmax(0, 1.2fr) minmax(0, 2fr);
+                gap: 20px;
+                align-items: start;
+            }
+
+            #person-content > div:first-child {
+                grid-column: 1 / -1;
+                padding: 30px !important;
+                border-radius: 26px !important;
+            }
+
+            #person-content > div:nth-child(2) {
+                grid-column: 1;
+                grid-template-columns: repeat(2, minmax(0,1fr)) !important;
+                gap: 14px !important;
+            }
+
+            #person-content > div:nth-child(3) {
+                grid-column: 2;
+                margin: 0 !important;
+                height: 100%;
+                padding: 28px !important;
+                border-radius: 24px !important;
+            }
+
+            #person-content > div:nth-child(4) {
+                grid-column: 1 / -1;
+            }
+
+            #person-works-grid {
+                grid-template-columns: repeat(7, minmax(0,1fr)) !important;
+                gap: 18px !important;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            #episodes-list-container { grid-template-columns: repeat(2, minmax(0,1fr)) !important; }
+            #ep-stills-grid { grid-template-columns: repeat(3, minmax(0,1fr)) !important; }
+        }
+
     </style>
 </head>
 <body class="min-h-screen flex flex-col pb-24 relative">
