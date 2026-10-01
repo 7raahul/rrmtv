@@ -203,8 +203,173 @@
             #person-view { padding-top: 106px !important; }
             #details-view { padding-top: 76px; }
 
-            /* HOME */
+            /* HOME — compact desktop split hero; mobile hero is untouched */
             #hero-section {
+                height: auto !important;
+                aspect-ratio: auto !important;
+                min-height: 0 !important;
+                overflow: hidden;
+                border-radius: 0 0 24px 24px;
+                background: #0a0b0f;
+            }
+
+            #desktop-hero-layout {
+                display: grid !important;
+                grid-template-columns: minmax(0, 1.55fr) minmax(300px, 1fr);
+                width: 100%;
+                align-items: stretch;
+                min-height: 0;
+                border: 1px solid rgba(255,255,255,.06);
+                background: #0a0b0f;
+            }
+
+            .desktop-hero-media-wrap {
+                position: relative;
+                aspect-ratio: 16 / 9;
+                min-width: 0;
+                overflow: hidden;
+                background: #08090d;
+            }
+
+            .desktop-hero-media {
+                display: block;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                object-position: center;
+                transition: opacity .35s ease, transform .7s ease;
+            }
+
+            .desktop-hero-media-overlay {
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(90deg, rgba(5,5,5,0) 55%, rgba(5,5,5,.34) 100%), linear-gradient(0deg, rgba(5,5,5,.32), transparent 45%);
+                pointer-events: none;
+            }
+
+            .desktop-hero-info {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                min-width: 0;
+                padding: 42px 48px 38px;
+                background: radial-gradient(circle at 15% 20%, rgba(251,191,36,.055), transparent 36%), #0a0b0f;
+                border-left: 1px solid rgba(255,255,255,.055);
+            }
+
+            .desktop-hero-type {
+                align-self: flex-start;
+                margin-bottom: 18px;
+                padding: 5px 10px;
+                border-radius: 7px;
+                background: rgba(0,0,0,.55);
+                border: 1px solid rgba(251,191,36,.25);
+                color: #fbbf24;
+                font-size: 10px;
+                line-height: 1;
+                font-weight: 900;
+                letter-spacing: .12em;
+            }
+
+            .desktop-hero-title-container {
+                min-height: 92px;
+                max-width: 100%;
+                display: flex;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+
+            .desktop-hero-title {
+                margin: 0;
+                max-width: 100%;
+                color: #fff;
+                font-size: clamp(30px, 3vw, 52px);
+                line-height: .98;
+                font-weight: 900;
+                letter-spacing: -.045em;
+                text-wrap: balance;
+                filter: drop-shadow(0 8px 20px rgba(0,0,0,.35));
+            }
+
+            .desktop-hero-title-logo {
+                display: block;
+                max-width: min(100%, 430px);
+                max-height: 100px;
+                width: auto;
+                height: auto;
+                object-fit: contain;
+                object-position: left center;
+                filter: drop-shadow(0 8px 20px rgba(0,0,0,.5));
+            }
+
+            .desktop-hero-title-container img {
+                display: block;
+                max-width: min(100%, 430px);
+                max-height: 100px;
+                width: auto;
+                height: auto;
+                object-fit: contain;
+                object-position: left center;
+                filter: drop-shadow(0 8px 20px rgba(0,0,0,.5));
+            }
+
+            .desktop-hero-rating {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                align-self: flex-start;
+                padding: 9px 13px;
+                margin-bottom: 16px;
+                border-radius: 10px;
+                background: rgba(251,191,36,.09);
+                border: 1px solid rgba(251,191,36,.23);
+                color: #fbbf24;
+                font-size: 15px;
+                font-weight: 900;
+            }
+
+            .desktop-hero-rating i { font-size: 12px; }
+
+            .desktop-hero-meta {
+                min-height: 18px;
+                color: #8f97a6;
+                font-size: 11px;
+                font-weight: 700;
+                line-height: 1.5;
+            }
+
+            .desktop-hero-dots {
+                display: flex;
+                align-items: center;
+                gap: 7px;
+                margin-top: 28px;
+            }
+
+            .desktop-hero-dot {
+                width: 6px;
+                height: 6px;
+                border-radius: 999px;
+                background: rgba(255,255,255,.3);
+                transition: .25s ease;
+            }
+
+            .desktop-hero-dot.active {
+                width: 24px;
+                background: #fff;
+            }
+
+            /* Hide the old full-bleed desktop presentation only; its markup stays for mobile. */
+            #hero-section > #hero-bg,
+            #hero-section > .absolute.inset-0.bg-gradient-to-t,
+            #hero-section > .absolute.bottom-4 {
+                display: none !important;
+            }
+
+            /* Compact desktop hero */
+            #hero-section > #desktop-hero-layout { display: grid !important; }
+
+
                 height: clamp(430px, 42vw, 600px);
                 aspect-ratio: auto !important;
                 border-radius: 0 0 30px 30px;
@@ -862,6 +1027,26 @@
         
         <!-- HERO BANNER SECTION -->
         <div id="hero-section" class="relative w-full aspect-video overflow-hidden cursor-pointer">
+            <!-- DESKTOP HERO: intentionally separate so the mobile hero remains unchanged -->
+            <div id="desktop-hero-layout" class="hidden">
+                <div class="desktop-hero-media-wrap">
+                    <img id="hero-bg-desktop" class="desktop-hero-media" src="" alt="Featured title backdrop">
+                    <div class="desktop-hero-media-overlay"></div>
+                </div>
+                <div class="desktop-hero-info">
+                    <div class="desktop-hero-type" id="hero-type-desktop">FEATURED</div>
+                    <div id="hero-title-container-desktop" class="desktop-hero-title-container">
+                        <h2 id="hero-title-desktop" class="desktop-hero-title">Loading...</h2>
+                    </div>
+                    <div class="desktop-hero-rating" aria-label="Rating">
+                        <i class="fa-solid fa-star"></i>
+                        <span id="hero-rating-desktop">0.0</span>
+                    </div>
+                    <div id="hero-meta-desktop" class="desktop-hero-meta"></div>
+                    <div id="hero-dots-desktop" class="desktop-hero-dots"></div>
+                </div>
+            </div>
+
             <div id="hero-bg" class="absolute inset-0 bg-cover bg-center transition-all duration-700"></div>
             <div class="absolute inset-0 bg-gradient-to-t from-brand-bg via-black/30 to-transparent"></div>
 
@@ -1456,10 +1641,17 @@
                 let currentIndex = 0;
 
                 const dotsContainer = document.getElementById('hero-dots');
-                // PURE WHITE DOTS
+                const desktopDotsContainer = document.getElementById('hero-dots-desktop');
+                // Mobile dots remain exactly as before.
                 dotsContainer.innerHTML = heroItems.map((_, i) => `
                     <div id="hero-dot-${i}" class="w-1.5 h-1.5 rounded-full transition-all duration-300 ${i === 0 ? 'bg-white w-4' : 'bg-white/40'}"></div>
                 `).join('');
+                // Separate desktop dots.
+                if (desktopDotsContainer) {
+                    desktopDotsContainer.innerHTML = heroItems.map((_, i) => `
+                        <div id="hero-dot-desktop-${i}" class="desktop-hero-dot ${i === 0 ? 'active' : ''}"></div>
+                    `).join('');
+                }
 
                 const updateHero = async (index) => {
                     const item = heroItems[index];
@@ -1468,6 +1660,22 @@
                     // DYNAMIC IMAGE FOR EACH SLIDE (2)
                     document.getElementById('hero-bg').style.backgroundImage = `url('${ORIGINAL_IMG}${item.backdrop_path}')`;
                     document.getElementById('hero-type').textContent = type.toUpperCase();
+
+                    // Desktop split hero uses a real 16:9 image element, preventing stretching.
+                    const desktopHeroImg = document.getElementById('hero-bg-desktop');
+                    if (desktopHeroImg) {
+                        desktopHeroImg.src = `${ORIGINAL_IMG}${item.backdrop_path}`;
+                        desktopHeroImg.alt = `${item.title || item.name || 'Featured'} backdrop`;
+                    }
+                    const desktopType = document.getElementById('hero-type-desktop');
+                    const desktopRating = document.getElementById('hero-rating-desktop');
+                    const desktopMeta = document.getElementById('hero-meta-desktop');
+                    if (desktopType) desktopType.textContent = type.toUpperCase();
+                    if (desktopRating) desktopRating.textContent = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
+                    if (desktopMeta) {
+                        const date = item.release_date || item.first_air_date || '';
+                        desktopMeta.textContent = date ? date.slice(0, 4) : '';
+                    }
                     
                     document.getElementById('hero-section').onclick = () => {
                         window.location.hash = `details?id=${item.id}&type=${type}`;
@@ -1479,6 +1687,8 @@
                         if (dot) {
                             dot.className = `w-1.5 h-1.5 rounded-full transition-all duration-300 ${i === index ? 'bg-white w-4' : 'bg-white/40'}`;
                         }
+                        const desktopDot = document.getElementById(`hero-dot-desktop-${i}`);
+                        if (desktopDot) desktopDot.classList.toggle('active', i === index);
                     });
 
                     // BIGGER TITLE LOGO (1)
@@ -1490,11 +1700,17 @@
 
                         if (logo) {
                             container.innerHTML = `<img src="${IMG_URL}${logo}" class="max-h-12 max-w-[85%] object-contain drop-shadow-2xl">`;
+                            const desktopContainer = document.getElementById('hero-title-container-desktop');
+                            if (desktopContainer) desktopContainer.innerHTML = `<img src="${IMG_URL}${logo}" alt="${item.title || item.name}" class="desktop-hero-title-logo">`;
                         } else {
                             container.innerHTML = `<h2 class="text-xl font-black text-white truncate drop-shadow-md">${item.title || item.name}</h2>`;
+                            const desktopContainer = document.getElementById('hero-title-container-desktop');
+                            if (desktopContainer) desktopContainer.innerHTML = `<h2 id="hero-title-desktop" class="desktop-hero-title">${item.title || item.name}</h2>`;
                         }
                     } catch {
                         container.innerHTML = `<h2 class="text-xl font-black text-white truncate drop-shadow-md">${item.title || item.name}</h2>`;
+                        const desktopContainer = document.getElementById('hero-title-container-desktop');
+                        if (desktopContainer) desktopContainer.innerHTML = `<h2 id="hero-title-desktop" class="desktop-hero-title">${item.title || item.name}</h2>`;
                     }
                 };
 
