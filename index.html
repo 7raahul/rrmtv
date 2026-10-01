@@ -983,6 +983,265 @@
             #ep-stills-grid { grid-template-columns: repeat(3, minmax(0,1fr)) !important; }
         }
 
+    
+        /* =========================================================
+           DESKTOP MOVIE / TV SPLIT HERO
+           Mobile layout is intentionally untouched.
+           ========================================================= */
+        .desktop-details-hero {
+            display: none;
+        }
+
+        @media (min-width: 768px) {
+            #desktop-details-hero {
+                display: grid;
+                grid-template-columns: minmax(390px, .86fr) minmax(0, 1.55fr);
+                align-items: stretch;
+                width: 100%;
+                min-height: clamp(480px, 35vw, 600px);
+                margin: 0;
+                overflow: hidden;
+                border: 1px solid rgba(255,255,255,.07);
+                border-radius: 0 0 30px 30px;
+                background: #050505;
+                box-shadow: 0 30px 90px rgba(0,0,0,.35);
+            }
+
+            /* Hide the old mobile-style details hero/genre/metadata on desktop.
+               Their content is represented in the split hero above. */
+            #details-view > section.relative.aspect-video,
+            #details-view > section:nth-of-type(2),
+            #details-view > section:nth-of-type(3) {
+                display: none !important;
+            }
+
+            .desktop-details-info {
+                position: relative;
+                z-index: 2;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                min-width: 0;
+                padding: 48px 48px 44px;
+                background: #050505;
+                border-right: 1px solid rgba(255,255,255,.055);
+            }
+
+            .desktop-details-type {
+                align-self: flex-start;
+                display: inline-flex;
+                align-items: center;
+                min-height: 28px;
+                padding: 6px 10px;
+                margin-bottom: 14px;
+                border-radius: 7px;
+                background: #000;
+                border: 1px solid rgba(251,191,36,.28);
+                color: #fbbf24;
+                font-size: 10px;
+                font-weight: 900;
+                letter-spacing: .13em;
+                line-height: 1;
+            }
+
+            .desktop-details-rating {
+                align-self: flex-start;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 9px 13px;
+                margin-bottom: 10px;
+                border-radius: 10px;
+                background: rgba(251,191,36,.09);
+                border: 1px solid rgba(251,191,36,.23);
+                color: #fbbf24;
+                font-size: 14px;
+                font-weight: 900;
+            }
+
+            .desktop-details-rating i {
+                font-size: 11px;
+            }
+
+            .desktop-details-release {
+                margin-bottom: 20px;
+                color: #8f97a6;
+                font-size: 12px;
+                font-weight: 800;
+            }
+
+            .desktop-details-title {
+                display: flex;
+                align-items: center;
+                min-height: 90px;
+                max-width: 100%;
+                margin-bottom: 22px;
+            }
+
+            .desktop-details-title img {
+                display: block;
+                max-width: min(100%, 480px);
+                max-height: 105px;
+                width: auto;
+                height: auto;
+                object-fit: contain;
+                object-position: left center;
+                filter: drop-shadow(0 8px 22px rgba(0,0,0,.5));
+            }
+
+            .desktop-details-title h1,
+            .desktop-details-title span {
+                margin: 0;
+                color: #fff;
+                font-size: clamp(34px, 3.5vw, 58px);
+                font-weight: 900;
+                line-height: .98;
+                letter-spacing: -.045em;
+                text-wrap: balance;
+            }
+
+            .desktop-details-genres {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-bottom: 20px;
+            }
+
+            .desktop-details-genre {
+                padding: 8px 13px;
+                border-radius: 999px;
+                background: #1e160a;
+                border: 1px solid rgba(133,83,22,.65);
+                color: #fbbf24;
+                font-size: 11px;
+                font-weight: 800;
+                white-space: nowrap;
+            }
+
+            .desktop-details-meta {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0,1fr));
+                gap: 9px;
+                margin-bottom: 20px;
+            }
+
+            .desktop-details-meta-item {
+                min-width: 0;
+                min-height: 68px;
+                padding: 11px 12px;
+                border: 1px solid #1f222e;
+                border-radius: 14px;
+                background: #0f1015;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+            .desktop-details-meta-item > span {
+                display: block;
+                margin-bottom: 5px;
+                color: #687083;
+                font-size: 7px;
+                font-weight: 900;
+                letter-spacing: .08em;
+                text-transform: uppercase;
+            }
+
+            .desktop-details-meta-item > strong {
+                display: block;
+                min-width: 0;
+                color: #fff;
+                font-size: 10px;
+                font-weight: 900;
+                line-height: 1.35;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .desktop-details-ott {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                min-height: 19px;
+                color: #9ca3af;
+                font-size: 10px;
+                font-weight: 800;
+            }
+
+            .desktop-details-ott img {
+                width: 20px;
+                height: 20px;
+                border-radius: 6px;
+                object-fit: cover;
+                border: 1px solid rgba(255,255,255,.1);
+            }
+
+            .desktop-details-overview {
+                max-width: 680px;
+                margin: 0;
+                color: #b7becb;
+                font-size: 11px;
+                line-height: 1.7;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 3;
+                overflow: hidden;
+            }
+
+            .desktop-details-media {
+                position: relative;
+                min-width: 0;
+                min-height: 0;
+                overflow: hidden;
+                background: #08090d;
+            }
+
+            .desktop-details-backdrop {
+                position: absolute;
+                inset: 0;
+                background-color: #08090d;
+                background-repeat: no-repeat;
+                background-position: center;
+                background-size: cover;
+                transition: opacity .45s ease, transform .7s ease;
+            }
+
+            .desktop-details-media-overlay {
+                position: absolute;
+                inset: 0;
+                pointer-events: none;
+                background:
+                    linear-gradient(90deg, rgba(5,5,5,.12) 0%, rgba(5,5,5,0) 18%, rgba(5,5,5,0) 80%, rgba(5,5,5,.08) 100%),
+                    linear-gradient(0deg, rgba(5,5,5,.22), transparent 42%);
+            }
+
+            #details-view > section:nth-of-type(4) {
+                margin-top: 24px;
+            }
+
+            @media (max-width: 1050px) {
+                #desktop-details-hero {
+                    grid-template-columns: minmax(330px, .8fr) minmax(0, 1.35fr);
+                }
+
+                .desktop-details-info {
+                    padding: 38px 32px 34px;
+                }
+
+                .desktop-details-meta {
+                    grid-template-columns: 1fr;
+                }
+
+                .desktop-details-title {
+                    min-height: 76px;
+                }
+
+                .desktop-details-title img {
+                    max-height: 82px;
+                }
+            }
+        }
+
     </style>
 </head>
 <body class="min-h-screen flex flex-col pb-24 relative">
@@ -1104,6 +1363,51 @@
 
     <!-- 3. MOVIE / TV SHOW DETAILS VIEW -->
     <div id="details-view" class="hidden max-w-md w-full mx-auto relative min-h-screen">
+        <!-- DESKTOP DETAILS SPLIT HERO
+             Mobile keeps the original details markup below unchanged. -->
+        <section id="desktop-details-hero" class="desktop-details-hero" aria-label="Movie or TV show details">
+            <div class="desktop-details-info">
+                <div id="desktop-details-type" class="desktop-details-type">TV</div>
+
+                <div class="desktop-details-rating">
+                    <i class="fa-solid fa-star"></i>
+                    <span id="desktop-details-rating">0.0</span>
+                </div>
+
+                <div id="desktop-details-release" class="desktop-details-release">2026</div>
+
+                <div id="desktop-details-title" class="desktop-details-title">
+                    <span>Loading...</span>
+                </div>
+
+                <div id="desktop-details-genres" class="desktop-details-genres"></div>
+
+                <div id="desktop-details-meta" class="desktop-details-meta">
+                    <div class="desktop-details-meta-item">
+                        <span id="desktop-details-runtime-label">RUNTIME</span>
+                        <strong id="desktop-details-runtime">N/A</strong>
+                    </div>
+                    <div class="desktop-details-meta-item">
+                        <span>DIRECTOR / CREATOR</span>
+                        <strong id="desktop-details-director">N/A</strong>
+                    </div>
+                    <div class="desktop-details-meta-item">
+                        <span>AVAILABLE ON</span>
+                        <div id="desktop-details-ott" class="desktop-details-ott">N/A</div>
+                    </div>
+                </div>
+
+                <p id="desktop-details-overview" class="desktop-details-overview">
+                    No overview available.
+                </p>
+            </div>
+
+            <div class="desktop-details-media">
+                <div id="desktop-details-backdrop" class="desktop-details-backdrop"></div>
+                <div class="desktop-details-media-overlay"></div>
+            </div>
+        </section>
+
         <section class="relative aspect-video w-full overflow-hidden">
             <div id="details-backdrop" class="absolute inset-0 bg-cover bg-center transition-all duration-1000"></div>
             <div class="absolute inset-0 bg-gradient-to-t from-brand-bg via-transparent to-transparent"></div>
@@ -1798,6 +2102,79 @@
         }
 
         // MOVIE / SHOW DETAILS PAGE
+
+        // DESKTOP DETAILS HERO — mirrors the existing mobile data without changing mobile UI.
+        function syncDesktopDetailsHero(data, type) {
+            const typeEl = document.getElementById('desktop-details-type');
+            const ratingEl = document.getElementById('desktop-details-rating');
+            const releaseEl = document.getElementById('desktop-details-release');
+            const titleEl = document.getElementById('desktop-details-title');
+            const genresEl = document.getElementById('desktop-details-genres');
+            const runtimeLabelEl = document.getElementById('desktop-details-runtime-label');
+            const runtimeEl = document.getElementById('desktop-details-runtime');
+            const directorEl = document.getElementById('desktop-details-director');
+            const ottEl = document.getElementById('desktop-details-ott');
+            const overviewEl = document.getElementById('desktop-details-overview');
+            const backdropEl = document.getElementById('desktop-details-backdrop');
+
+            if (!typeEl || !titleEl) return;
+
+            typeEl.textContent = type.toUpperCase();
+            ratingEl.textContent = data.vote_average ? data.vote_average.toFixed(1) : 'N/A';
+            releaseEl.textContent = data.release_date || data.first_air_date || 'N/A';
+            overviewEl.textContent = data.overview || 'No overview available.';
+
+            const logo = data.images?.logos?.[0]?.file_path;
+            if (logo) {
+                titleEl.innerHTML = `<img src="${IMG_URL}${logo}" alt="${data.title || data.name || ''} logo">`;
+            } else {
+                titleEl.innerHTML = `<h1>${data.title || data.name || 'Untitled'}</h1>`;
+            }
+
+            genresEl.innerHTML = (data.genres || []).map(g =>
+                `<span class="desktop-details-genre">${g.name}</span>`
+            ).join('');
+
+            if (type === 'tv') {
+                runtimeLabelEl.textContent = 'SEASONS & EPISODES';
+                const validSeasons = (data.seasons || []).filter(s => s.season_number > 0);
+                const seasonsCount = validSeasons.length;
+                const episodesCount = data.number_of_episodes || 0;
+                runtimeEl.textContent = seasonsCount > 0
+                    ? `${seasonsCount} Season${seasonsCount > 1 ? 's' : ''} • ${episodesCount} Ep`
+                    : 'N/A';
+            } else {
+                runtimeLabelEl.textContent = 'RUNTIME';
+                runtimeEl.textContent = data.runtime ? `${data.runtime} min` : 'N/A';
+            }
+
+            if (type === 'movie') {
+                const director = data.credits?.crew?.find(c => c.job === 'Director');
+                directorEl.textContent = director ? director.name : 'N/A';
+            } else {
+                const creators = data.created_by?.map(c => c.name).join(', ');
+                directorEl.textContent = creators || 'N/A';
+            }
+
+            const providersData = data['watch/providers']?.results;
+            const regionData = providersData?.IN || providersData?.US;
+            const flatrate = regionData?.flatrate || regionData?.buy || [];
+
+            if (flatrate.length > 0) {
+                ottEl.innerHTML = flatrate.slice(0, 3).map(p => `
+                    <img src="${IMG_URL}${p.logo_path}" title="${p.provider_name}" alt="${p.provider_name}">
+                `).join('');
+            } else {
+                ottEl.textContent = 'N/A';
+            }
+
+            if (data.backdrop_path) {
+                backdropEl.style.backgroundImage = `url('${ORIGINAL_IMG}${data.backdrop_path}')`;
+            } else {
+                backdropEl.style.backgroundImage = 'none';
+            }
+        }
+
         async function renderDetailsPage(id, type = 'movie') {
             currentDetailsId = id;
             currentDetailsType = type;
@@ -1815,6 +2192,8 @@
                 const res = await fetch(`${BASE_URL}/${type}/${id}?api_key=${TMDB_API_KEY}&append_to_response=credits,images,watch/providers&include_image_language=en,null`);
                 const data = await res.json();
                 currentShowData = data;
+
+                syncDesktopDetailsHero(data, type);
 
                 document.getElementById('media-type').textContent = type.toUpperCase();
                 document.getElementById('rating-val').textContent = data.vote_average ? data.vote_average.toFixed(1) : 'N/A';
@@ -1843,16 +2222,28 @@
                 if (backdrops.length > 0) {
                     let backdropIdx = 0;
                     bgElement.style.backgroundImage = `url('${ORIGINAL_IMG}${backdrops[0].file_path}')`;
+                    const desktopBg = document.getElementById('desktop-details-backdrop');
+                    if (desktopBg) {
+                        desktopBg.style.backgroundImage = `url('${ORIGINAL_IMG}${backdrops[0].file_path}')`;
+                    }
 
                     clearInterval(detailsSliderInterval);
                     if (backdrops.length > 1) {
                         detailsSliderInterval = setInterval(() => {
                             backdropIdx = (backdropIdx + 1) % Math.min(backdrops.length, 5);
                             bgElement.style.backgroundImage = `url('${ORIGINAL_IMG}${backdrops[backdropIdx].file_path}')`;
+                            const desktopBg = document.getElementById('desktop-details-backdrop');
+                            if (desktopBg) {
+                                desktopBg.style.backgroundImage = `url('${ORIGINAL_IMG}${backdrops[backdropIdx].file_path}')`;
+                            }
                         }, 3000);
                     }
                 } else if (data.backdrop_path) {
                     bgElement.style.backgroundImage = `url('${ORIGINAL_IMG}${data.backdrop_path}')`;
+                    const desktopBg = document.getElementById('desktop-details-backdrop');
+                    if (desktopBg) {
+                        desktopBg.style.backgroundImage = `url('${ORIGINAL_IMG}${data.backdrop_path}')`;
+                    }
                 }
 
                 document.getElementById('meta-release').textContent = data.release_date || data.first_air_date || 'N/A';
