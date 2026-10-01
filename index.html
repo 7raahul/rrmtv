@@ -1738,6 +1738,353 @@
             }
         }
 
+    
+        /* =========================================================
+           FRESH CINEMATIC DETAILS UI
+           Desktop only. Existing mobile UI is intentionally untouched.
+           ========================================================= */
+        @media (min-width: 768px) {
+            #details-view {
+                width: min(1320px, calc(100vw - 64px)) !important;
+                max-width: none !important;
+                padding-top: 82px !important;
+                padding-bottom: 70px !important;
+            }
+
+            /* Hide the previous desktop details hero. */
+            #desktop-details-hero {
+                display: none !important;
+            }
+
+            /* Fresh hero */
+            #details-view .fresh-detail-hero {
+                display: grid;
+                grid-template-columns: 360px minmax(0, 1fr);
+                gap: 42px;
+                align-items: center;
+                padding: 38px 44px;
+                border: 1px solid #1d2028;
+                border-radius: 28px;
+                background:
+                    radial-gradient(circle at 76% 30%, rgba(251,191,36,.055), transparent 34%),
+                    #08090c;
+                box-shadow: 0 28px 80px rgba(0,0,0,.34);
+            }
+
+            .fresh-detail-poster-wrap {
+                width: 100%;
+                max-width: 360px;
+                justify-self: center;
+            }
+
+            .fresh-detail-poster {
+                width: 100%;
+                aspect-ratio: 2 / 3;
+                display: block;
+                object-fit: cover;
+                border-radius: 20px;
+                background: #101116;
+                border: 1px solid rgba(255,255,255,.08);
+                box-shadow: 0 24px 55px rgba(0,0,0,.48);
+            }
+
+            .fresh-detail-info {
+                min-width: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .fresh-detail-kicker {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 13px;
+                color: #8d95a5;
+                font-size: 10px;
+                font-weight: 900;
+                letter-spacing: .12em;
+                text-transform: uppercase;
+            }
+
+            .fresh-detail-type {
+                padding: 6px 9px;
+                border-radius: 7px;
+                color: #fbbf24;
+                background: #151107;
+                border: 1px solid rgba(251,191,36,.28);
+            }
+
+            .fresh-detail-rating {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                color: #fbbf24;
+                letter-spacing: 0;
+            }
+
+            .fresh-detail-title {
+                margin: 0 0 17px;
+                max-width: 760px;
+            }
+
+            .fresh-detail-title img {
+                display: block;
+                max-width: min(600px, 100%);
+                max-height: 125px;
+                object-fit: contain;
+                object-position: left center;
+                filter: drop-shadow(0 9px 25px rgba(0,0,0,.45));
+            }
+
+            .fresh-detail-title h1 {
+                margin: 0;
+                color: #fff;
+                font-size: clamp(42px, 5vw, 72px);
+                font-weight: 900;
+                line-height: .94;
+                letter-spacing: -.055em;
+            }
+
+            .fresh-detail-facts {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 9px;
+                margin-bottom: 18px;
+            }
+
+            .fresh-detail-fact {
+                display: inline-flex;
+                align-items: center;
+                min-height: 32px;
+                padding: 7px 11px;
+                border-radius: 9px;
+                background: #101116;
+                border: 1px solid #242733;
+                color: #c5cad5;
+                font-size: 10px;
+                font-weight: 800;
+            }
+
+            .fresh-detail-fact i {
+                margin-right: 6px;
+                color: #fbbf24;
+                font-size: 9px;
+            }
+
+            .fresh-detail-genres {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 7px;
+                margin-bottom: 22px;
+            }
+
+            .fresh-detail-genre {
+                padding: 7px 11px;
+                border-radius: 999px;
+                color: #fbbf24;
+                background: #171108;
+                border: 1px solid #5d3d0f;
+                font-size: 10px;
+                font-weight: 800;
+            }
+
+            .fresh-detail-summary {
+                max-width: 760px;
+                margin: 0 0 22px;
+                color: #aeb5c2;
+                font-size: 13px;
+                line-height: 1.75;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 3;
+                overflow: hidden;
+            }
+
+            .fresh-detail-providers {
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-bottom: 22px;
+            }
+
+            .fresh-detail-provider-label {
+                color: #697182;
+                font-size: 9px;
+                font-weight: 900;
+                letter-spacing: .08em;
+                text-transform: uppercase;
+                margin-right: 3px;
+            }
+
+            .fresh-detail-provider {
+                width: 30px;
+                height: 30px;
+                border-radius: 8px;
+                object-fit: cover;
+                border: 1px solid rgba(255,255,255,.1);
+            }
+
+            .fresh-detail-actions {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 9px;
+            }
+
+            .fresh-detail-action {
+                height: 40px;
+                padding: 0 15px;
+                border-radius: 11px;
+                border: 1px solid #282b35;
+                background: #111218;
+                color: #c8ced8;
+                font-size: 10px;
+                font-weight: 900;
+            }
+
+            .fresh-detail-action.primary {
+                background: #fbbf24;
+                color: #090909;
+                border-color: #fbbf24;
+            }
+
+            /* Remove all previous desktop-only duplicate detail blocks. */
+            #details-view > section:nth-of-type(2),
+            #details-view > section:nth-of-type(3),
+            #details-view > section:nth-of-type(4) {
+                display: none !important;
+            }
+
+            /* Fresh tabs */
+            #details-view .fresh-detail-tabs {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                margin-top: 22px;
+                padding: 6px;
+                border: 1px solid #1d2028;
+                border-radius: 15px;
+                background: #0b0c10;
+            }
+
+            #details-view .fresh-detail-tabs button {
+                height: 42px;
+                padding: 0 17px;
+                border: 0;
+                border-radius: 10px;
+                background: transparent;
+                color: #7f8796;
+                font-size: 10px;
+                font-weight: 900;
+                cursor: pointer;
+            }
+
+            #details-view .fresh-detail-tabs button.active {
+                color: #fff;
+                background: #1b1d24;
+                box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
+            }
+
+            /* Existing tab content, visually refreshed. */
+            #details-view > section:nth-of-type(6) {
+                display: block !important;
+                padding-top: 22px !important;
+            }
+
+            #tab-overview {
+                display: grid !important;
+                grid-template-columns: minmax(0, 1.65fr) minmax(280px, .75fr) !important;
+                gap: 16px !important;
+            }
+
+            #tab-overview > div {
+                min-width: 0;
+                padding: 26px !important;
+                border-radius: 20px !important;
+                background: #0c0d12 !important;
+                border: 1px solid #1d2028 !important;
+            }
+
+            #tab-overview > div:first-child p {
+                margin: 0 !important;
+                color: #bdc3cf !important;
+                font-size: 13px !important;
+                line-height: 1.85 !important;
+            }
+
+            #tab-overview.tv-no-financials {
+                display: block !important;
+            }
+
+            #tab-overview.tv-no-financials > div:first-child {
+                width: 100%;
+            }
+
+            #tab-overview.tv-no-financials > div:nth-child(2) {
+                display: none !important;
+            }
+
+            #episodes-list-container {
+                grid-template-columns: repeat(2, minmax(0,1fr)) !important;
+                gap: 16px !important;
+            }
+
+            #tab-cast #cast-grid {
+                grid-template-columns: repeat(7, minmax(0,1fr)) !important;
+                gap: 16px !important;
+            }
+
+            #media-backdrops-grid {
+                grid-template-columns: repeat(3, minmax(0,1fr)) !important;
+                gap: 16px !important;
+            }
+
+            #media-posters-grid,
+            #media-logos-grid {
+                grid-template-columns: repeat(5, minmax(0,1fr)) !important;
+                gap: 16px !important;
+            }
+
+            /* Existing mobile details DOM is hidden on desktop after fresh UI is mounted. */
+            #details-view > section:not(.fresh-detail-hero):not(.fresh-detail-tabs) {
+                /* keep JS-driven tab content visible; handled by specific selectors above */
+            }
+        }
+
+        @media (min-width: 1100px) {
+            #details-view .fresh-detail-hero {
+                grid-template-columns: 390px minmax(0, 1fr);
+                gap: 50px;
+                padding: 44px 52px;
+            }
+        }
+
+        @media (max-width: 900px) and (min-width: 768px) {
+            #details-view {
+                width: calc(100vw - 36px) !important;
+            }
+
+            #details-view .fresh-detail-hero {
+                grid-template-columns: 280px minmax(0, 1fr);
+                gap: 28px;
+                padding: 28px;
+            }
+
+            .fresh-detail-title img {
+                max-height: 85px;
+            }
+
+            .fresh-detail-title h1 {
+                font-size: 40px;
+            }
+
+            #tab-overview {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
     </style>
 </head>
 <body class="min-h-screen flex flex-col pb-24 relative">
@@ -1859,6 +2206,41 @@
 
     <!-- 3. MOVIE / TV SHOW DETAILS VIEW -->
     <div id="details-view" class="hidden max-w-md w-full mx-auto relative min-h-screen">
+        <!-- FRESH DESKTOP DETAILS UI: mobile markup remains below untouched -->
+        <section class="fresh-detail-hero" id="fresh-detail-hero" aria-label="Title details">
+            <div class="fresh-detail-poster-wrap">
+                <img id="fresh-detail-poster" class="fresh-detail-poster" alt="">
+            </div>
+            <div class="fresh-detail-info">
+                <div class="fresh-detail-kicker">
+                    <span id="fresh-detail-type" class="fresh-detail-type">TV</span>
+                    <span class="fresh-detail-rating"><i class="fa-solid fa-star"></i><span id="fresh-detail-rating">0.0</span></span>
+                </div>
+                <div id="fresh-detail-title" class="fresh-detail-title">
+                    <h1>Loading...</h1>
+                </div>
+                <div id="fresh-detail-facts" class="fresh-detail-facts"></div>
+                <div id="fresh-detail-genres" class="fresh-detail-genres"></div>
+                <p id="fresh-detail-summary" class="fresh-detail-summary">No overview available.</p>
+                <div id="fresh-detail-providers" class="fresh-detail-providers"></div>
+                <div class="fresh-detail-actions">
+                    <button type="button" class="fresh-detail-action primary" id="fresh-detail-primary-action">
+                        <i class="fa-solid fa-circle-info"></i> Details
+                    </button>
+                    <button type="button" class="fresh-detail-action" id="fresh-detail-share-action">
+                        <i class="fa-solid fa-share-nodes"></i> Share
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <div class="fresh-detail-tabs" id="fresh-detail-tabs" role="tablist">
+            <button type="button" class="active" data-tab="overview">Overview</button>
+            <button type="button" data-tab="seasons">Seasons</button>
+            <button type="button" data-tab="cast">Cast</button>
+            <button type="button" data-tab="media">Media</button>
+        </div>
+
         <!-- DESKTOP DETAILS SPLIT HERO
              Mobile keeps the original details markup below unchanged. -->
         <section id="desktop-details-hero" class="desktop-details-hero" aria-label="Movie or TV show details">
@@ -2678,6 +3060,114 @@
             overview.classList.toggle('tv-no-financials', type === 'tv');
         }
 
+
+        function syncFreshDesktopDetails(data, type) {
+            const poster = document.getElementById('fresh-detail-poster');
+            const typeEl = document.getElementById('fresh-detail-type');
+            const ratingEl = document.getElementById('fresh-detail-rating');
+            const titleEl = document.getElementById('fresh-detail-title');
+            const factsEl = document.getElementById('fresh-detail-facts');
+            const genresEl = document.getElementById('fresh-detail-genres');
+            const summaryEl = document.getElementById('fresh-detail-summary');
+            const providersEl = document.getElementById('fresh-detail-providers');
+
+            if (!poster || !titleEl) return;
+
+            const title = data.title || data.name || 'Untitled';
+            const release = data.release_date || data.first_air_date || 'N/A';
+            const logo = data.images?.logos?.[0]?.file_path;
+            const posterPath = data.poster_path || data.backdrop_path;
+
+            typeEl.textContent = type === 'tv' ? 'TV' : 'MOVIE';
+            ratingEl.textContent = data.vote_average ? data.vote_average.toFixed(1) : 'N/A';
+
+            if (posterPath) {
+                poster.src = `${IMG_URL}${posterPath}`;
+            } else {
+                poster.removeAttribute('src');
+            }
+            poster.alt = `${title} poster`;
+
+            if (logo) {
+                titleEl.innerHTML = `<img src="${IMG_URL}${logo}" alt="${title} logo">`;
+            } else {
+                titleEl.innerHTML = `<h1>${title}</h1>`;
+            }
+
+            let facts = [];
+            facts.push(`<span class="fresh-detail-fact"><i class="fa-regular fa-calendar"></i>${release}</span>`);
+
+            if (type === 'tv') {
+                const seasons = (data.seasons || []).filter(s => s.season_number > 0);
+                const seasonCount = seasons.length;
+                const episodeCount = data.number_of_episodes || 0;
+                facts.push(`<span class="fresh-detail-fact"><i class="fa-solid fa-layer-group"></i>${seasonCount ? seasonCount + ' Season' + (seasonCount > 1 ? 's' : '') : 'N/A'}</span>`);
+                facts.push(`<span class="fresh-detail-fact"><i class="fa-solid fa-clapperboard"></i>${episodeCount ? episodeCount + ' Episodes' : 'N/A'}</span>`);
+                const creators = data.created_by?.map(c => c.name).join(', ');
+                if (creators) facts.push(`<span class="fresh-detail-fact"><i class="fa-solid fa-user-pen"></i>${creators}</span>`);
+            } else {
+                if (data.runtime) facts.push(`<span class="fresh-detail-fact"><i class="fa-regular fa-clock"></i>${data.runtime} min</span>`);
+                const director = data.credits?.crew?.find(c => c.job === 'Director');
+                if (director) facts.push(`<span class="fresh-detail-fact"><i class="fa-solid fa-user-pen"></i>${director.name}</span>`);
+            }
+            factsEl.innerHTML = facts.join('');
+
+            genresEl.innerHTML = (data.genres || []).map(g =>
+                `<span class="fresh-detail-genre">${g.name}</span>`
+            ).join('');
+
+            summaryEl.textContent = data.overview || 'No overview available.';
+
+            const providerResults = data['watch/providers']?.results;
+            const region = providerResults?.IN || providerResults?.US;
+            const providers = (region?.flatrate || region?.buy || []).slice(0, 4);
+
+            providersEl.innerHTML = providers.length
+                ? `<span class="fresh-detail-provider-label">Available on</span>` + providers.map(p =>
+                    `<img class="fresh-detail-provider" src="${IMG_URL}${p.logo_path}" title="${p.provider_name}" alt="${p.provider_name}">`
+                  ).join('')
+                : '';
+        }
+
+        function setupFreshDesktopTabs() {
+            const tabs = document.querySelectorAll('#fresh-detail-tabs button[data-tab]');
+            tabs.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tab = button.dataset.tab;
+                    tabs.forEach(b => b.classList.toggle('active', b === button));
+
+                    const targets = {
+                        overview: document.getElementById('tab-overview'),
+                        seasons: document.getElementById('tab-seasons'),
+                        cast: document.getElementById('tab-cast'),
+                        media: document.getElementById('tab-media')
+                    };
+
+                    Object.entries(targets).forEach(([name, el]) => {
+                        if (el) el.classList.toggle('hidden', name !== tab);
+                    });
+                });
+            });
+
+            const share = document.getElementById('fresh-detail-share-action');
+            if (share && !share.dataset.bound) {
+                share.dataset.bound = '1';
+                share.addEventListener('click', async () => {
+                    try {
+                        if (navigator.share) {
+                            await navigator.share({title: document.title, url: location.href});
+                        } else if (navigator.clipboard) {
+                            await navigator.clipboard.writeText(location.href);
+                            share.innerHTML = '<i class="fa-solid fa-check"></i> Copied';
+                            setTimeout(() => {
+                                share.innerHTML = '<i class="fa-solid fa-share-nodes"></i> Share';
+                            }, 1200);
+                        }
+                    } catch (_) {}
+                });
+            }
+        }
+
         async function renderDetailsPage(id, type = 'movie') {
             currentDetailsId = id;
             currentDetailsType = type;
@@ -2697,6 +3187,8 @@
                 currentShowData = data;
 
                 syncDesktopDetailsHero(data, type);
+                syncFreshDesktopDetails(data, type);
+                setupFreshDesktopTabs();
                 updateDesktopOverviewFinancialVisibility(type);
 
                 document.getElementById('media-type').textContent = type.toUpperCase();
