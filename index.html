@@ -54,9 +54,382 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+
+
+        /* =========================================================
+           DESKTOP RESPONSIVE UI
+           Mobile layout is intentionally left unchanged.
+           Activated only at 768px and above.
+           ========================================================= */
+        .desktop-only-nav { display: none; }
+
+        @media (min-width: 768px) {
+            html { background: #050505; }
+            body {
+                padding-bottom: 0 !important;
+                min-height: 100vh;
+            }
+
+            .desktop-only-nav {
+                display: flex;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 76px;
+                z-index: 100;
+                align-items: center;
+                justify-content: center;
+                padding: 0 28px;
+                background: rgba(5, 5, 5, .82);
+                border-bottom: 1px solid rgba(255,255,255,.07);
+                backdrop-filter: blur(22px);
+                -webkit-backdrop-filter: blur(22px);
+            }
+
+            .desktop-nav-inner {
+                width: min(1380px, calc(100vw - 56px));
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 30px;
+            }
+
+            .desktop-brand {
+                display: flex;
+                align-items: center;
+                gap: 11px;
+                min-width: 190px;
+            }
+            .desktop-brand-mark {
+                width: 38px;
+                height: 38px;
+                border-radius: 12px;
+                display: grid;
+                place-items: center;
+                color: #050505;
+                background: #fbbf24;
+                box-shadow: 0 8px 28px rgba(251,191,36,.16);
+            }
+            .desktop-brand-title {
+                font-size: 15px;
+                line-height: 1;
+                font-weight: 800;
+                letter-spacing: -.02em;
+                color: #fff;
+            }
+            .desktop-brand-subtitle {
+                margin-top: 4px;
+                font-size: 8px;
+                line-height: 1;
+                font-weight: 800;
+                letter-spacing: .16em;
+                text-transform: uppercase;
+                color: #6b7280;
+            }
+
+            .desktop-nav-links {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                padding: 5px;
+                border: 1px solid rgba(255,255,255,.07);
+                background: rgba(28,29,36,.72);
+                border-radius: 18px;
+            }
+            .desktop-nav-link {
+                height: 42px;
+                padding: 0 18px;
+                border: 0;
+                border-radius: 13px;
+                background: transparent;
+                color: #8d95a5;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 9px;
+                font-size: 11px;
+                font-weight: 800;
+                cursor: pointer;
+                transition: .2s ease;
+            }
+            .desktop-nav-link:hover { color: #fff; background: rgba(255,255,255,.06); }
+            .desktop-nav-link.active {
+                color: #fff;
+                background: rgba(255,255,255,.10);
+                box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+            }
+            .desktop-nav-link i { font-size: 12px; }
+
+            .desktop-search-shortcut {
+                min-width: 190px;
+                display: flex;
+                justify-content: flex-end;
+            }
+            .desktop-search-button {
+                border: 1px solid rgba(255,255,255,.08);
+                background: rgba(15,16,21,.88);
+                color: #8d95a5;
+                height: 40px;
+                min-width: 170px;
+                padding: 0 13px;
+                border-radius: 13px;
+                display: flex;
+                align-items: center;
+                gap: 9px;
+                font-size: 10px;
+                font-weight: 700;
+                cursor: pointer;
+            }
+            .desktop-search-button:hover { color:#fff; border-color: rgba(251,191,36,.35); }
+            .desktop-search-button span { flex: 1; text-align:left; }
+
+            #scroll-to-top-btn { z-index: 110; }
+            body > .glass-pill { display: none !important; }
+
+            /* Main views become wide desktop canvases. */
+            #app-view,
+            #search-view,
+            #details-view,
+            #episode-details-view,
+            #person-view {
+                width: min(1380px, calc(100vw - 56px)) !important;
+                max-width: none !important;
+                margin-left: auto !important;
+                margin-right: auto !important;
+            }
+
+            #app-view { padding-top: 76px; }
+            #search-view,
+            #episode-details-view,
+            #person-view { padding-top: 106px !important; }
+            #details-view { padding-top: 76px; }
+
+            /* HOME */
+            #hero-section {
+                height: clamp(430px, 42vw, 600px);
+                aspect-ratio: auto !important;
+                border-radius: 0 0 30px 30px;
+            }
+            #hero-bg { background-position: center 30%; }
+            #hero-section > .absolute.inset-0.bg-gradient-to-t {
+                background-image: linear-gradient(to top, #050505 0%, rgba(5,5,5,.78) 25%, rgba(0,0,0,.12) 70%, rgba(0,0,0,.12) 100%) !important;
+            }
+            #hero-section > .absolute.bottom-4 {
+                bottom: 42px !important;
+                left: 52px !important;
+                right: 52px !important;
+            }
+            #hero-title-container { min-height: 82px !important; }
+            #hero-title-container img { max-height: 76px !important; max-width: 520px !important; }
+            #hero-title-container h2 { font-size: 42px !important; line-height: 1 !important; }
+            #hero-type { font-size: 10px !important; padding: 5px 10px !important; }
+            #hero-dots { gap: 7px !important; padding-bottom: 8px !important; }
+
+            #app-view > .px-4 {
+                padding: 34px 0 70px !important;
+            }
+            #grid-title {
+                font-size: 13px !important;
+                letter-spacing: .13em !important;
+                margin-bottom: 18px;
+                color: #9ca3af !important;
+            }
+            #content-grid {
+                grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+                gap: 18px !important;
+            }
+
+            #content-grid > div,
+            #search-results-grid > div {
+                border-radius: 18px !important;
+                transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+            }
+            #content-grid > div:hover,
+            #search-results-grid > div:hover {
+                transform: translateY(-5px);
+                border-color: rgba(251,191,36,.32) !important;
+                box-shadow: 0 18px 38px rgba(0,0,0,.34);
+            }
+            #content-grid img,
+            #search-results-grid img { transition: transform .35s ease; }
+
+            /* SEARCH */
+            #search-view { min-height: calc(100vh - 76px); }
+            #search-view > .flex { max-width: 760px; margin: 0 auto; }
+            #dedicated-search-input {
+                min-height: 54px;
+                font-size: 13px !important;
+                padding-left: 44px !important;
+                border-radius: 16px !important;
+            }
+            #search-suggestions { max-width: 760px; margin: 0 auto; }
+            #search-results-grid {
+                grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+                gap: 18px !important;
+            }
+
+            /* DETAILS */
+            #details-view > section:first-child {
+                height: clamp(430px, 42vw, 600px);
+                aspect-ratio: auto !important;
+                border-radius: 0 0 30px 30px;
+            }
+            #details-view > section:first-child > .absolute.bottom-3 {
+                bottom: 42px !important;
+                left: 52px !important;
+                right: 52px !important;
+            }
+            #details-title-container { min-height: 70px !important; }
+            #details-title-container img { max-height: 74px !important; max-width: 600px !important; }
+            #details-title-container h1 { font-size: 42px !important; }
+            #rating-val { font-size: 14px !important; }
+            #details-view > section:nth-of-type(2) {
+                padding: 24px 0 8px !important;
+            }
+            #genre-container { gap: 9px !important; }
+            #genre-container span { padding: 9px 16px !important; }
+
+            #details-view > section:nth-of-type(3) {
+                padding: 16px 0 20px !important;
+                grid-template-columns: repeat(4, minmax(0,1fr)) !important;
+                gap: 14px !important;
+            }
+            #details-view > section:nth-of-type(3) > div {
+                min-height: 88px;
+                padding: 17px !important;
+                border-radius: 18px !important;
+            }
+
+            #details-view > section:nth-of-type(4) {
+                padding: 8px 0 0 !important;
+            }
+            #details-view > section:nth-of-type(4) > div {
+                gap: 30px !important;
+                padding-left: 4px;
+                padding-right: 4px;
+            }
+            #details-view > section:nth-of-type(5) {
+                padding: 24px 0 80px !important;
+            }
+            #tab-overview > div:first-child {
+                padding: 25px !important;
+                border-radius: 22px !important;
+            }
+            #tab-overview > div:first-child p { font-size: 13px !important; line-height: 1.8 !important; }
+            #tab-overview > div:nth-child(2) { padding: 25px !important; border-radius: 22px !important; }
+
+            #tab-cast #cast-grid {
+                grid-template-columns: repeat(6, minmax(0,1fr)) !important;
+                gap: 16px !important;
+            }
+            #tab-cast #cast-grid > div { border-radius: 18px !important; }
+
+            #tab-media > div:first-child { max-width: 600px; }
+            #media-backdrops-grid { grid-template-columns: repeat(2, minmax(0,1fr)) !important; gap: 16px !important; }
+            #media-posters-grid { grid-template-columns: repeat(5, minmax(0,1fr)) !important; gap: 16px !important; }
+            #media-logos-grid { grid-template-columns: repeat(4, minmax(0,1fr)) !important; gap: 16px !important; }
+
+            #episodes-list-container { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
+            #episodes-list-container > div { height: 100%; }
+
+            /* EPISODE DETAILS */
+            #episode-details-view { padding-bottom: 80px !important; }
+            #episode-details-view > div:nth-child(2) {
+                width: 100%;
+                max-width: 1100px;
+                margin: 0 auto;
+                min-height: 520px;
+            }
+            #episode-details-view > div:nth-child(3) {
+                max-width: 1100px;
+                margin: 0 auto;
+                padding: 24px !important;
+                border-radius: 22px !important;
+            }
+            #episode-details-view > div:nth-child(4),
+            #ep-stills-container,
+            #ep-cast-container {
+                max-width: 1100px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            #ep-stills-grid { grid-template-columns: repeat(2,minmax(0,1fr)) !important; gap: 16px !important; }
+            #ep-big-cast-grid { grid-template-columns: repeat(6,minmax(0,1fr)) !important; gap: 16px !important; }
+
+            /* PERSON */
+            #person-content { max-width: 1100px; margin: 0 auto; }
+            #person-content > div:first-child { padding: 26px !important; border-radius: 24px !important; }
+            #person-img { width: 150px !important; }
+            #person-name { font-size: 28px !important; }
+            #person-content > div:nth-child(2) { grid-template-columns: repeat(4,minmax(0,1fr)) !important; gap: 14px !important; }
+            #person-content > div:nth-child(2) > div { padding: 18px !important; min-height: 82px; }
+            #person-content > div:nth-child(3) { padding: 26px !important; border-radius: 22px !important; }
+            #person-bio { font-size: 13px !important; line-height: 1.8 !important; }
+            #person-works-grid { grid-template-columns: repeat(6,minmax(0,1fr)) !important; gap: 18px !important; }
+
+            /* Keep all desktop content comfortably away from the viewport edges. */
+            #search-view,
+            #episode-details-view,
+            #person-view { padding-left: 0 !important; padding-right: 0 !important; }
+        }
+
+        @media (min-width: 1200px) {
+            #content-grid,
+            #search-results-grid { grid-template-columns: repeat(7, minmax(0,1fr)) !important; }
+            #tab-cast #cast-grid,
+            #ep-big-cast-grid,
+            #person-works-grid { grid-template-columns: repeat(7, minmax(0,1fr)) !important; }
+        }
+
+        @media (min-width: 1500px) {
+            #app-view,
+            #search-view,
+            #details-view,
+            #episode-details-view,
+            #person-view { width: min(1480px, calc(100vw - 80px)) !important; }
+            .desktop-nav-inner { width: min(1480px, calc(100vw - 80px)); }
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col pb-24 relative">
+
+    <!-- DESKTOP HEADER (hidden on mobile) -->
+    <header class="desktop-only-nav" aria-label="Desktop navigation">
+        <div class="desktop-nav-inner">
+            <button class="desktop-brand" onclick="navigateToTab('home')" aria-label="Go to home">
+                <span class="desktop-brand-mark"><i class="fa-solid fa-play text-xs"></i></span>
+                <span>
+                    <span class="desktop-brand-title">Streaming Hub</span>
+                    <span class="desktop-brand-subtitle">Movies • TV • Entertainment</span>
+                </span>
+            </button>
+
+            <nav class="desktop-nav-links">
+                <button onclick="navigateToTab('home')" data-desktop-nav="home" class="desktop-nav-link active">
+                    <i class="fa-solid fa-house"></i><span>Home</span>
+                </button>
+                <button onclick="navigateToTab('movie')" data-desktop-nav="movie" class="desktop-nav-link">
+                    <i class="fa-solid fa-clapperboard"></i><span>Movies</span>
+                </button>
+                <button onclick="navigateToTab('tv')" data-desktop-nav="tv" class="desktop-nav-link">
+                    <i class="fa-solid fa-tv"></i><span>TV Shows</span>
+                </button>
+                <button onclick="navigateToTab('search')" data-desktop-nav="search" class="desktop-nav-link">
+                    <i class="fa-solid fa-magnifying-glass"></i><span>Search</span>
+                </button>
+            </nav>
+
+            <div class="desktop-search-shortcut">
+                <button class="desktop-search-button" onclick="navigateToTab('search')">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <span>Search movies & shows</span>
+                    <i class="fa-solid fa-arrow-right text-[9px]"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
 
     <!-- FLOATING SCROLL TO TOP BUTTON (⬆️) -->
     <button id="scroll-to-top-btn" onclick="scrollToTop()" class="hidden fixed bottom-20 right-4 z-50 bg-amber-500 hover:bg-amber-400 text-black font-bold w-10 h-10 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 transform scale-100 hover:scale-110 border border-amber-300">
@@ -505,6 +878,10 @@
                         btn.className = "flex-1 py-2 rounded-full flex flex-col items-center justify-center text-gray-400 hover:text-white transition";
                     }
                 }
+            });
+
+            document.querySelectorAll('[data-desktop-nav]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.desktopNav === activeNav);
             });
         }
 
